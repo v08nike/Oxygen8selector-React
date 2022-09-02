@@ -63,7 +63,7 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Card sx={{ p: 3 }}>
-            <Box sx={{ display: 'grid', rowGap: 3, columnGap: 2 }}>
+            <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}>
               <RHFTextField name="jobName" label="Job name" />
 
               <RHFSelect name="application" label="Application" placeholder="Application">

@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
-import { m } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Link, Grid, List, Stack, Popover, ListItem, ListSubheader, CardActionArea } from '@mui/material';
+import { Box, Link, Stack,} from '@mui/material';
 // components
-import Iconify from '../../components/Iconify';
+// import Iconify from '../../components/Iconify';
 import { NavSectionHorizontal } from '../../components/nav-section';
 
 // ----------------------------------------------------------------------
@@ -24,26 +23,13 @@ const LinkStyle = styled(Link)(({ theme }) => ({
   },
 }));
 
-const ListItemStyle = styled(ListItem)(({ theme }) => ({
-  ...theme.typography.body2,
-  padding: 0,
-  marginTop: theme.spacing(3),
-  color: theme.palette.text.secondary,
-  transition: theme.transitions.create('color'),
-  '&:hover': {
-    color: theme.palette.text.primary,
-  },
-}));
-
 // ----------------------------------------------------------------------
 
 MenuDesktop.propTypes = {
-  isHome: PropTypes.bool,
-  isOffset: PropTypes.bool,
   navConfig: PropTypes.array,
 };
 
-export default function MenuDesktop({ isOffset, isHome, navConfig }) {
+export default function MenuDesktop({ navConfig }) {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
@@ -53,10 +39,6 @@ export default function MenuDesktop({ isOffset, isHome, navConfig }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -104,7 +86,7 @@ MenuDesktopItem.propTypes = {
 };
 
 function MenuDesktopItem({ item }) {
-  const { title, path, icon } = item;
+  const { title, path } = item;
 
   return (
     <LinkStyle

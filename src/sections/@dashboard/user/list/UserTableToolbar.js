@@ -54,7 +54,7 @@ export default function UserTableToolbar({ filterName, onFilterName, onFilterRol
           }}
           anchorEl={anchorEl}
           open={open}
-          onClose={handleClose}
+          onClose={() => handleClose('All')}
           PaperProps={{
             style: {
               maxHeight: '300px',

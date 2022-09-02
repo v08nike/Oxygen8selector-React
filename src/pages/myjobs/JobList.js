@@ -34,11 +34,7 @@ import NewJobFormDialog from './NewJobFormDialog';
 import ConfirmDialog from './ConfirmDialog';
 // ----------------------------------------------------------------------
 
-const ROLE_OPTIONS = [
-  'All',
-  'My Jobs',
-  'By Others',
-];
+const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 
 const TABLE_HEAD = [
   { id: 'projectName', label: 'Project Name', align: 'left' },
@@ -151,6 +147,7 @@ export default function UserList() {
     filterName,
     filterRole,
     filterStatus,
+    TABLE_HEAD,
   });
 
   const denseHeight = dense ? 52 : 72;
@@ -165,7 +162,11 @@ export default function UserList() {
       <Container>
         <HeaderBreadcrumbs
           heading="My Jobs"
-          links={[{ name: 'Job Lists', href: PATH_MY_JOBS.root }]}
+          links={[{ name: 'Home', href: PATH_MY_JOBS.root }, { name: 'My Jobs' }]}
+          sx={{
+            pl: '10px',
+            pt: '20px',
+          }}
         />
 
         <Card>
@@ -269,7 +270,7 @@ export default function UserList() {
 
 // ----------------------------------------------------------------------
 
-function applySortFilter({ tableData, comparator, filterName, filterStatus, filterRole }) {
+function applySortFilter({ tableData, comparator, filterName, filterStatus, filterRole, TABLE_HEAD }) {
   const stabilizedThis = tableData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -277,11 +278,19 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-
   tableData = stabilizedThis.map((el) => el[0]);
-
   if (filterName) {
-    tableData = tableData.filter((item) => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
+    tableData = tableData.filter(
+      (item) =>
+        item.projectName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.referenceNo.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.revNo.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.rep.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.createdBy.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.revisiedBy.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.dataCreated.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.dataRevised.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    );
   }
 
   if (filterStatus !== 'All') {

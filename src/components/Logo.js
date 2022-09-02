@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
-import { useTheme, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-const LogoStyle = styled('img')(({ theme }) => ({
+const LogoStyle = styled('img')(() => ({
   marginLeft: "auto",
   marginRight: "auto"
 }));
@@ -19,14 +19,6 @@ Logo.propTypes = {
 };
 
 export default function Logo({ width, disabledLink = false, sx }) {
-  const theme = useTheme();
-
-  const PRIMARY_LIGHT = theme.palette.primary.light;
-
-  const PRIMARY_MAIN = theme.palette.primary.main;
-
-  const PRIMARY_DARK = theme.palette.primary.dark;
-
   // OR
   // const logo = '/logo/logo_single.svg';
 

@@ -1,21 +1,17 @@
-import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Button, AppBar, Toolbar, Container, Stack } from '@mui/material';
+import { AppBar, Toolbar, Container, Stack } from '@mui/material';
 // hooks
 import useOffSetTop from '../../hooks/useOffSetTop';
-import useResponsive from '../../hooks/useResponsive';
 // utils
 import cssStyles from '../../utils/cssStyles';
 // config
 import { HEADER } from '../../config';
 // components
 import Logo from '../../components/Logo';
-import Label from '../../components/Label';
 import AccountPopover from './AccountPopover';
 //
 import MenuDesktop from './MenuDesktop';
-import MenuMobile from './MenuMobile';
 import navConfig from './MenuConfig';
 
 // ----------------------------------------------------------------------
@@ -52,12 +48,6 @@ export default function MainHeader() {
 
   const theme = useTheme();
 
-  const { pathname } = useLocation();
-
-  const isDesktop = useResponsive('up', 'md');
-
-  const isHome = pathname === '/';
-
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent', position: 'relative' }}>
       <ToolbarStyle
@@ -79,14 +69,11 @@ export default function MainHeader() {
           <Logo sx={{width: "300px", height: "40px"}}/>
 
 
-          {isDesktop && <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
+          <MenuDesktop navConfig={navConfig} />
 
           <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
             <AccountPopover />
           </Stack>
-
-
-          {/* {!isDesktop && <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />} */}
         </Container>
       </ToolbarStyle>
 
