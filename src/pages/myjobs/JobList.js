@@ -5,33 +5,23 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
 import {
   Box,
-  Tab,
-  Tabs,
   Card,
   Table,
-  Switch,
-  Button,
   Tooltip,
-  Divider,
-  Select,
   TableBody,
   Container,
   IconButton,
   TableContainer,
   TablePagination,
-  FormControlLabel,
-  Dialog,
-  DialogTitle,
 } from '@mui/material';
 
 // routes
 import { PATH_MY_JOBS, PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import useTabs from '../../hooks/useTabs';
-import useSettings from '../../hooks/useSettings';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
 // _mock_
-import { _userList, _jobList } from '../../_mock';
+import { _jobList } from '../../_mock';
 // components
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
@@ -79,14 +69,11 @@ export default function UserList() {
     onSelectAllRows,
     //
     onSort,
-    onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
 
   const dense = true;
-
-  const { themeStretch } = useSettings();
 
   const navigate = useNavigate();
 
