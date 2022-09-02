@@ -1,27 +1,23 @@
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
-import { useCallback } from 'react';
+// import { useCallback } from 'react';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Box, Grid, Card, Stack, Typography } from '@mui/material';
+import { Box, Grid, Card, Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
-import useAuth from '../../../hooks/useAuth';
-// utils
-import { fData } from '../../../utils/formatNumber';
-// _mock
-import { countries } from '../../../_mock';
+// import useAuth from '../../../hooks/useAuth';
 // components
-import { FormProvider, RHFSwitch, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
+import { FormProvider, RHFTextField } from '../../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
 
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   const UpdateUserSchema = Yup.object().shape({
     username: Yup.string().required('Please enter a Username'),
@@ -30,9 +26,7 @@ export default function AccountGeneral() {
     eMail: Yup.string().required('Please enter a eMail'),
     repName: Yup.string().required('Please enter an Rep.Name'),
   });
-
   
-
   const defaultValues = {
     username: 'John',
     firstName: 'John',
@@ -61,21 +55,21 @@ export default function AccountGeneral() {
     }
   };
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
+  // const handleDrop = useCallback(
+  //   (acceptedFiles) => {
+  //     const file = acceptedFiles[0];
 
-      if (file) {
-        setValue(
-          'photoURL',
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        );
-      }
-    },
-    [setValue]
-  );
+  //     if (file) {
+  //       setValue(
+  //         'photoURL',
+  //         Object.assign(file, {
+  //           preview: URL.createObjectURL(file),
+  //         })
+  //       );
+  //     }
+  //   },
+  //   [setValue]
+  // );
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
