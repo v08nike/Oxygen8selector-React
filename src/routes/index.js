@@ -64,9 +64,9 @@ export default function Router() {
           path: '/',
           element: <MainLayout />,
           children: [
-            { path: 'my-jobs', element: <JobList /> },
+            { path: 'my-jobs', element: <MyJobs /> },
             { path: 'my-account', element: <MyAccount /> },
-            { path: 'faqs', element: <Faqs /> },
+            { path: 'job-dashboard', element: <JobDashboard /> },
     
           ]
         }
@@ -93,7 +93,8 @@ const GeneralBanking = Loadable(lazy(() => import('../pages/dashboard/GeneralBan
 const GeneralBooking = Loadable(lazy(() => import('../pages/dashboard/GeneralBooking')));
 
 // MyJobs
-const JobList = Loadable(lazy(() => import('../pages/myjobs/JobList')));
+const MyJobs = Loadable(lazy(() => import('../pages/myjobs/MyJobs')));
+const JobDashboard = Loadable(lazy(() => import('../pages/myjobs/JobDashboard')));
 
 // MyAccount
 const MyAccount = Loadable(lazy(() => import('../pages/MyAccount')));
