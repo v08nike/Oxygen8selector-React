@@ -69,9 +69,9 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
         <DialogContent>
           <Card sx={{ p: 3 }}>
             <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}>
-              <RHFTextField name="jobName" label="Job name" />
+              <RHFTextField size='small' name="jobName" label="Job name" />
 
-              <RHFSelect name="application" label="Application" placeholder="Application">
+              <RHFSelect size='small' name="application" label="Application" placeholder="Application">
                 <option value="" />
                 {applicaitons.map((option) => (
                   <option key={option.id} value={option.label}>
@@ -79,14 +79,14 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
                   </option>
                 ))}
               </RHFSelect>
-              <RHFTextField name="reference" label="Reference #" />
-              <RHFTextField name="companyName" label="Company name" />
+              <RHFTextField size='small' name="reference" label="Reference #" />
+              <RHFTextField size='small' name="companyName" label="Company name" />
             </Box>
           </Card>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleNewJobDialogClose}>Cancel</Button>
-          <LoadingButton href="/job-dashboard" type="submit" variant="contained" loading={isSubmitting}>
+          <LoadingButton href="/jobDashboard" type="submit" variant="contained" loading={isSubmitting}>
             Create new job
           </LoadingButton>
         </DialogActions>

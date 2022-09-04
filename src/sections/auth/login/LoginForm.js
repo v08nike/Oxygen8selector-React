@@ -91,7 +91,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton href="/my-jobs" fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+      <LoadingButton href="/myJobs" fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
         Login
       </LoadingButton>
     </FormProvider>

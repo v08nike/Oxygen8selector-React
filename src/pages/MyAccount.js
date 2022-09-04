@@ -17,7 +17,7 @@ import {
 } from '../sections/user/account';
 // ----------------------------------------------------------------------
 
-export default function UserAccount() {
+export default function MyAccount() {
   const { currentTab, onChangeTab } = useTabs('general');
 
   const ACCOUNT_TABS = [

@@ -61,36 +61,10 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Login() {
-  const { method } = useAuth();
-
-  const smUp = useResponsive('up', 'sm');
-
-  const mdUp = useResponsive('up', 'md');
 
   return (
     <Page title="Login">
       <RootStyle>
-        {/* <HeaderStyle>
-          <Logo />
-          {smUp && (
-            <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-              Don’t have an account? {''}
-              <Link variant="subtitle2" component={RouterLink} to={PATH_AUTH.register}>
-                Get started
-              </Link>
-            </Typography>
-          )}
-        </HeaderStyle> */}
-
-        {/* {mdUp && (
-          <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back
-            </Typography>
-            <Image visibleByDefault disabledEffect src="/assets/illustrations/illustration_login.png" alt="login" />
-          </SectionStyle>
-        )} */}
-
         <Container maxWidth="sm">
           <ContentStyle>
             <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
@@ -98,11 +72,6 @@ export default function Login() {
                 <Logo sx={{ width: "100%" }} />
               </Box>
             </Stack>
-
-            {/* <Alert severity="info" sx={{ mb: 3 }}>
-              Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-            </Alert> */}
-
             <LoginForm />
           </ContentStyle>
         </Container>

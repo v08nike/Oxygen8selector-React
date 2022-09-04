@@ -22,7 +22,7 @@ import useTabs from '../../hooks/useTabs';
 import useSettings from '../../hooks/useSettings';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
 // _mock_
-import { _jobList } from '../../_mock';
+import { _unitList } from '../../_mock';
 // components
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
@@ -30,7 +30,7 @@ import Scrollbar from '../../components/Scrollbar';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../components/table';
 // sections
-import { JobsTableToolbar, JobsTableRow } from '../../sections/myjobs/jobslist';
+import { UnitTableToolbar, UnitTableRow } from '../../sections/myjobs/unitlist';
 import NewJobFormDialog from '../../sections/myjobs/NewJobFormDialog';
 import ConfirmDialog from '../../sections/myjobs/ConfirmDialog';
 // ----------------------------------------------------------------------
@@ -38,21 +38,17 @@ import ConfirmDialog from '../../sections/myjobs/ConfirmDialog';
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 
 const TABLE_HEAD = [
-  { id: 'projectName', label: 'Project Name', align: 'left' },
-  { id: 'referenceNo', label: 'Reference no', align: 'left' },
-  { id: 'revNo', label: 'Rev no', align: 'left' },
-  { id: 'rep', label: 'Rep', align: 'left' },
-  { id: 'createdBy', label: 'Created By', align: 'left' },
-  { id: 'revisiedBy', label: 'Revisied By', align: 'left' },
-  { id: 'createdDate', label: 'Created Date', align: 'left' },
-  { id: 'revisedDate', label: 'Revised Date', align: 'left' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'tag', label: 'Tag', align: 'left' },
+  { id: 'qty', label: 'Qty', align: 'left' },
+  { id: 'type', label: 'Type', align: 'left' },
+  { id: 'modal', label: 'Modal', align: 'left' },
+  { id: 'cfm', label: 'CFM', align: 'left' },
   { id: '' },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function MyJobs() {
+export default function ViewUnitList() {
   const {
     page,
     order,
@@ -70,11 +66,12 @@ export default function MyJobs() {
     onChangeRowsPerPage,
   } = useTable();
 
+  console.log(_unitList);
   const dense = true;
 
   const navigate = useNavigate();
 
-  const [tableData, setTableData] = useState(_jobList);
+  const [tableData, setTableData] = useState(_unitList);
 
   const [filterName, setFilterName] = useState('');
 
@@ -158,12 +155,19 @@ export default function MyJobs() {
     (!dataFiltered.length && !!filterStatus);
 
   return (
-    <Page title="My Jobs">
+    <Page title="Unit List">
       <Container>
-        <HeaderBreadcrumbs heading="My Jobs" links={[{ name: 'Job Lists', href: PATH_MY_JOBS.root }]} />
+        <HeaderBreadcrumbs
+          heading="Unit List"
+          links={[
+            { name: 'My Jobs', href: PATH_MY_JOBS.root },
+            { name: 'Selected Job', href: PATH_MY_JOBS.dashboard },
+            { name: 'Unit List' },
+          ]}
+        />
 
         <Card>
-          <JobsTableToolbar
+          <UnitTableToolbar
             filterName={filterName}
             filterRole={filterRole}
             onFilterName={handleFilterName}
@@ -213,7 +217,7 @@ export default function MyJobs() {
 
                 <TableBody>
                   {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <JobsTableRow
+                    <UnitTableRow
                       key={row.id}
                       row={row}
                       selected={selected.includes(row.id)}
@@ -273,17 +277,15 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
   });
 
   tableData = stabilizedThis.map((el) => el[0]);
-
+  
   if (filterName) {
     tableData = tableData.filter(
       (item) =>
-        item.projectName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.referenceNo.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.rep.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.createdBy.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.createdDate.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.revisedDate.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.status.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.tag.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.qty.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.modal.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.cfm.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 

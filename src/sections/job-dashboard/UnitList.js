@@ -54,11 +54,11 @@ export default function UnitList({ unitList }) {
         sx={{ mb: 2 }}
         action={
           <>
-            <Button size="small" startIcon={<Iconify icon={'eva:edit-fill'} />}>
+            <Button size="small" href="/viewUnitList" startIcon={<Iconify icon={'eva:edit-fill'} />}>
               Edit unit list
             </Button>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <Button size="small" startIcon={<Iconify icon={'akar-icons:plus'} />}>
+            <Button size="small" href="/setUnitList" startIcon={<Iconify icon={'akar-icons:plus'} />}>
               Add new unit
             </Button>
           </>

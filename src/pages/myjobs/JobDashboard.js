@@ -96,7 +96,7 @@ export default function JobDashboard() {
   const isComplete = activeStep === STEPS.length;
 
   return (
-    <Page title="Ecommerce: Checkout">
+    <Page title="Job Dashboard">
       <Container>
         <HeaderBreadcrumbs
           heading="My Spring Project Name"

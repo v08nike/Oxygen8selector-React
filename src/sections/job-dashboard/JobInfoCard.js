@@ -14,16 +14,15 @@ const CardHeaderStyle = styled(CardHeader)(() => ({
 
 JobInfoCard.propTypes = {
   info: PropTypes.array,
-  onEdit: PropTypes.func,
 };
 
-export default function JobInfoCard({ info, onEdit }) {
+export default function JobInfoCard({ info }) {
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeaderStyle
         title="JOB INFO"
         action={
-          <Button size="small" onClick={onEdit} startIcon={<Iconify icon={'eva:edit-fill'} />}>
+          <Button href="/editJobInfo" size="small" startIcon={<Iconify icon={'eva:edit-fill'} />}>
             Edit
           </Button>
         }

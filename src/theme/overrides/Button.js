@@ -8,6 +8,7 @@ export default function Button(theme) {
           '&:hover': {
             boxShadow: 'none',
           },
+          borderRadius: 20 // Added Nadezda
         },
         sizeLarge: {
           height: 48,

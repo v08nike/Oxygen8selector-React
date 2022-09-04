@@ -21,7 +21,8 @@ export const PATH_AUTH = {
 };
 
 export const PATH_MY_JOBS = {
-  root: '/my-jobs',
+  root: '/myJobs',
+  dashboard: '/jobDashboard',
 }
 
 export const PATH_PAGE = {
