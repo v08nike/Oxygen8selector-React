@@ -23,3 +23,81 @@ export const _unitList = [...Array(24)].map((_, index) => ({
   modal: randomInArray(['A16IN - (325 - 775 CFM)', 'A16IN - (123 - 456 CFM)', 'A16IN - (544 - 234 CFM)']),
   cfm: randomNumberRange(100, 1000),
 }));
+
+export const _modelInfos = [
+  {
+    id: 'nova',
+    title: 'Nova1',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '1Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova2',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '2Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'ventum',
+    title: 'Ventum',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '3Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova3',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '4Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova4',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '5Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova5',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '6Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova6',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '7Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova7',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '8Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova8',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '9Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  },
+  {
+    id: 'nova',
+    title: 'Nova9',
+    image: '/assets/Images/img_nova_1.png',
+    description:
+      '10Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
+  }
+];
+
+export const _productFamilyInfos = [
+  { id: 'commercial', title: 'Commercial', image: '/assets/Images/img_nova_1.png' },
+  { id: 'residential', title: 'Residental', image: '/assets/Images/img_nova_2.png' },
+];

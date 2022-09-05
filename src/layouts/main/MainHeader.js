@@ -59,7 +59,7 @@ export default function MainHeader() {
   const isHome = pathname === '/';
 
   return (
-    <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent', position: 'relative' }}>
+    <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent', zIndex: 5000, background: '#ffff' }}>
       <ToolbarStyle
         disableGutters
         sx={{

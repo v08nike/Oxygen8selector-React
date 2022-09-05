@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 // @mui
 import { m } from 'framer-motion';
 import { styled } from '@mui/material/styles';
@@ -11,7 +12,16 @@ import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 // sections
-import { JobInfoCard, UnitList } from '../../sections/job-dashboard';
+import { JobInfoCard, UnitList } from '../../sections/jobDashboard';
+
+// ----------------------------------------------------------------------
+
+const RootStyle = styled('div')(({ theme }) => ({
+  paddingTop: theme.spacing(8),
+  [theme.breakpoints.up('md')]: {
+    paddingTop: theme.spacing(11),
+  },
+}));
 
 // ----------------------------------------------------------------------
 const jobInfo = [
@@ -94,71 +104,74 @@ function StepIcon({ active, completed }) {
 export default function JobDashboard() {
   const [activeStep, setActiveStep] = useState(unitList.length > 0 ? 2 : 1);
   const isComplete = activeStep === STEPS.length;
+  const { state } = useLocation();
 
   return (
     <Page title="Job Dashboard">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="My Spring Project Name"
-          links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: 'My Spring Project Name' }]}
-        />
-        <Card sx={{ padding: '50px', pb: '10px', pt: '20px', mb: 1 }}>
-          <Grid container justifyContent={unitList.length > 0 ? 'center' : 'flex-start'}>
-            <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'left' }}>
-              <Box>
-                <m.div>
-                  <Typography color="primary" variant="h5" sx={{ mb: 1 }}>
-                    Job Status
-                  </Typography>
-                </m.div>
-                <m.div>
-                  <Typography sx={{ mb: 2 }}>
-                    To request a submittal, you must complete the following 4 steps
-                  </Typography>
-                </m.div>
-              </Box>
+      <RootStyle>
+        <Container>
+          <HeaderBreadcrumbs
+            heading={state.projectName}
+            links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: state.projectName }]}
+          />
+          <Card sx={{ padding: '50px', pb: '10px', pt: '20px', mb: 1 }}>
+            <Grid container justifyContent={unitList.length > 0 ? 'center' : 'flex-start'}>
+              <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'left' }}>
+                <Box>
+                  <m.div>
+                    <Typography color="primary" variant="h5" sx={{ mb: 1 }}>
+                      Job Status
+                    </Typography>
+                  </m.div>
+                  <m.div>
+                    <Typography sx={{ mb: 2 }}>
+                      To request a submittal, you must complete the following 4 steps
+                    </Typography>
+                  </m.div>
+                </Box>
+              </Grid>
+              <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'right' }}>
+                <Box>
+                  <Button
+                    variant="outlined"
+                    startIcon={<Iconify icon={'ant-design:mail-outlined'} />}
+                    disabled={unitList.length === 0}
+                  >
+                    Request submittal
+                  </Button>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ mb: 5, textAlign: 'center' }}>
+                <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
+                  {STEPS.map((label) => (
+                    <Step key={label}>
+                      <StepLabel
+                        StepIconComponent={StepIcon}
+                        sx={{
+                          '& .MuiStepLabel-label': {
+                            typography: 'subtitle2',
+                            color: 'text.disabled',
+                          },
+                        }}
+                      >
+                        {label}
+                      </StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Grid>
             </Grid>
-            <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'right' }}>
-              <Box>
-                <Button
-                  variant="outlined"
-                  startIcon={<Iconify icon={'ant-design:mail-outlined'} />}
-                  disabled={unitList.length === 0}
-                >
-                  Request submittal
-                </Button>
-              </Box>
+          </Card>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={4}>
+              <JobInfoCard info={jobInfo} />
             </Grid>
-            <Grid item xs={12} md={12} sx={{ mb: 5, textAlign: 'center' }}>
-              <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
-                {STEPS.map((label) => (
-                  <Step key={label}>
-                    <StepLabel
-                      StepIconComponent={StepIcon}
-                      sx={{
-                        '& .MuiStepLabel-label': {
-                          typography: 'subtitle2',
-                          color: 'text.disabled',
-                        },
-                      }}
-                    >
-                      {label}
-                    </StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
+            <Grid item xs={12} md={8}>
+              <UnitList unitList={unitList} />
             </Grid>
           </Grid>
-        </Card>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <JobInfoCard info={jobInfo} />
-          </Grid>
-          <Grid item xs={12} md={8}>
-            <UnitList unitList={unitList} />
-          </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      </RootStyle>
     </Page>
   );
 }

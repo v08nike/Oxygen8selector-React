@@ -23,6 +23,7 @@ export const PATH_AUTH = {
 export const PATH_MY_JOBS = {
   root: '/myJobs',
   dashboard: '/jobDashboard',
+  unitInfo: '/viewUnitInfo',
 }
 
 export const PATH_PAGE = {

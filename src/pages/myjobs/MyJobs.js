@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { paramCase } from 'change-case';
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
+import { styled } from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -16,11 +16,11 @@ import {
 } from '@mui/material';
 
 // routes
-import { PATH_MY_JOBS, PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_MY_JOBS } from '../../routes/paths';
 // hooks
 import useTabs from '../../hooks/useTabs';
-import useSettings from '../../hooks/useSettings';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
+
 // _mock_
 import { _jobList } from '../../_mock';
 // components
@@ -30,9 +30,18 @@ import Scrollbar from '../../components/Scrollbar';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../components/table';
 // sections
-import { JobsTableToolbar, JobsTableRow } from '../../sections/myjobs/jobslist';
+import { JobsTableToolbar, JobsTableRow } from '../../sections/jobslist';
 import NewJobFormDialog from '../../sections/myjobs/NewJobFormDialog';
 import ConfirmDialog from '../../sections/myjobs/ConfirmDialog';
+// ----------------------------------------------------------------------
+
+const RootStyle = styled('div')(({ theme }) => ({
+  paddingTop: theme.spacing(8),
+  [theme.breakpoints.up('md')]: {
+    paddingTop: theme.spacing(11),
+  },
+}));
+
 // ----------------------------------------------------------------------
 
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
@@ -138,8 +147,8 @@ export default function MyJobs() {
     setMultiConfirmDialogState(false);
   };
 
-  const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
+  const handleEditRow = (data) => {
+    navigate(PATH_MY_JOBS.dashboard, { state: data });
   };
 
   const dataFiltered = applySortFilter({
@@ -159,104 +168,106 @@ export default function MyJobs() {
 
   return (
     <Page title="My Jobs">
-      <Container>
-        <HeaderBreadcrumbs heading="My Jobs" links={[{ name: 'Job Lists', href: PATH_MY_JOBS.root }]} />
+      <RootStyle>
+        <Container>
+          <HeaderBreadcrumbs heading="My Jobs" links={[{ name: 'Job Lists', href: PATH_MY_JOBS.root }]} />
 
-        <Card>
-          <JobsTableToolbar
-            filterName={filterName}
-            filterRole={filterRole}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            onOpneDialog={handleClickNewJobDialogOpen}
-            optionsRole={ROLE_OPTIONS}
-          />
-
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={tableData.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleMultiConfirmDialogOpen()}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
-
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                />
-
-                <TableBody>
-                  {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <JobsTableRow
-                      key={row.id}
-                      row={row}
-                      selected={selected.includes(row.id)}
-                      onSelectRow={() => onSelectRow(row.id)}
-                      onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                      onEditRow={() => handleEditRow(row.name)}
-                    />
-                  ))}
-
-                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, tableData.length)} />
-
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
+          <Card>
+            <JobsTableToolbar
+              filterName={filterName}
+              filterRole={filterRole}
+              onFilterName={handleFilterName}
+              onFilterRole={handleFilterRole}
+              onOpneDialog={handleClickNewJobDialogOpen}
+              optionsRole={ROLE_OPTIONS}
             />
-          </Box>
-        </Card>
-      </Container>
-      <NewJobFormDialog newJobDialogOpen={newJobDialogOpen} handleNewJobDialogClose={handleNewJobDialogClose} />
-      <ConfirmDialog
-        isOpen={isOneConfirmDialog}
-        onClose={handleOneConfirmDialogClose}
-        onConfirm={handleDeleteRow}
-        isOneRow
-      />
-      <ConfirmDialog
-        isOpen={isOpenMultiConfirmDialog}
-        onClose={handleMultiConfirmDialogClose}
-        onConfirm={handleDeleteRows}
-        isOneRow={false}
-      />
+
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                {selected.length > 0 && (
+                  <TableSelectedActions
+                    dense={dense}
+                    numSelected={selected.length}
+                    rowCount={tableData.length}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => row.id)
+                      )
+                    }
+                    actions={
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleMultiConfirmDialogOpen()}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    }
+                  />
+                )}
+
+                <Table size={dense ? 'small' : 'medium'}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={tableData.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => row.id)
+                      )
+                    }
+                  />
+
+                  <TableBody>
+                    {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                      <JobsTableRow
+                        key={row.id}
+                        row={row}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
+                        onEditRow={() => handleEditRow(row)}
+                      />
+                    ))}
+
+                    <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, tableData.length)} />
+
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={dataFiltered.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+            </Box>
+          </Card>
+        </Container>
+        <NewJobFormDialog newJobDialogOpen={newJobDialogOpen} handleNewJobDialogClose={handleNewJobDialogClose} />
+        <ConfirmDialog
+          isOpen={isOneConfirmDialog}
+          onClose={handleOneConfirmDialogClose}
+          onConfirm={handleDeleteRow}
+          isOneRow
+        />
+        <ConfirmDialog
+          isOpen={isOpenMultiConfirmDialog}
+          onClose={handleMultiConfirmDialogClose}
+          onConfirm={handleDeleteRows}
+          isOneRow={false}
+        />
+      </RootStyle>
     </Page>
   );
 }

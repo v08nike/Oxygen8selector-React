@@ -54,12 +54,15 @@ export default function Router() {
     {
       path: '/',
       children: [
-        { path: '/', element: <Navigate to="/auth/login" replace />  },
-        { path: '/login', element: (
-          <GuestGuard>
-            <Login />
-          </GuestGuard>
-        )  },
+        { path: '/', element: <Navigate to="/auth/login" replace /> },
+        {
+          path: '/login',
+          element: (
+            <GuestGuard>
+              <Login />
+            </GuestGuard>
+          ),
+        },
         {
           path: '/',
           element: <MainLayout />,
@@ -68,10 +71,11 @@ export default function Router() {
             { path: 'myAccount', element: <MyAccount /> },
             { path: 'jobDashboard', element: <JobDashboard /> },
             { path: 'editJobInfo', element: <EditJobInfo /> },
-            { path: 'viewUnitList', element: <ViewUnitList /> },
-            { path: 'setUnitInfo', element: <SetUnitInfo /> }
-          ]
-        }
+            { path: 'viewUnitInfo', element: <ViewUnitInfo /> },
+            { path: 'setUnitInfo', element: <SetUnitInfo /> },
+            { path: 'addNewUnit', element: <AddNewUnit /> },
+          ],
+        },
       ],
     },
     { path: '*', element: <Navigate to="/404" replace /> },
@@ -89,9 +93,9 @@ const ResetPassword = Loadable(lazy(() => import('../pages/auth/ResetPassword'))
 const MyJobs = Loadable(lazy(() => import('../pages/myjobs/MyJobs')));
 const JobDashboard = Loadable(lazy(() => import('../pages/myjobs/JobDashboard')));
 const EditJobInfo = Loadable(lazy(() => import('../pages/myjobs/EditJobInfo')));
-const ViewUnitList = Loadable(lazy(() => import('../pages/myjobs/ViewUnitList')));
+const ViewUnitInfo = Loadable(lazy(() => import('../pages/myjobs/ViewUnitInfo')));
 const SetUnitInfo = Loadable(lazy(() => import('../pages/myjobs/SetUnitInfo')));
-
+const AddNewUnit = Loadable(lazy(() => import('../pages/myjobs/AddNewUnit')));
 // MyAccount
 const MyAccount = Loadable(lazy(() => import('../pages/MyAccount')));
 

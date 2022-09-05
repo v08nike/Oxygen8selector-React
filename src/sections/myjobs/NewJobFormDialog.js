@@ -1,5 +1,4 @@
 /* eslint-disable import/no-unresolved */
-import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import * as Yup from 'yup';

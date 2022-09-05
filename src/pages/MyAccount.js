@@ -1,6 +1,7 @@
 import { capitalCase } from 'change-case';
 
 // @mui
+import { styled } from '@mui/material/styles';
 import { Container, Box, Tab, Tabs } from '@mui/material';
 
 // components
@@ -11,10 +12,16 @@ import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 // hooks
 import useTabs from '../hooks/useTabs';
 
-import {
-  AccountGeneral,
-  AccountChangePassword,
-} from '../sections/user/account';
+import { AccountGeneral, AccountChangePassword } from '../sections/user/account';
+// ----------------------------------------------------------------------
+
+const RootStyle = styled('div')(({ theme }) => ({
+  paddingTop: theme.spacing(8),
+  [theme.breakpoints.up('md')]: {
+    paddingTop: theme.spacing(11),
+  },
+}));
+
 // ----------------------------------------------------------------------
 
 export default function MyAccount() {
@@ -31,31 +38,33 @@ export default function MyAccount() {
       icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
       component: <AccountChangePassword />,
     },
-  ]
+  ];
   return (
     <Page title="User: Account Settings">
-      <Container sx={{ mt: '20px' }}>
-        <HeaderBreadcrumbs heading="My Account" links={[{ name: 'Edit Account' }]} />
-        
-        <Tabs
-          allowScrollButtonsMobile
-          variant="scrollable"
-          scrollButtons="auto"
-          value={currentTab}
-          onChange={onChangeTab}
-        >
-          {ACCOUNT_TABS.map((tab) => (
-            <Tab disableRipple key={tab.value} label={capitalCase(tab.value)} icon={tab.icon} value={tab.value} />
-          ))}
-        </Tabs>
+      <RootStyle>
+        <Container sx={{ mt: '20px' }}>
+          <HeaderBreadcrumbs heading="My Account" links={[{ name: 'Edit Account' }]} />
 
-        <Box sx={{ mb: 5 }} />
+          <Tabs
+            allowScrollButtonsMobile
+            variant="scrollable"
+            scrollButtons="auto"
+            value={currentTab}
+            onChange={onChangeTab}
+          >
+            {ACCOUNT_TABS.map((tab) => (
+              <Tab disableRipple key={tab.value} label={capitalCase(tab.value)} icon={tab.icon} value={tab.value} />
+            ))}
+          </Tabs>
 
-        {ACCOUNT_TABS.map((tab) => {
-          const isMatched = tab.value === currentTab;
-          return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-        })}
-      </Container>
+          <Box sx={{ mb: 5 }} />
+
+          {ACCOUNT_TABS.map((tab) => {
+            const isMatched = tab.value === currentTab;
+            return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+          })}
+        </Container>
+      </RootStyle>
     </Page>
   );
 }
