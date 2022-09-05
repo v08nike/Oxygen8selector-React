@@ -106,13 +106,15 @@ export default function JobDashboard() {
   const isComplete = activeStep === STEPS.length;
   const { state } = useLocation();
 
+  console.log(state);
+
   return (
     <Page title="Job Dashboard">
       <RootStyle>
         <Container>
           <HeaderBreadcrumbs
-            heading={state.projectName}
-            links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: state.projectName }]}
+            heading={state? state.projectName: 'New Job'}
+            links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: state? state.projectName: 'New Job' }]}
           />
           <Card sx={{ padding: '50px', pb: '10px', pt: '20px', mb: 1 }}>
             <Grid container justifyContent={unitList.length > 0 ? 'center' : 'flex-start'}>

@@ -120,7 +120,7 @@ export default function AddNewUnit() {
         <FooterStepStyle>
           <Grid container>
             <Grid item xs={2} textAlign="center">
-              <Button color="primary" type="button">
+              <Button href='/jobDashboard' color="primary" type="button">
                 <Iconify icon={'akar-icons:arrow-left'} />
                 Back to job dashboard
               </Button>
