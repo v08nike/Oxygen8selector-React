@@ -83,7 +83,7 @@ export default function SetUnitInfo({ isEdit, values }) {
   });
 
   const {
-    setValue,
+    // setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;

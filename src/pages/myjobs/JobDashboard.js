@@ -103,7 +103,7 @@ function StepIcon({ active, completed }) {
 
 export default function JobDashboard() {
   const [activeStep, setActiveStep] = useState(unitList.length > 0 ? 2 : 1);
-  const isComplete = activeStep === STEPS.length;
+  // const isComplete = activeStep === STEPS.length;
   const { state } = useLocation();
 
   console.log(state);

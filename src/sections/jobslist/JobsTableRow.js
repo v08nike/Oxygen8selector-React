@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem, Divider } from '@mui/material';
+import { Checkbox, TableRow, TableCell, MenuItem, Divider } from '@mui/material';
 // components
 import Label from '../../components/Label';
 import Iconify from '../../components/Iconify';
