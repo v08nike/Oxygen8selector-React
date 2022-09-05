@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { paramCase } from 'change-case';
+// import { paramCase } from 'change-case';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Box,
@@ -16,18 +16,15 @@ import {
 } from '@mui/material';
 
 // routes
-import { PATH_MY_JOBS, PATH_DASHBOARD } from '../../routes/paths';
+// import { PATH_MY_JOBS } from '../../routes/paths';
 // hooks
 import useTabs from '../../hooks/useTabs';
-import useSettings from '../../hooks/useSettings';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
 // _mock_
 import { _unitList } from '../../_mock';
 // components
-import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../components/table';
 // sections
 import { UnitTableToolbar, UnitTableRow } from '../../sections/unitlist';
@@ -136,7 +133,7 @@ export default function UnitInfoList() {
   };
 
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
+    // navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
   };
 
   const dataFiltered = applySortFilter({
