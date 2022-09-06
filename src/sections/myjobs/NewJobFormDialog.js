@@ -1,5 +1,5 @@
-/* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 import * as Yup from 'yup';
 import Button from '@mui/material/Button';
@@ -16,13 +16,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 // components
 import { FormProvider, RHFSelect, RHFTextField } from '../../components/hook-form';
+import { PATH_MY_JOBS } from '../../routes/paths';
 
 NewJobFormDialog.propTypes = {
   newJobDialogOpen: PropTypes.bool,
   handleNewJobDialogClose: PropTypes.func,
+  addNewJob: PropTypes.func,
 };
 
-export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogClose }) {
+export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogClose, addNewJob }) {
+  const navigate = useNavigate();
+
   const applicaitons = [
     { id: '1', label: 'One' },
     { id: '2', label: 'Two' },
@@ -33,11 +37,15 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
   const NewUserSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a job name'),
     application: Yup.string().required('Please enter an applicaiton type'),
+    reference: Yup.string(),
+    companyName: Yup.string(),
   });
 
   const defaultValues = {
-    projectName: '',
+    jobName: '',
     application: '',
+    reference: '',
+    companyName: '',
   };
 
   const methods = useForm({
@@ -51,11 +59,10 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      // navigate(PATH_DASHBOARD.user.list);
+      addNewJob(data);
+      // navigate(PATH_MY_JOBS.dashboard, { state: data });
     } catch (error) {
       console.error(error);
     }
@@ -68,9 +75,9 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
         <DialogContent>
           <Card sx={{ p: 3 }}>
             <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}>
-              <RHFTextField size='small' name="jobName" label="Job name" />
+              <RHFTextField size="small" name="jobName" label="Job name" />
 
-              <RHFSelect size='small' name="application" label="Application" placeholder="Application">
+              <RHFSelect size="small" name="application" label="Application" placeholder="Application">
                 <option value="" />
                 {applicaitons.map((option) => (
                   <option key={option.id} value={option.label}>
@@ -78,14 +85,14 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
                   </option>
                 ))}
               </RHFSelect>
-              <RHFTextField size='small' name="reference" label="Reference #" />
-              <RHFTextField size='small' name="companyName" label="Company name" />
+              <RHFTextField size="small" name="reference" label="Reference #" />
+              <RHFTextField size="small" name="companyName" label="Company name" />
             </Box>
           </Card>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleNewJobDialogClose}>Cancel</Button>
-          <LoadingButton href="/jobDashboard" type="submit" variant="contained" loading={isSubmitting}>
+          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
             Create new job
           </LoadingButton>
         </DialogActions>

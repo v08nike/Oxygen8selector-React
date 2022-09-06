@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Stack, Button, CardHeader, Typography, CardContent } from '@mui/material';
+import { PATH_MY_JOBS } from '../../routes/paths';
+
 // components
 import Iconify from '../../components/Iconify';
 
@@ -13,16 +17,26 @@ const CardHeaderStyle = styled(CardHeader)(() => ({
 }));
 
 JobInfoCard.propTypes = {
-  info: PropTypes.array,
+  info: PropTypes.object,
 };
 
 export default function JobInfoCard({ info }) {
+  const navigate = useNavigate();
+
+  const handleEditRow = (data) => {
+    navigate(PATH_MY_JOBS.editJob, { state: data });
+  };
+
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeaderStyle
         title="JOB INFO"
         action={
-          <Button href="/editJobInfo" size="small" startIcon={<Iconify icon={'eva:edit-fill'} />}>
+          <Button
+            size="small"
+            startIcon={<Iconify icon={'eva:edit-fill'} />}
+            onClick={() => handleEditRow(info)}
+          >
             Edit
           </Button>
         }
@@ -30,12 +44,12 @@ export default function JobInfoCard({ info }) {
 
       <CardContent>
         <Stack spacing={2}>
-          {info.map((item, index) => (
+          {Object.entries(info).map(([key, value], index) => (
             <Stack key={index} direction="row" justifyContent="space-between">
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {item.title}
+                {key}
               </Typography>
-              <Typography variant="subtitle2">{item.value}</Typography>
+              <Typography variant="subtitle2">{value}</Typography>
             </Stack>
           ))}
         </Stack>

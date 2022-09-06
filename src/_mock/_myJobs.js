@@ -1,28 +1,36 @@
 import _mock from './_mock';
 import { randomNumberRange, randomInArray } from './funcs';
 
-export const _jobList = [...Array(24)].map((_, index) => ({
+export const _jobList = [...Array(3)].map((_, index) => ({
   id: _mock.id(index),
-  projectName: _mock.company(index),
+  jobName: _mock.company(index),
   referenceNo: 123456,
   revNo: 1,
   rep: _mock.name.fullName(index),
   createdBy: _mock.name.fullName(index),
   revisiedBy: _mock.name.fullName(index),
-  createdDate: "2020-09-23",
-  revisedDate: "2020-09-23",
+  createdDate: '2020-09-23',
+  revisedDate: '2020-09-23',
   status: randomInArray(['Pending', 'Complete', 'Open']),
 }));
 
-
-export const _unitList = [...Array(24)].map((_, index) => ({
-  id: _mock.id(index),
-  tag: _mock.company(index),
-  qty: randomNumberRange(1, 10),
-  type: randomInArray(['Energy Recovery Ventilator (ERV)', 'Energy Recovery Ventilator (DGE)', 'Energy Recovery Ventilator (ETD)']),
-  modal: randomInArray(['A16IN - (325 - 775 CFM)', 'A16IN - (123 - 456 CFM)', 'A16IN - (544 - 234 CFM)']),
-  cfm: randomNumberRange(100, 1000),
-}));
+export const _unitList = _jobList.map((item) =>
+  ({
+    jobId: item.id,
+    data:[...Array(5)].map((_, index) => ({
+      id: _mock.id(index),
+      tag: _mock.company(index),
+      qty: randomNumberRange(1, 10),
+      type: randomInArray([
+        'Energy Recovery Ventilator (ERV)',
+        'Energy Recovery Ventilator (DGE)',
+        'Energy Recovery Ventilator (ETD)',
+      ]),
+      modal: randomInArray(['A16IN - (325 - 775 CFM)', 'A16IN - (123 - 456 CFM)', 'A16IN - (544 - 234 CFM)']),
+      cfm: randomNumberRange(100, 1000),
+    }))
+  })
+);
 
 export const _modelInfos = [
   {
@@ -94,7 +102,7 @@ export const _modelInfos = [
     image: '/assets/Images/img_nova_1.png',
     description:
       '10Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusce ultrices tortor pretium vulputate viverra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.',
-  }
+  },
 ];
 
 export const _productFamilyInfos = [

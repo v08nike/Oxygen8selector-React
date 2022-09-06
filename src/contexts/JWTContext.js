@@ -3,6 +3,8 @@ import { createContext, useEffect, useReducer } from 'react';
 // utils
 import axios from '../utils/axios';
 import { isValidToken, setSession } from '../utils/jwt';
+// _mock
+import {_userList} from '../_mock/_user';
 
 // ----------------------------------------------------------------------
 
@@ -109,13 +111,17 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/account/login', {
-      email,
-      password,
-    });
-    const { accessToken, user } = response.data;
+    // const response = await axios.post('/api/account/login', {
+    //   email,
+    //   password,
+    // });
 
-    setSession(accessToken);
+    const user = _userList.filter((item) => item.email === email);
+    if (password !== '1234') return;
+
+    // const { accessToken, user } = response.data;
+
+    // setSession(accessToken);
 
     dispatch({
       type: 'LOGIN',

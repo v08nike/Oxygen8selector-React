@@ -20,9 +20,9 @@ import { PATH_MY_JOBS } from '../../routes/paths';
 // hooks
 import useTabs from '../../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
-
-// _mock_
-import { _jobList } from '../../_mock';
+// redux
+import { useSelector } from '../../redux/store';
+import { getJobList, addNewJob, setJobInfo } from '../../redux/slices/myJobsReducer';
 // components
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
@@ -83,7 +83,9 @@ export default function MyJobs() {
 
   const navigate = useNavigate();
 
-  const [tableData, setTableData] = useState(_jobList);
+  const tableData = useSelector(getJobList);
+
+  // const [tableData, setTableData] = useState(myJobList);
 
   const [filterName, setFilterName] = useState('');
 
@@ -118,7 +120,7 @@ export default function MyJobs() {
     const deleteRow = tableData.filter((row) => row.id !== deleteRowID);
     setSelected([]);
     setDeleteRowID(-1);
-    setTableData(deleteRow);
+    setJobInfo(deleteRow);
     handleOneConfirmDialogClose(false);
   };
 
@@ -136,6 +138,7 @@ export default function MyJobs() {
     setFilterName(filterName);
     setPage(0);
   };
+
   const handleFilterRole = (value) => {
     setFilterRole(value);
   };
@@ -143,12 +146,26 @@ export default function MyJobs() {
   const handleDeleteRows = () => {
     const deleteRows = tableData.filter((row) => !selected.includes(row.id));
     setSelected([]);
-    setTableData(deleteRows);
+    setJobInfo(deleteRows);
     setMultiConfirmDialogState(false);
   };
 
   const handleEditRow = (data) => {
     navigate(PATH_MY_JOBS.dashboard, { state: data });
+  };
+
+  const handleAddNewJob = (data) => {
+    addNewJob({
+      jobName: data.jobName,
+      referenceNo: data.reference,
+      revNo: 1,
+      rep: 'Admin',
+      createdBy: 'Admin',
+      revisiedBy: 'Admin',
+      createdDate: '2020-09-23',
+      revisedDate: '2020-09-23',
+      status: 'Open',
+    });
   };
 
   const dataFiltered = applySortFilter({
@@ -222,9 +239,9 @@ export default function MyJobs() {
                   />
 
                   <TableBody>
-                    {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                    {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                       <JobsTableRow
-                        key={row.id}
+                        key={index}
                         row={row}
                         selected={selected.includes(row.id)}
                         onSelectRow={() => onSelectRow(row.id)}
@@ -254,7 +271,11 @@ export default function MyJobs() {
             </Box>
           </Card>
         </Container>
-        <NewJobFormDialog newJobDialogOpen={newJobDialogOpen} handleNewJobDialogClose={handleNewJobDialogClose} />
+        <NewJobFormDialog
+          newJobDialogOpen={newJobDialogOpen}
+          handleNewJobDialogClose={handleNewJobDialogClose}
+          addNewJob={handleAddNewJob}
+        />
         <ConfirmDialog
           isOpen={isOneConfirmDialog}
           onClose={handleOneConfirmDialogClose}

@@ -5,8 +5,13 @@ import { useLocation } from 'react-router-dom';
 import { m } from 'framer-motion';
 import { styled } from '@mui/material/styles';
 import { Box, Grid, Card, Step, Stepper, Container, StepLabel, StepConnector, Typography, Button } from '@mui/material';
+// redux
+import { useSelector } from 'react-redux';
+import { getUnitList } from '../../redux/slices/myJobsReducer';
 // routes
 import { PATH_MY_JOBS } from '../../routes/paths';
+// mocks
+import { _unitList } from '../../_mock/_myJobs';
 // components
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
@@ -24,35 +29,6 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
-const jobInfo = [
-  { title: 'Project Name', value: 'Welcome' },
-  { title: 'Basis of Design', value: 'N/a' },
-  { title: 'Reference no', value: '12345678' },
-  { title: 'Revision', value: '1' },
-  { title: 'Date created', value: '2022-04-14' },
-  { title: 'Data revised', value: '2022-04-14' },
-  { title: 'Company name', value: 'Test Rep' },
-  { title: 'Contact name', value: 'John Doe' },
-];
-
-const unitList = [
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-  { tag: 'ERV1', qty: 1, type: 'Energy RecoveryVentilator (ERV)', model: 'B22OU - (525 - 1300 CFM)', cfm: 1000 },
-];
 
 const STEPS = ['Complete job info', 'Add units', 'Make a selection', 'Submit drawing'];
 
@@ -102,22 +78,29 @@ function StepIcon({ active, completed }) {
 }
 
 export default function JobDashboard() {
-  const [activeStep, setActiveStep] = useState(unitList.length > 0 ? 2 : 1);
-  // const isComplete = activeStep === STEPS.length;
   const { state } = useLocation();
+  const unitList = useSelector(getUnitList);
 
-  console.log(state);
+  let JobUnitInfo;
+  if (state) {
+    JobUnitInfo = unitList.filter((JobUnitItems) => JobUnitItems.jobId === state.id);
+  }
+
+  JobUnitInfo = JobUnitInfo.length? JobUnitInfo[0].data : [];
+
+  const [activeStep, setActiveStep] = useState(JobUnitInfo.length > 0 ? 2 : 1);
+  // const isComplete = activeStep === STEPS.length;
 
   return (
     <Page title="Job Dashboard">
       <RootStyle>
         <Container>
           <HeaderBreadcrumbs
-            heading={state? state.projectName: 'New Job'}
-            links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: state? state.projectName: 'New Job' }]}
+            heading={state ? state.jobName : 'New Job'}
+            links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: state ? state.jobName : 'New Job' }]}
           />
           <Card sx={{ padding: '50px', pb: '10px', pt: '20px', mb: 1 }}>
-            <Grid container justifyContent={unitList.length > 0 ? 'center' : 'flex-start'}>
+            <Grid container justifyContent={JobUnitInfo.length > 0 ? 'center' : 'flex-start'}>
               <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'left' }}>
                 <Box>
                   <m.div>
@@ -137,7 +120,7 @@ export default function JobDashboard() {
                   <Button
                     variant="outlined"
                     startIcon={<Iconify icon={'ant-design:mail-outlined'} />}
-                    disabled={unitList.length === 0}
+                    disabled={JobUnitInfo.length === 0}
                   >
                     Request submittal
                   </Button>
@@ -166,10 +149,10 @@ export default function JobDashboard() {
           </Card>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <JobInfoCard info={jobInfo} />
+              <JobInfoCard info={state} />
             </Grid>
             <Grid item xs={12} md={8}>
-              <UnitList unitList={unitList} />
+              <UnitList unitList={JobUnitInfo} />
             </Grid>
           </Grid>
         </Container>

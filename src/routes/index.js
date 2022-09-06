@@ -47,7 +47,7 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '404', element: <Page404 /> },
-        { path: '*', element: <Navigate to="/404" replace /> },
+        // { path: '*', element: <Navigate to="/404" replace /> },
       ],
     },
     {
@@ -77,7 +77,7 @@ export default function Router() {
         },
       ],
     },
-    { path: '*', element: <Navigate to="/404" replace /> },
+    // { path: '*', element: <Navigate to="/404" replace /> },
   ]);
 }
 

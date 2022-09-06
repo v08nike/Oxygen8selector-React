@@ -1,11 +1,11 @@
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem } from '@mui/material';
+import { Box, Divider, Typography, MenuItem } from '@mui/material';
 // routes
-import { PATH_DASHBOARD, PATH_AUTH } from '../../routes/paths';
+import { PATH_AUTH } from '../../routes/paths';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
@@ -13,23 +13,6 @@ import useIsMountedRef from '../../hooks/useIsMountedRef';
 import MyAvatar from '../../components/MyAvatar';
 import MenuPopover from '../../components/MenuPopover';
 import { IconButtonAnimate } from '../../components/animate';
-
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    linkTo: '/',
-  },
-  {
-    label: 'Profile',
-    linkTo: PATH_DASHBOARD.user.profile,
-  },
-  {
-    label: 'Settings',
-    linkTo: PATH_DASHBOARD.user.account,
-  },
-];
 
 // ----------------------------------------------------------------------
 

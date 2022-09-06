@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
+import { useLocation } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
@@ -32,59 +33,60 @@ const RootStyle = styled('div')(({ theme }) => ({
 //------------------------------------------------
 
 export default function EditJobInfo() {
-  const { enqueueSnackbar } = useSnackbar();
+  const { state } = useLocation();
 
-  // const { user } = useAuth();
-
-  const UpdateUserSchema = Yup.object().shape({
-    job_name: Yup.string().required('Please enter a Job Name'),
-    basis_of_design: Yup.string().required('Please enter a Basis Of Design'),
+  const UpdateJobInfoSchema = Yup.object().shape({
+    jobName: Yup.string().required('Please enter a Job Name'),
+    basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
     reference: Yup.string().required('Please select a Reference'),
     revision: Yup.string().required('Please enter a Revision'),
-    created_date: Yup.string().required('Please enter a Created Date'),
-    revised_date: Yup.string().required('Please enter a Revised Date'),
-    company_name: Yup.string().required('Please enter a Company Name'),
-    contact_name: Yup.string().required('Please enter a Contact Name'),
+    createdDate: Yup.string().required('Please enter a Created Date'),
+    revisedDate: Yup.string().required('Please enter a Revised Date'),
+    companyName: Yup.string().required('Please enter a Company Name'),
+    contactName: Yup.string().required('Please enter a Contact Name'),
     application: Yup.string().required('Please enter a Application'),
     uom: Yup.string().required('Please select a UoM'),
     country: Yup.string().required('Please select a County'),
     state: Yup.string().required('Please select a Province / State'),
     city: Yup.string().required('Please enter a city'),
-    ashare_design_conditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
+    ashareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
   });
 
   const defaultValues = {
-    job_name: '',
-    basis_of_design: '',
-    reference: '',
-    revision: '',
-    created_date: '',
-    revised_date: '',
-    company_name: '',
-    contact_name: '',
-    application: '',
-    uom: '',
-    country: '',
-    state: '',
-    city: '',
-    ashare_design_conditions: '',
+    jobName: '',
+    basisOfDesign: 'TBD',
+    revision: 'Welcome',
+    createdDate: '',
+    revisedDate: '',
+    companyName: 'Oxygen8',
+    contactName: 'Joe',
+    application: 'I hope to work',
+    uom: 'IDE',
+    country: 'USA',
+    state: 'AL',
+    city: 'ADAK(NAS)',
+    ashareDesignConditions: '0.4%/99.6%',
   };
 
+  Object.entries(state).forEach(([key, value]) => {
+    defaultValues[key] = value;
+  });
+
   const methods = useForm({
-    resolver: yupResolver(UpdateUserSchema),
+    resolver: yupResolver(UpdateJobInfoSchema),
     defaultValues,
   });
 
   const {
     setValue,
+    setError,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -112,29 +114,31 @@ export default function EditJobInfo() {
                   <CardHeaderStyle title="Project Information" />
                   <CardContent>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="job_name" label="Job Name" />
-                      <RHFSelect size="small" name="basis_of_design" label="Besis of Design" placeholder="">
+                      <RHFTextField size="small" name="jobName" label="Project Name" />
+                      <RHFSelect size="small" name="basisOfDesign" label="Basis of Design" placeholder="">
                         <option value="" />
                         <option value="N/a">N/a</option>
                         <option value="no">No</option>
                         <option value="yes">Yes</option>
                         <option value="tbd">TBD</option>
                       </RHFSelect>
-                      <RHFTextField size="small" name="basis_of_design" label="Besis of Design" />
-                      <RHFTextField size="small" name="reference" label="Reference #" />
+                      <RHFTextField size="small" name="referenceNo" label="Reference #" />
                       <RHFTextField size="small" name="revision" label="Revision #" />
-                      <RHFTextField size="small" name="created_date" label="Created Date" />
-                      <RHFTextField size="small" name="revised_date" label="Revised Date" />
-                      <RHFSelect size="small" name="company_name" label="Company Name" placeholder="">
+                      <RHFTextField size="small" name="createdDate" label="Created Date" />
+                      <RHFTextField size="small" name="revisedDate" label="Revised Date" />
+                      <RHFTextField size="small" name="rep" label="Rep" />
+                      <RHFSelect size="small" name="companyName" label="Company Name" placeholder="">
                         <option value="" />
                         <option value="oxygen8">Oxygen8</option>
                       </RHFSelect>
-                      <RHFSelect size="small" name="contact_name" label="Contact Name" placeholder="">
+                      <RHFSelect size="small" name="contactName" label="Contact Name" placeholder="">
                         <option value="" />
+                        <option value="Joe">Joe</option>
                       </RHFSelect>
                       <RHFTextField size="small" name="application" label="Applicaton" />
                       <RHFSelect size="small" name="uom" label="UoM" placeholder="">
                         <option value="" />
+                        <option value="Joe">IDE</option>
                       </RHFSelect>
                     </Box>
                   </CardContent>
@@ -172,7 +176,7 @@ export default function EditJobInfo() {
                       </RHFSelect>
                       <RHFSelect
                         size="small"
-                        name="ashare_design_conditions"
+                        name="ashareDesignConditions"
                         label="ASHRAE Design Conditions"
                         placeholder=""
                       >
