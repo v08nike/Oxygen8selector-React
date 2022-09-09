@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
@@ -9,11 +9,14 @@ import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-
+// redux
+import { useSelector } from '../../redux/store';
+import { updateJob } from '../../redux/slices/myJobsReducer';
 // components
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFSelect } from '../../components/hook-form';
+import { PATH_MY_JOBS } from '../../routes/paths';
 
 //------------------------------------------------
 
@@ -34,14 +37,16 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 export default function EditJobInfo() {
   const { state } = useLocation();
+  const navigate = useNavigate();
 
   const UpdateJobInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Job Name'),
     basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
-    reference: Yup.string().required('Please select a Reference'),
+    referenceNo: Yup.string().required('Please select a Reference'),
     revision: Yup.string().required('Please enter a Revision'),
     createdDate: Yup.string().required('Please enter a Created Date'),
     revisedDate: Yup.string().required('Please enter a Revised Date'),
+    rep: Yup.string().required('Please enter a Rep'),
     companyName: Yup.string().required('Please enter a Company Name'),
     contactName: Yup.string().required('Please enter a Contact Name'),
     application: Yup.string().required('Please enter a Application'),
@@ -50,22 +55,49 @@ export default function EditJobInfo() {
     state: Yup.string().required('Please select a Province / State'),
     city: Yup.string().required('Please enter a city'),
     ashareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
+    alltitude: Yup.string(),
+    summer_air_db: Yup.string(),
+    summer_air_wb: Yup.string(),
+    summer_air_rh: Yup.string(),
+    winter_air_db: Yup.string(),
+    winter_air_wb: Yup.string(),
+    winter_air_rh: Yup.string(),
+    summer_return_db: Yup.string(),
+    summer_return_wb: Yup.string(),
+    summer_return_rh: Yup.string(),
+    winter_return_db: Yup.string(),
+    winter_return_wb: Yup.string(),
+    winter_return_rh: Yup.string(),
   });
 
   const defaultValues = {
     jobName: '',
-    basisOfDesign: 'TBD',
+    basisOfDesign: 'no',
+    referenceNo: '',
     revision: 'Welcome',
     createdDate: '',
     revisedDate: '',
-    companyName: 'Oxygen8',
+    companyName: 'oxygen8',
     contactName: 'Joe',
     application: 'I hope to work',
-    uom: 'IDE',
-    country: 'USA',
-    state: 'AL',
-    city: 'ADAK(NAS)',
-    ashareDesignConditions: '0.4%/99.6%',
+    uom: 'Joe',
+    country: 'usa',
+    state: 'al',
+    city: 'al',
+    ashareDesignConditions: '2',
+    alltitude: '',
+    summer_air_db: '',
+    summer_air_wb: '',
+    summer_air_rh: '',
+    winter_air_db: '',
+    winter_air_wb: '',
+    winter_air_rh: '',
+    summer_return_db: '',
+    summer_return_wb: '',
+    summer_return_rh: '',
+    winter_return_db: '',
+    winter_return_wb: '',
+    winter_return_rh: '',
   };
 
   Object.entries(state).forEach(([key, value]) => {
@@ -78,15 +110,14 @@ export default function EditJobInfo() {
   });
 
   const {
-    setValue,
-    setError,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async (data) => {
+  const onJobInfoSubmit = async (data) => {
     try {
-      console.log(data);
+      updateJob({ jobId: state.id, data });
+      navigate('/jobDashboard', { state: data });
     } catch (error) {
       console.error(error);
     }
@@ -96,7 +127,7 @@ export default function EditJobInfo() {
     <Page title="Job Infomation">
       <RootStyle>
         <Container sx={{ mt: '20px' }}>
-          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+          <FormProvider methods={methods} onSubmit={handleSubmit(onJobInfoSubmit)}>
             <HeaderBreadcrumbs
               heading="Edit Job Info"
               links={[{ name: 'My Dashboard', href: '/jobDashboard' }, { name: 'Edit Job Info' }]}
@@ -143,14 +174,14 @@ export default function EditJobInfo() {
                     </Box>
                   </CardContent>
                 </Card>
-                <Card sx={{ mb: 3 }}>
+                {/* <Card sx={{ mb: 3 }}>
                   <CardHeaderStyle title="Project Information" />
                   <CardContent>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                       <FormControlLabel control={<Checkbox />} label="Test New Price" />
                     </Box>
                   </CardContent>
-                </Card>
+                </Card> */}
               </Grid>
               <Grid item xs={4} md={4}>
                 <Card sx={{ mb: 3 }}>

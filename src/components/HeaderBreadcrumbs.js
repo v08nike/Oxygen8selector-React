@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes, { any } from 'prop-types';
 // @mui
 import { Box, Typography, Link } from '@mui/material';
 //
@@ -12,9 +12,10 @@ HeaderBreadcrumbs.propTypes = {
   heading: PropTypes.string.isRequired,
   moreLink: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   sx: PropTypes.object,
+  data: PropTypes.any,
 };
 
-export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '' || [], sx, ...other }) {
+export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '' || [], sx, data, ...other }) {
   return (
     <Box sx={{ mb: 5, ...sx }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -38,7 +39,7 @@ export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '
             <Link
               noWrap
               key={href}
-              href={href}
+              to={{ pathname: href, state: data }}
               variant="body2"
               target="_blank"
               rel="noopener"

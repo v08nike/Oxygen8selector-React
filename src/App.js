@@ -1,3 +1,4 @@
+import { createBrowserHistory } from 'history';
 // routes
 import Router from './routes';
 // theme
@@ -9,6 +10,8 @@ import { ProgressBarStyle } from './components/ProgressBar';
 import NotistackProvider from './components/NotistackProvider';
 import MotionLazyContainer from './components/animate/MotionLazyContainer';
 
+const history =  createBrowserHistory();
+
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -19,7 +22,7 @@ export default function App() {
           <ProgressBarStyle />
           <ChartStyle />
           <ScrollToTop />
-          <Router />
+          <Router history={history} />
         </NotistackProvider>
       </ThemeProvider>
     </MotionLazyContainer>

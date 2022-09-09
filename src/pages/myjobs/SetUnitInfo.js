@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // @mui
@@ -9,7 +10,8 @@ import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-
+// redux
+import { addNewUnit } from '../../redux/slices/myJobsReducer';
 // components
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
@@ -38,43 +40,60 @@ SetUnitInfo.propTypes = {
 
 export default function SetUnitInfo({ isEdit, values }) {
   const { enqueueSnackbar } = useSnackbar();
-
+  const navigate = useNavigate();
+  const { state } = useLocation();
   // const { user } = useAuth();
 
   const UpdateUserSchema = Yup.object().shape({
-    job_name: Yup.string().required('Please enter a Job Name'),
-    basis_of_design: Yup.string().required('Please enter a Basis Of Design'),
-    reference: Yup.string().required('Please select a Reference'),
-    revision: Yup.string().required('Please enter a Revision'),
-    created_date: Yup.string().required('Please enter a Created Date'),
-    revised_date: Yup.string().required('Please enter a Revised Date'),
-    company_name: Yup.string().required('Please enter a Company Name'),
-    contact_name: Yup.string().required('Please enter a Contact Name'),
-    application: Yup.string().required('Please enter a Application'),
-    uom: Yup.string().required('Please select a UoM'),
-    country: Yup.string().required('Please select a County'),
-    state: Yup.string().required('Please select a Province / State'),
-    city: Yup.string().required('Please enter a city'),
-    ashare_design_conditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
+    tag: Yup.string().required('Please enter a Tag'),
+    quantity: Yup.string().required('Please enter a Quantity'),
+    location: Yup.string().required('Please enter a Location'),
+    orientation: Yup.string().required('Please enter a Orientation'),
+    handling: Yup.string().required('Please select a Handling'),
+    unitType: Yup.string().required('Please enter a UnitType'),
+    controlPreference: Yup.string().required('Please enter a Control Preference'),
+    CFM: Yup.string().required('Please enter a CFM'),
+    ASD: Yup.string().required('Please enter a ASD'),
+    ERC: Yup.string().required('Please enter a ERC'),
+    DVG: Yup.string().required('Please enter a DVG'),
+    unitModel: Yup.string().required('Please select a UnitModel'),
+    unitVoltage: Yup.string().required('Please select a UnitVoltage'),
+    qa_filter1: Yup.string().required('Please select a QA Filter'),
+    ra_filter1: Yup.string().required('Please enter a RA Filter'),
+    preheat: Yup.string().required('Please enter a Preheat'),
+    cooling: Yup.string().required('Please enter a Cooling'),
+    heating: Yup.string().required('Please enter a Heating'),
+    qa_filter2: Yup.string().required('Please enter a QA Filter'),
+    ra_filter2: Yup.string().required('Please enter a RA Filter'),
+    qa_filter3: Yup.string().required('Please enter a QA Filter'),
+    ra_filter3: Yup.string().required('Please enter a RA Filter'),
   });
 
   const defaultValues = isEdit
     ? values
     : {
-        job_name: '',
-        basis_of_design: '',
-        reference: '',
-        revision: '',
-        created_date: '',
-        revised_date: '',
-        company_name: '',
-        contact_name: '',
-        application: '',
-        uom: '',
-        country: '',
-        state: '',
-        city: '',
-        ashare_design_conditions: '',
+        tag: 'ok',
+        quantity: 'ok',
+        location: 'ca',
+        orientation: 'or',
+        handling: 'left',
+        unitType: 'ERV',
+        controlPreference: 'cv',
+        CFM: 'CFM',
+        ASD: 'ASD',
+        ERC: 'ERC',
+        DVG: 'DVG',
+        unitModel: 'unitModel',
+        unitVoltage: 'unitVoltage',
+        qa_filter1: 'One',
+        ra_filter1: 'Two',
+        preheat: 'auto',
+        cooling: 'n/a',
+        heating: 'n/a',
+        qa_filter2: 'One',
+        ra_filter2: 'Two',
+        qa_filter3: 'Oen',
+        ra_filter3: 'Two',
       };
 
   const methods = useForm({
@@ -88,13 +107,10 @@ export default function SetUnitInfo({ isEdit, values }) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
-    } catch (error) {
-      console.error(error);
-    }
+  const onSubmit = (data) => {
+    console.log(state);
+    addNewUnit({ jobId: state.jobId, data });
+    navigate('/viewUnitInfo', { state });
   };
 
   return (
@@ -179,8 +195,8 @@ export default function SetUnitInfo({ isEdit, values }) {
                   <CardContent sx={{ height: '600px' }}>
                     <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1 }}>
                       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFTextField size="small" name="qa_filter" label="QA Filter" />
-                        <RHFTextField size="small" name="ra_filter" label="RA Filter" />
+                        <RHFTextField size="small" name="qa_filter1" label="QA Filter" />
+                        <RHFTextField size="small" name="ra_filter1" label="RA Filter" />
                         <RHFSelect size="small" name="preheat" label="Preheat" placeholder="">
                           <option value="" />
                           <option value="auto">Auto</option>
@@ -196,13 +212,13 @@ export default function SetUnitInfo({ isEdit, values }) {
                       </Box>
                       <Divider />
                       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFTextField size="small" name="qa_filter" label="QA Filter" />
-                        <RHFTextField size="small" name="ra_filter" label="RA Filter" />
+                        <RHFTextField size="small" name="qa_filter2" label="QA Filter" />
+                        <RHFTextField size="small" name="ra_filter2" label="RA Filter" />
                       </Box>
                       <Divider />
                       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFTextField size="small" name="qa_filter" label="QA Filter" />
-                        <RHFTextField size="small" name="ra_filter" label="RA Filter" />
+                        <RHFTextField size="small" name="qa_filter3" label="QA Filter" />
+                        <RHFTextField size="small" name="ra_filter3" label="RA Filter" />
                       </Box>
                     </Box>
                   </CardContent>

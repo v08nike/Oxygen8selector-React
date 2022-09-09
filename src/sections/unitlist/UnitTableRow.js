@@ -20,6 +20,7 @@ UserTableRow.propTypes = {
 
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   // const theme = useTheme();
+  console.log(row);
 
   const { tag, qty, type, modal, cfm } = row;
 

@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+
+import { useNavigate } from 'react-router';
 // @mui
 import { styled } from '@mui/material/styles';
 import {
@@ -37,9 +39,16 @@ const TABLE_HEAD = [
 
 UnitList.propTypes = {
   unitList: PropTypes.array.isRequired,
+  jobId: PropTypes.number
 };
 
-export default function UnitList({ unitList }) {
+export default function UnitList({ unitList, jobId }) {
+  const navigate = useNavigate();
+
+  const hanndleEditUnitList = () => { 
+    navigate('/viewUnitInfo', { state: {unitList, jobId} });
+  };
+
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeaderStyle
@@ -54,11 +63,11 @@ export default function UnitList({ unitList }) {
         sx={{ mb: 2 }}
         action={
           <>
-            <Button size="small" href="/viewUnitInfo" startIcon={<Iconify icon={'eva:edit-fill'} />}>
+            <Button size="small" onClick={hanndleEditUnitList} startIcon={<Iconify icon={'eva:edit-fill'} />}>
               Edit unit list
             </Button>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <Button size="small" href="/setUnitInfo" startIcon={<Iconify icon={'akar-icons:plus'} />}>
+            <Button size="small" startIcon={<Iconify icon={'akar-icons:plus'} />}>
               Add new unit
             </Button>
           </>

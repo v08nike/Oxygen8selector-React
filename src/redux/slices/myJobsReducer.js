@@ -5,6 +5,7 @@ import axios from '../../utils/axios';
 import { dispatch } from '../store';
 // mock
 import { _jobList, _unitList } from '../../_mock/_myJobs';
+import { PATH_MY_JOBS } from '../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -28,10 +29,19 @@ const myJobsslice = createSlice({
     addJob(state, action) {
       state.jobList.push(action.payload);
     },
-    updateJob(state, action) {},
+    updateJob(state, action) {
+      const { jobId, data } = action.payload;
+      state.jobList[jobId] = data;
+    },
     getUnitInfoByJobId(state, actiond) {},
     updateUnitInfo(state, action) {},
-    addUnitInfo(state, action) {},
+    addUnitInfo(state, action) {
+      const { jobId, data } = action.payload;
+      const selectedId = state.unitList.findIndex((item) => item.jobId === jobId)
+      console.log("------------------------------------------");
+      console.log(selectedId, state.unitList[selectedId].data);
+      state.unitList[selectedId].data.unshift(data);
+    },
   },
 });
 
@@ -44,7 +54,6 @@ export function getJobList(state) {
   return state.myJobs.jobList;
 }
 
-
 export function addNewJob(data) {
   dispatch(myJobsslice.actions.addJob(data));
 }
@@ -53,7 +62,15 @@ export function setJobInfo(data) {
   dispatch(myJobsslice.actions.setJobInfo(data));
 }
 
-export function getUnitList(state) {
+export function getUnitList(state,) {
   return state.myJobs.unitList;
+}
+
+export function updateJob(jobUpdated) {
+  dispatch(myJobsslice.actions.updateJob(jobUpdated));
+}
+
+export function addNewUnit(data) {
+  dispatch(myJobsslice.actions.addUnitInfo(data));
 }
 // ----------------------------------------------------------------------

@@ -2,7 +2,7 @@ import _mock from './_mock';
 import { randomNumberRange, randomInArray } from './funcs';
 
 export const _jobList = [...Array(3)].map((_, index) => ({
-  id: _mock.id(index),
+  id: index,
   jobName: _mock.company(index),
   referenceNo: 123456,
   revNo: 1,

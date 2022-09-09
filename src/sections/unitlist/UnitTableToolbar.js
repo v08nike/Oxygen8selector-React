@@ -22,9 +22,10 @@ UserTableToolbar.propTypes = {
   onFilterName: PropTypes.func,
   onFilterRole: PropTypes.func,
   optionsRole: PropTypes.arrayOf(PropTypes.string),
+  onAddNewUnit: PropTypes.func,
 };
 
-export default function UserTableToolbar({ filterName, onFilterName, onFilterRole, optionsRole }) {
+export default function UserTableToolbar({ filterName, onFilterName, onFilterRole, optionsRole, onAddNewUnit }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -97,7 +98,7 @@ export default function UserTableToolbar({ filterName, onFilterName, onFilterRol
         />
       </Item>
       <Item sx={{ width: '20%' }}>
-        <Button variant="contained" href="/setUnitInfo" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+        <Button variant="contained" onClick={onAddNewUnit} startIcon={<Iconify icon={'eva:plus-fill'} />}>
           Add unit to job
         </Button>
       </Item>

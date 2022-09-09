@@ -1,4 +1,5 @@
 import { capitalCase } from 'change-case';
+import { useLocation } from 'react-router';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Container, Tab, Box, Tabs } from '@mui/material';
@@ -25,8 +26,9 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function UserAccount() {
+export default function ViewUnitInfo() {
   const { themeStretch } = useSettings();
+  const { state } = useLocation();
 
   const { currentTab, onChangeTab } = useTabs('Unit Info');
 
@@ -34,7 +36,7 @@ export default function UserAccount() {
     {
       value: 'Unit Info',
       icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
-      component: <UnitInfoList />,
+      component: <UnitInfoList unitinfo={state} />,
     },
     {
       value: 'Selection',
@@ -65,6 +67,7 @@ export default function UserAccount() {
               { name: 'Unit Info', href: PATH_MY_JOBS.dashboard },
               { name: currentTab },
             ]}
+            data={state}
           />
 
           <Tabs

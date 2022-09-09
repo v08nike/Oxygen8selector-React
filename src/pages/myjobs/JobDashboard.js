@@ -79,6 +79,7 @@ function StepIcon({ active, completed }) {
 
 export default function JobDashboard() {
   const { state } = useLocation();
+  console.log(state);
   const unitList = useSelector(getUnitList);
 
   let JobUnitInfo;
@@ -90,7 +91,6 @@ export default function JobDashboard() {
 
   const [activeStep, setActiveStep] = useState(JobUnitInfo.length > 0 ? 2 : 1);
   // const isComplete = activeStep === STEPS.length;
-
   return (
     <Page title="Job Dashboard">
       <RootStyle>
@@ -152,7 +152,7 @@ export default function JobDashboard() {
               <JobInfoCard info={state} />
             </Grid>
             <Grid item xs={12} md={8}>
-              <UnitList unitList={JobUnitInfo} />
+              <UnitList unitList={JobUnitInfo} jobId={state.id} />
             </Grid>
           </Grid>
         </Container>

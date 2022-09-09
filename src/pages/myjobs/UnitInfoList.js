@@ -1,7 +1,7 @@
 import * as React from 'react';
 // import { paramCase } from 'change-case';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // @mui
 import {
   Box,
@@ -15,13 +15,12 @@ import {
   TablePagination,
 } from '@mui/material';
 
-// routes
-// import { PATH_MY_JOBS } from '../../routes/paths';
+// redux
+import { useSelector } from 'react-redux';
+import { getUnitList } from '../../redux/slices/myJobsReducer';
 // hooks
 import useTabs from '../../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
-// _mock_
-import { _unitList } from '../../_mock';
 // components
 import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
@@ -46,6 +45,8 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function UnitInfoList() {
+  const { state } = useLocation();
+
   const {
     page,
     order,
@@ -63,26 +64,17 @@ export default function UnitInfoList() {
     onChangeRowsPerPage,
   } = useTable();
 
-  console.log(_unitList);
   const dense = true;
 
   const navigate = useNavigate();
 
-  const [tableData, setTableData] = useState(_unitList);
+  const unitList = useSelector(getUnitList);
+
+  const [tableData, setTableData] = useState(unitList[state.jobId].data);
 
   const [filterName, setFilterName] = useState('');
 
   const [filterRole, setFilterRole] = useState('All');
-
-  const [newJobDialogOpen, setNewJobDialog] = React.useState(false);
-
-  const handleClickNewJobDialogOpen = () => {
-    setNewJobDialog(true);
-  };
-
-  const handleNewJobDialogClose = () => {
-    setNewJobDialog(false);
-  };
 
   // Delete one row
   const [isOneConfirmDialog, setOneConfirmDialogState] = React.useState(false);
@@ -136,6 +128,10 @@ export default function UnitInfoList() {
     // navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
   };
 
+  const handleClickNewUnit = () => {
+    navigate('/setUnitInfo', { state });
+  };
+
   const dataFiltered = applySortFilter({
     tableData,
     comparator: getComparator(order, orderBy),
@@ -159,7 +155,7 @@ export default function UnitInfoList() {
           filterRole={filterRole}
           onFilterName={handleFilterName}
           onFilterRole={handleFilterRole}
-          onOpneDialog={handleClickNewJobDialogOpen}
+          onAddNewUnit={handleClickNewUnit}
           optionsRole={ROLE_OPTIONS}
         />
 
@@ -203,9 +199,9 @@ export default function UnitInfoList() {
               />
 
               <TableBody>
-                {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                   <UnitTableRow
-                    key={row.id}
+                    key={index}
                     row={row}
                     selected={selected.includes(row.id)}
                     onSelectRow={() => onSelectRow(row.id)}
@@ -234,7 +230,6 @@ export default function UnitInfoList() {
           />
         </Box>
       </Card>
-      <NewJobFormDialog newJobDialogOpen={newJobDialogOpen} handleNewJobDialogClose={handleNewJobDialogClose} />
       <ConfirmDialog
         isOpen={isOneConfirmDialog}
         onClose={handleOneConfirmDialogClose}
