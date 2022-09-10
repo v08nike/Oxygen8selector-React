@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
-import axios from '../../utils/axios';
-//
+// import axios from '../../utils/axios';
+// store
 import { dispatch } from '../store';
 // mock
 import { _jobList, _unitList } from '../../_mock/_myJobs';
-import { PATH_MY_JOBS } from '../../routes/paths';
+// paths
+// import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -14,8 +15,8 @@ const initialState = {
   unitList: _unitList,
 };
 
-const myJobsslice = createSlice({
-  name: 'myJobs',
+const JobsSlice = createSlice({
+  name: 'jobs',
   initialState,
   reducers: {
     // GET JOB DATA
@@ -33,44 +34,50 @@ const myJobsslice = createSlice({
       const { jobId, data } = action.payload;
       state.jobList[jobId] = data;
     },
-    getUnitInfoByJobId(state, actiond) {},
-    updateUnitInfo(state, action) {},
+    updateUnit(state, action) {
+      const { jobId, unitId, data } = action.payload;
+      const selectedJobIdx = state.unitList.findIndex((item) => item.jobId.toString() === jobId);
+      const selectedUnitIdx = state.unitList[selectedJobIdx].data.findIndex(
+        (item) => item.unitId.toString() === unitId
+      );
+      state.unitList[selectedJobIdx].data[selectedUnitIdx] = data;
+    },
     addUnitInfo(state, action) {
       const { jobId, data } = action.payload;
-      const selectedId = state.unitList.findIndex((item) => item.jobId === jobId)
-      console.log("------------------------------------------");
-      console.log(selectedId, state.unitList[selectedId].data);
+      const selectedId = state.unitList.findIndex((item) => item.jobId.toString() === jobId);
       state.unitList[selectedId].data.unshift(data);
     },
   },
 });
 
+export const { getUnitInfoByJobId } = JobsSlice.actions;
+
 // Reducer
-export default myJobsslice.reducer;
+export default JobsSlice.reducer;
 
 // ----------------------------------------------------------------------
 
 export function getJobList(state) {
-  return state.myJobs.jobList;
+  return state.jobs.jobList;
 }
 
 export function addNewJob(data) {
-  dispatch(myJobsslice.actions.addJob(data));
+  dispatch(JobsSlice.actions.addJob(data));
 }
 
 export function setJobInfo(data) {
-  dispatch(myJobsslice.actions.setJobInfo(data));
-}
-
-export function getUnitList(state,) {
-  return state.myJobs.unitList;
+  dispatch(JobsSlice.actions.setJobInfo(data));
 }
 
 export function updateJob(jobUpdated) {
-  dispatch(myJobsslice.actions.updateJob(jobUpdated));
+  dispatch(JobsSlice.actions.updateJob(jobUpdated));
 }
 
 export function addNewUnit(data) {
-  dispatch(myJobsslice.actions.addUnitInfo(data));
+  dispatch(JobsSlice.actions.addUnitInfo(data));
+}
+
+export function updateUnit(data) {
+  dispatch(JobsSlice.actions.updateUnit(data));
 }
 // ----------------------------------------------------------------------

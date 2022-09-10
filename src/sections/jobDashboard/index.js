@@ -1,2 +1,2 @@
-export { default as JobInfoCard } from './JobInfoCard';
+export { default as JobInfo } from './JobInfo';
 export { default as UnitList } from './UnitList';

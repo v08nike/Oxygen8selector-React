@@ -1,23 +1,20 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // @mui
 import { m } from 'framer-motion';
 import { styled } from '@mui/material/styles';
 import { Box, Grid, Card, Step, Stepper, Container, StepLabel, StepConnector, Typography, Button } from '@mui/material';
 // redux
 import { useSelector } from 'react-redux';
-import { getUnitList } from '../../redux/slices/myJobsReducer';
 // routes
-import { PATH_MY_JOBS } from '../../routes/paths';
-// mocks
-import { _unitList } from '../../_mock/_myJobs';
+import { PATH_JOBS } from '../routes/paths';
 // components
-import Page from '../../components/Page';
-import Iconify from '../../components/Iconify';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+import Page from '../components/Page';
+import Iconify from '../components/Iconify';
+import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 // sections
-import { JobInfoCard, UnitList } from '../../sections/jobDashboard';
+import { JobInfo, UnitList } from '../sections/jobDashboard';
 
 // ----------------------------------------------------------------------
 
@@ -78,29 +75,27 @@ function StepIcon({ active, completed }) {
 }
 
 export default function JobDashboard() {
-  const { state } = useLocation();
-  console.log(state);
-  const unitList = useSelector(getUnitList);
+  const { jobId } = useParams();
+  const info = useSelector((state) => ({
+    jobInfo: state.jobs.jobList.filter((item) => item.jobId.toString() === jobId),
+    unitInfo: state.jobs.unitList.filter((item) => item.jobId.toString() === jobId),
+  }));
 
-  let JobUnitInfo;
-  if (state) {
-    JobUnitInfo = unitList.filter((JobUnitItems) => JobUnitItems.jobId === state.id);
-  }
+  const jobInfo = info.jobInfo[0];
+  const unitInfo = info.unitInfo[0];
 
-  JobUnitInfo = JobUnitInfo.length? JobUnitInfo[0].data : [];
-
-  const [activeStep, setActiveStep] = useState(JobUnitInfo.length > 0 ? 2 : 1);
+  const [activeStep, setActiveStep] = useState(unitInfo.data.length > 0 ? 2 : 1);
   // const isComplete = activeStep === STEPS.length;
   return (
     <Page title="Job Dashboard">
       <RootStyle>
         <Container>
           <HeaderBreadcrumbs
-            heading={state ? state.jobName : 'New Job'}
-            links={[{ name: 'My jobs', href: PATH_MY_JOBS.root }, { name: state ? state.jobName : 'New Job' }]}
+            heading={jobInfo.jobName}
+            links={[{ name: 'My jobs', href: PATH_JOBS.root }, { name: jobInfo.jobName }]}
           />
           <Card sx={{ padding: '50px', pb: '10px', pt: '20px', mb: 1 }}>
-            <Grid container justifyContent={JobUnitInfo.length > 0 ? 'center' : 'flex-start'}>
+            <Grid container justifyContent={unitInfo.data.length > 0 ? 'center' : 'flex-start'}>
               <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'left' }}>
                 <Box>
                   <m.div>
@@ -120,7 +115,7 @@ export default function JobDashboard() {
                   <Button
                     variant="outlined"
                     startIcon={<Iconify icon={'ant-design:mail-outlined'} />}
-                    disabled={JobUnitInfo.length === 0}
+                    disabled={unitInfo.data.length === 0}
                   >
                     Request submittal
                   </Button>
@@ -149,10 +144,10 @@ export default function JobDashboard() {
           </Card>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <JobInfoCard info={state} />
+              <JobInfo jobInfo={jobInfo} />
             </Grid>
             <Grid item xs={12} md={8}>
-              <UnitList unitList={JobUnitInfo} jobId={state.id} />
+              <UnitList unitInfo={unitInfo} />
             </Grid>
           </Grid>
         </Container>

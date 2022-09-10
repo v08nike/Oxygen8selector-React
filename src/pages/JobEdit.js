@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
-import { useSnackbar } from 'notistack';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
@@ -9,14 +8,15 @@ import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
+// paths
+import { PATH_JOB } from '../routes/paths';
 // redux
-import { useSelector } from '../../redux/store';
-import { updateJob } from '../../redux/slices/myJobsReducer';
+import { useSelector } from '../redux/store';
+import { updateJob } from '../redux/slices/jobsReducer';
 // components
-import Page from '../../components/Page';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { FormProvider, RHFTextField, RHFSelect } from '../../components/hook-form';
-import { PATH_MY_JOBS } from '../../routes/paths';
+import Page from '../components/Page';
+import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
+import { FormProvider, RHFTextField, RHFSelect } from '../components/hook-form';
 
 //------------------------------------------------
 
@@ -36,8 +36,11 @@ const RootStyle = styled('div')(({ theme }) => ({
 //------------------------------------------------
 
 export default function EditJobInfo() {
-  const { state } = useLocation();
+  const { jobId } = useParams();
   const navigate = useNavigate();
+
+  const jobList = useSelector((state) => state.jobs.jobList.filter((item) => item.jobId.toString() === jobId));
+  const jobInfo = jobList[0];
 
   const UpdateJobInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Job Name'),
@@ -100,7 +103,7 @@ export default function EditJobInfo() {
     winter_return_rh: '',
   };
 
-  Object.entries(state).forEach(([key, value]) => {
+  Object.entries(jobInfo).forEach(([key, value]) => {
     defaultValues[key] = value;
   });
 
@@ -116,8 +119,8 @@ export default function EditJobInfo() {
 
   const onJobInfoSubmit = async (data) => {
     try {
-      updateJob({ jobId: state.id, data });
-      navigate('/jobDashboard', { state: data });
+      updateJob({ jobId: jobInfo.jobId, data });
+      navigate(PATH_JOB.dashboard(jobId));
     } catch (error) {
       console.error(error);
     }
@@ -130,7 +133,7 @@ export default function EditJobInfo() {
           <FormProvider methods={methods} onSubmit={handleSubmit(onJobInfoSubmit)}>
             <HeaderBreadcrumbs
               heading="Edit Job Info"
-              links={[{ name: 'My Dashboard', href: '/jobDashboard' }, { name: 'Edit Job Info' }]}
+              links={[{ name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) }, { name: 'Edit Job Info' }]}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                   <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
@@ -174,14 +177,6 @@ export default function EditJobInfo() {
                     </Box>
                   </CardContent>
                 </Card>
-                {/* <Card sx={{ mb: 3 }}>
-                  <CardHeaderStyle title="Project Information" />
-                  <CardContent>
-                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <FormControlLabel control={<Checkbox />} label="Test New Price" />
-                    </Box>
-                  </CardContent>
-                </Card> */}
               </Grid>
               <Grid item xs={4} md={4}>
                 <Card sx={{ mb: 3 }}>

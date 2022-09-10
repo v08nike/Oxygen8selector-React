@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Stack, Button, CardHeader, Typography, CardContent } from '@mui/material';
-import { PATH_MY_JOBS } from '../../routes/paths';
+import { PATH_JOB } from '../../routes/paths';
 
 // components
 import Iconify from '../../components/Iconify';
@@ -16,15 +16,15 @@ const CardHeaderStyle = styled(CardHeader)(() => ({
   borderBottom: '1px solid #b9b9b9',
 }));
 
-JobInfoCard.propTypes = {
-  info: PropTypes.object,
+JobInfo.propTypes = {
+  jobInfo: PropTypes.object,
 };
 
-export default function JobInfoCard({ info }) {
+export default function JobInfo({ jobInfo }) {
   const navigate = useNavigate();
 
-  const handleEditRow = (data) => {
-    navigate(PATH_MY_JOBS.editJob, { state: data });
+  const handleEditJobInfo = () => {
+    navigate(PATH_JOB.jobEdit(jobInfo.jobId));
   };
 
   return (
@@ -35,7 +35,7 @@ export default function JobInfoCard({ info }) {
           <Button
             size="small"
             startIcon={<Iconify icon={'eva:edit-fill'} />}
-            onClick={() => handleEditRow(info)}
+            onClick={() => handleEditJobInfo()}
           >
             Edit
           </Button>
@@ -44,7 +44,7 @@ export default function JobInfoCard({ info }) {
 
       <CardContent>
         <Stack spacing={2}>
-          {Object.entries(info).map(([key, value], index) => (
+          {Object.entries(jobInfo).map(([key, value], index) => (
             <Stack key={index} direction="row" justifyContent="space-between">
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {key}

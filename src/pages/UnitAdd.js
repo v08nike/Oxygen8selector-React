@@ -4,15 +4,15 @@ import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Grid, Card, Step, Stepper, Container, StepLabel, StepConnector, Button } from '@mui/material';
 // _mock_
-import { _modelInfos, _productFamilyInfos } from '../../_mock';
+import { _modelInfos, _productFamilyInfos } from '../_mock';
 // routes
-import { PATH_MY_JOBS } from '../../routes/paths';
+import { PATH_JOBS } from '../routes/paths';
 // components
-import Page from '../../components/Page';
-import Iconify from '../../components/Iconify';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+import Page from '../components/Page';
+import Iconify from '../components/Iconify';
+import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 // sections
-import { SelectModel, SelectProductFamily } from '../../sections/addNewUnit';
+import { SelectModel, SelectProductFamily } from '../sections/addNewUnit';
 
 // ----------------------------------------------------------------------
 
@@ -104,8 +104,8 @@ export default function AddNewUnit() {
           <HeaderBreadcrumbs
             heading="Add New Unit"
             links={[
-              { name: 'My jobs', href: PATH_MY_JOBS.root },
-              { name: 'Selected Job', href: PATH_MY_JOBS.dashboard },
+              { name: 'My jobs', href: PATH_JOBS.root },
+              // { name: 'Selected Job', href: PATH_MY_JOBS.dashboard },
               { name: 'Add New Unit' },
             ]}
             sx={{ paddingLeft: '24px', paddingTop: '24px' }}

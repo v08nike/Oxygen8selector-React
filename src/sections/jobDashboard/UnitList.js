@@ -14,6 +14,8 @@ import {
   Typography,
   Button,
 } from '@mui/material';
+// Paths
+import { PATH_UNIT } from '../../routes/paths';
 // components
 import Iconify from '../../components/Iconify';
 import { TableHeadCustom } from '../../components/table';
@@ -38,15 +40,16 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 UnitList.propTypes = {
-  unitList: PropTypes.array.isRequired,
-  jobId: PropTypes.number
+  unitInfo: PropTypes.object.isRequired,
 };
 
-export default function UnitList({ unitList, jobId }) {
+export default function UnitList({ unitInfo }) {
   const navigate = useNavigate();
 
-  const hanndleEditUnitList = () => { 
-    navigate('/viewUnitInfo', { state: {unitList, jobId} });
+  const { jobId, data } = unitInfo;
+
+  const hanndleEditUnitList = () => {
+    navigate(PATH_UNIT.view(jobId));
   };
 
   return (
@@ -56,7 +59,7 @@ export default function UnitList({ unitList, jobId }) {
           <Typography variant="h6">
             Unit List
             <Typography component="span" sx={{ color: 'text.secondary' }}>
-              &nbsp;({unitList.length} item)
+              &nbsp;({data.length} item)
             </Typography>
           </Typography>
         }
@@ -74,14 +77,14 @@ export default function UnitList({ unitList, jobId }) {
         }
       />
 
-      {unitList.length !== 0 ? (
+      {data.length !== 0 ? (
         <Scrollbar>
           <TableContainer sx={{ minWidth: 720, maxHeight: '320px' }}>
             <Table stickyHeader>
               <TableHeadCustom headLabel={TABLE_HEAD} />
 
               <TableBody>
-                {unitList.map((row, index) => (
+                {data.map((row, index) => (
                   <UnitListRow key={index} row={row} />
                 ))}
               </TableBody>

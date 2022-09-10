@@ -53,7 +53,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           onClose={handleCloseMenu}
           actions={
             <>
-              <MenuItem sx={{ color: 'info.main' }}>
+              <MenuItem sx={{ color: 'info.main' }} onClick={onEditRow}>
                 <Iconify icon={'fa-solid:pen'} />
                 Edit Unit
               </MenuItem>

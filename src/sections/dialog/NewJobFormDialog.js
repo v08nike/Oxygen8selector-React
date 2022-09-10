@@ -16,7 +16,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 // components
 import { FormProvider, RHFSelect, RHFTextField } from '../../components/hook-form';
-import { PATH_MY_JOBS } from '../../routes/paths';
 
 NewJobFormDialog.propTypes = {
   newJobDialogOpen: PropTypes.bool,

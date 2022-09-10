@@ -1,7 +1,7 @@
 import * as React from 'react';
 // import { paramCase } from 'change-case';
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 // @mui
 import {
   Box,
@@ -17,7 +17,7 @@ import {
 
 // redux
 import { useSelector } from 'react-redux';
-import { getUnitList } from '../../redux/slices/myJobsReducer';
+// import { getUnitList } from '../../redux/slices/jobsReducer';
 // hooks
 import useTabs from '../../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
@@ -26,9 +26,10 @@ import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
 import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../components/table';
 // sections
-import { UnitTableToolbar, UnitTableRow } from '../../sections/unitlist';
-import NewJobFormDialog from '../../sections/myjobs/NewJobFormDialog';
-import ConfirmDialog from '../../sections/myjobs/ConfirmDialog';
+import UnitTableToolbar from './UnitTableToolbar';
+import UnitTableRow from './UnitTableRow';
+import ConfirmDialog from '../dialog/ConfirmDialog';
+import { PATH_UNIT } from '../../routes/paths';
 // ----------------------------------------------------------------------
 
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
@@ -44,8 +45,8 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function UnitInfoList() {
-  const { state } = useLocation();
+export default function UnitList() {
+  const { jobId } = useParams();
 
   const {
     page,
@@ -67,10 +68,9 @@ export default function UnitInfoList() {
   const dense = true;
 
   const navigate = useNavigate();
+  const unitList = useSelector((state) => state.jobs.unitList.filter((item) => item.jobId.toString() === jobId)[0]);
 
-  const unitList = useSelector(getUnitList);
-
-  const [tableData, setTableData] = useState(unitList[state.jobId].data);
+  const [tableData, setTableData] = useState(unitList.data);
 
   const [filterName, setFilterName] = useState('');
 
@@ -92,7 +92,7 @@ export default function UnitInfoList() {
   };
 
   const handleDeleteRow = () => {
-    const deleteRow = tableData.filter((row) => row.id !== deleteRowID);
+    const deleteRow = tableData.filter((row) => row.unitId !== deleteRowID);
     setSelected([]);
     setDeleteRowID(-1);
     setTableData(deleteRow);
@@ -118,18 +118,18 @@ export default function UnitInfoList() {
   };
 
   const handleDeleteRows = () => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.id));
+    const deleteRows = tableData.filter((row) => !selected.includes(row.unitId));
     setSelected([]);
     setTableData(deleteRows);
     setMultiConfirmDialogState(false);
   };
 
-  const handleEditRow = (id) => {
-    // navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
+  const handleEditRow = (unitId) => {
+    navigate(PATH_UNIT.edit(jobId, unitId));
   };
 
   const handleClickNewUnit = () => {
-    navigate('/setUnitInfo', { state });
+    navigate(PATH_UNIT.add(jobId));
   };
 
   const dataFiltered = applySortFilter({
@@ -169,7 +169,7 @@ export default function UnitInfoList() {
                 onSelectAllRows={(checked) =>
                   onSelectAllRows(
                     checked,
-                    tableData.map((row) => row.id)
+                    tableData.map((row) => row.unitId)
                   )
                 }
                 actions={
@@ -193,7 +193,7 @@ export default function UnitInfoList() {
                 onSelectAllRows={(checked) =>
                   onSelectAllRows(
                     checked,
-                    tableData.map((row) => row.id)
+                    tableData.map((row) => row.unitId)
                   )
                 }
               />
@@ -203,10 +203,10 @@ export default function UnitInfoList() {
                   <UnitTableRow
                     key={index}
                     row={row}
-                    selected={selected.includes(row.id)}
-                    onSelectRow={() => onSelectRow(row.id)}
-                    onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                    onEditRow={() => handleEditRow(row.name)}
+                    selected={selected.includes(row.unitId)}
+                    onSelectRow={() => onSelectRow(row.unitId)}
+                    onDeleteRow={() => handleOneConfirmDialogOpen(row.unitId)}
+                    onEditRow={() => handleEditRow(row.unitId)}
                   />
                 ))}
 

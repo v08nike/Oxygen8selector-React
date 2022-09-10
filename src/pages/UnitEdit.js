@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
-import { useSnackbar } from 'notistack';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // @mui
@@ -11,11 +10,13 @@ import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // redux
-import { addNewUnit } from '../../redux/slices/myJobsReducer';
+import { useSelector } from '../redux/store';
+import { addNewUnit, updateUnit } from '../redux/slices/jobsReducer';
 // components
-import Page from '../../components/Page';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { FormProvider, RHFTextField, RHFSelect } from '../../components/hook-form';
+import Page from '../components/Page';
+import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
+import { FormProvider, RHFTextField, RHFSelect } from '../components/hook-form';
+import { PATH_JOB, PATH_JOBS, PATH_UNIT } from '../routes/paths';
 
 //------------------------------------------------
 
@@ -33,18 +34,19 @@ const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
 
 // -----------------------------------------------
 
-SetUnitInfo.propTypes = {
-  isEdit: PropTypes.string,
-  values: PropTypes.object,
-};
-
-export default function SetUnitInfo({ isEdit, values }) {
-  const { enqueueSnackbar } = useSnackbar();
+export default function UnitEdit() {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  // const { user } = useAuth();
+  const { jobId, unitId } = useParams();
+  const isEdit = unitId !== undefined;
 
-  const UpdateUserSchema = Yup.object().shape({
+  const unitInfo = useSelector(
+    (state) =>
+      state.jobs.unitList
+        .filter((item) => item.jobId.toString() === jobId)[0]
+        .data.filter((item) => item.unitId.toString() === unitId)[0]
+  );
+
+  const UnitSchema = Yup.object().shape({
     tag: Yup.string().required('Please enter a Tag'),
     quantity: Yup.string().required('Please enter a Quantity'),
     location: Yup.string().required('Please enter a Location'),
@@ -69,35 +71,38 @@ export default function SetUnitInfo({ isEdit, values }) {
     ra_filter3: Yup.string().required('Please enter a RA Filter'),
   });
 
-  const defaultValues = isEdit
-    ? values
-    : {
-        tag: 'ok',
-        quantity: 'ok',
-        location: 'ca',
-        orientation: 'or',
-        handling: 'left',
-        unitType: 'ERV',
-        controlPreference: 'cv',
-        CFM: 'CFM',
-        ASD: 'ASD',
-        ERC: 'ERC',
-        DVG: 'DVG',
-        unitModel: 'unitModel',
-        unitVoltage: 'unitVoltage',
-        qa_filter1: 'One',
-        ra_filter1: 'Two',
-        preheat: 'auto',
-        cooling: 'n/a',
-        heating: 'n/a',
-        qa_filter2: 'One',
-        ra_filter2: 'Two',
-        qa_filter3: 'Oen',
-        ra_filter3: 'Two',
-      };
+  const defaultValues = {
+    tag: '',
+    quantity: '',
+    location: '',
+    orientation: '',
+    handling: '',
+    unitType: '',
+    controlPreference: '',
+    CFM: '',
+    ASD: '',
+    ERC: '',
+    DVG: '',
+    unitModel: '',
+    unitVoltage: '',
+    qa_filter1: '',
+    ra_filter1: '',
+    preheat: '',
+    cooling: '',
+    heating: '',
+    qa_filter2: '',
+    ra_filter2: '',
+    qa_filter3: '',
+    ra_filter3: '',
+  };
+
+  if (isEdit)
+    Object.entries(unitInfo).forEach(([key, value]) => {
+      defaultValues[key] = value;
+    });
 
   const methods = useForm({
-    resolver: yupResolver(UpdateUserSchema),
+    resolver: yupResolver(UnitSchema),
     defaultValues,
   });
 
@@ -108,9 +113,12 @@ export default function SetUnitInfo({ isEdit, values }) {
   } = methods;
 
   const onSubmit = (data) => {
-    console.log(state);
-    addNewUnit({ jobId: state.jobId, data });
-    navigate('/viewUnitInfo', { state });
+    if (!isEdit) {
+      data.unitId = 100;
+      addNewUnit({ jobId, data })
+    }
+    else updateUnit({ jobId, unitId, data });
+    navigate(PATH_UNIT.view(jobId));
   };
 
   return (
@@ -119,10 +127,12 @@ export default function SetUnitInfo({ isEdit, values }) {
         <Container sx={{ mt: '20px' }}>
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <HeaderBreadcrumbs
-              heading="Edit Job Info"
+              heading={isEdit ? 'Edit Unit' : 'Add New Unit'}
               links={[
-                { name: 'My Dashboard', href: '/jobDashboard' },
-                { name: isEdit ? 'Edit Unit Info' : 'Add Unit Info' },
+                { name: 'My Jobs', href: PATH_JOBS.root },
+                { name: 'Job Dashboard', href: PATH_JOB.dashboard(jobId) },
+                { name: 'Unit View', href: PATH_UNIT.view(jobId) },
+                { name: isEdit ? 'Edit Unit' : 'Add New Unit' },
               ]}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>

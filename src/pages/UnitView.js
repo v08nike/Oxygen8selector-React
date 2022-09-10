@@ -1,19 +1,19 @@
 import { capitalCase } from 'change-case';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Container, Tab, Box, Tabs } from '@mui/material';
 // routes
-import { PATH_MY_JOBS } from '../../routes/paths';
+import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../routes/paths';
 // hooks
-import useTabs from '../../hooks/useTabs';
-import useSettings from '../../hooks/useSettings';
+import useTabs from '../hooks/useTabs';
+import useSettings from '../hooks/useSettings';
 // components
-import Page from '../../components/Page';
-import Iconify from '../../components/Iconify';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+import Page from '../components/Page';
+import Iconify from '../components/Iconify';
+import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 // sections
-import UnitInfoList from './UnitInfoList';
+import { UnitList } from '../sections/unitView';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 export default function ViewUnitInfo() {
   const { themeStretch } = useSettings();
-  const { state } = useLocation();
+  const { jobId } = useParams();
 
   const { currentTab, onChangeTab } = useTabs('Unit Info');
 
@@ -36,22 +36,22 @@ export default function ViewUnitInfo() {
     {
       value: 'Unit Info',
       icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
-      component: <UnitInfoList unitinfo={state} />,
+      component: <UnitList />,
     },
     {
       value: 'Selection',
       icon: <Iconify icon={'mdi:selection-ellipse'} width={20} height={20} />,
-      component: <UnitInfoList />,
+      component: <UnitList />,
     },
     {
       value: 'Drawing',
       icon: <Iconify icon={'arcticons:grid-drawing-for-artist'} width={20} height={20} />,
-      component: <UnitInfoList />,
+      component: <UnitList />,
     },
     {
       value: 'Layout',
       icon: <Iconify icon={'ant-design:layout-outlined'} width={20} height={20} />,
-      component: <UnitInfoList />,
+      component: <UnitList />,
     },
   ];
 
@@ -62,12 +62,11 @@ export default function ViewUnitInfo() {
           <HeaderBreadcrumbs
             heading={currentTab}
             links={[
-              { name: 'My Jobs', href: PATH_MY_JOBS.root },
-              { name: 'Job Dashboard', href: PATH_MY_JOBS.dashboard },
-              { name: 'Unit Info', href: PATH_MY_JOBS.dashboard },
+              { name: 'My Jobs', href: PATH_JOBS.root },
+              { name: 'Job Dashboard', href: PATH_JOB.dashboard(jobId) },
+              { name: 'Unit Info', href: PATH_UNIT.view(jobId) },
               { name: currentTab },
             ]}
-            data={state}
           />
 
           <Tabs

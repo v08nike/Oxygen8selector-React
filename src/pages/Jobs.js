@@ -16,23 +16,23 @@ import {
 } from '@mui/material';
 
 // routes
-import { PATH_MY_JOBS } from '../../routes/paths';
+import { PATH_JOBS, PATH_JOB } from '../routes/paths';
 // hooks
-import useTabs from '../../hooks/useTabs';
-import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
+import useTabs from '../hooks/useTabs';
+import useTable, { getComparator, emptyRows } from '../hooks/useTable';
 // redux
-import { useSelector } from '../../redux/store';
-import { getJobList, addNewJob, setJobInfo } from '../../redux/slices/myJobsReducer';
+import { useSelector } from '../redux/store';
+import { getJobList, addNewJob, setJobInfo } from '../redux/slices/jobsReducer';
 // components
-import Page from '../../components/Page';
-import Iconify from '../../components/Iconify';
-import Scrollbar from '../../components/Scrollbar';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../components/table';
+import Page from '../components/Page';
+import Iconify from '../components/Iconify';
+import Scrollbar from '../components/Scrollbar';
+import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
+import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../components/table';
 // sections
-import { JobsTableToolbar, JobsTableRow } from '../../sections/jobslist';
-import NewJobFormDialog from '../../sections/myjobs/NewJobFormDialog';
-import ConfirmDialog from '../../sections/myjobs/ConfirmDialog';
+import { JobsTableToolbar, JobsTableRow } from '../sections/jobslist';
+import NewJobFormDialog from '../sections/dialog/NewJobFormDialog';
+import ConfirmDialog from '../sections/dialog/ConfirmDialog';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -117,7 +117,7 @@ export default function MyJobs() {
   };
 
   const handleDeleteRow = () => {
-    const deleteRow = tableData.filter((row) => row.id !== deleteRowID);
+    const deleteRow = tableData.filter((row) => row.jobId !== deleteRowID);
     setSelected([]);
     setDeleteRowID(-1);
     setJobInfo(deleteRow);
@@ -144,14 +144,14 @@ export default function MyJobs() {
   };
 
   const handleDeleteRows = () => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.id));
+    const deleteRows = tableData.filter((row) => !selected.includes(row.jobId));
     setSelected([]);
     setJobInfo(deleteRows);
     setMultiConfirmDialogState(false);
   };
 
-  const handleEditRow = (data) => {
-    navigate(PATH_MY_JOBS.dashboard, { state: data });
+  const handleEditRow = (jobid) => {
+    navigate(PATH_JOB.dashboard(jobid));
   };
 
   const handleAddNewJob = (data) => {
@@ -187,7 +187,7 @@ export default function MyJobs() {
     <Page title="My Jobs">
       <RootStyle>
         <Container>
-          <HeaderBreadcrumbs heading="My Jobs" links={[{ name: 'Job Lists', href: PATH_MY_JOBS.root }]} />
+          <HeaderBreadcrumbs heading="My Jobs" links={[{ name: 'Job Lists', href: PATH_JOBS.root }]} />
 
           <Card>
             <JobsTableToolbar
@@ -209,7 +209,7 @@ export default function MyJobs() {
                     onSelectAllRows={(checked) =>
                       onSelectAllRows(
                         checked,
-                        tableData.map((row) => row.id)
+                        tableData.map((row) => row.jobId)
                       )
                     }
                     actions={
@@ -233,7 +233,7 @@ export default function MyJobs() {
                     onSelectAllRows={(checked) =>
                       onSelectAllRows(
                         checked,
-                        tableData.map((row) => row.id)
+                        tableData.map((row) => row.jobId)
                       )
                     }
                   />
@@ -243,10 +243,10 @@ export default function MyJobs() {
                       <JobsTableRow
                         key={index}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                        onEditRow={() => handleEditRow(row)}
+                        selected={selected.includes(row.jobId)}
+                        onSelectRow={() => onSelectRow(row.jobId)}
+                        onDeleteRow={() => handleOneConfirmDialogOpen(row.jobId)}
+                        onEditRow={() => handleEditRow(row.jobId)}
                       />
                     ))}
 

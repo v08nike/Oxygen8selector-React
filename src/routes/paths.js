@@ -19,12 +19,26 @@ export const PATH_AUTH = {
   newPassword: path(ROOTS_AUTH, '/new-password'),
 };
 
-export const PATH_MY_JOBS = {
-  root: '/myJobs',
-  dashboard: '/jobDashboard',
-  unitInfo: '/viewUnitInfo',
-  editJob: '/editJobInfo',
+// ----------------------------------------------------------------------
+const ROOTS_JOBS = '/jobs';
+export const PATH_JOBS = {
+  root: ROOTS_JOBS,
 }
+
+const ROOTS_JOB = '/job';
+export const PATH_JOB = {
+  root: ROOTS_JOB,
+  dashboard: (id) => path(ROOTS_JOB, `/dashboard/${id}`),
+  jobEdit: (id) => path(ROOTS_JOB, `/edit/${id}`),
+};
+
+// ----------------------------------------------------------------------
+const ROOTS_UNIT = '/unit';
+export const PATH_UNIT = {
+  view: (jobid) => path(ROOTS_UNIT, `/view/${jobid}`),
+  add: (jobid) => path(ROOTS_UNIT, `/add/${jobid}`),
+  edit: (jobid, unitid) => path(ROOTS_UNIT, `/edit/${jobid}/${unitid}`),
+};
 
 export const PATH_PAGE = {
   comingSoon: '/coming-soon',

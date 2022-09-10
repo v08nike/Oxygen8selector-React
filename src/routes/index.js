@@ -66,13 +66,13 @@ export default function Router() {
           path: '/',
           element: <MainLayout />,
           children: [
-            { path: 'myJobs', element: <MyJobs /> },
-            { path: 'myAccount', element: <MyAccount /> },
-            { path: 'jobDashboard', element: <JobDashboard /> },
-            { path: 'editJobInfo', element: <EditJobInfo /> },
-            { path: 'viewUnitInfo', element: <ViewUnitInfo /> },
-            { path: 'setUnitInfo', element: <SetUnitInfo /> },
-            { path: 'addNewUnit', element: <AddNewUnit /> },
+            { path: 'jobs', element: <Jobs /> },
+            { path: 'account', element: <Account /> },
+            { path: 'job/dashboard/:jobId', element: <JobDashboard /> },
+            { path: 'job/edit/:jobId', element: <JobEdit /> },
+            { path: 'unit/view/:jobId/', element: <UnitView /> },
+            { path: 'unit/add/:jobId/', element: <UnitEdit /> },
+            { path: 'unit/edit/:jobId/:unitId', element: <UnitEdit /> },
           ],
         },
       ],
@@ -88,14 +88,15 @@ const ResetPassword = Loadable(lazy(() => import('../pages/auth/ResetPassword'))
 // const NewPassword = Loadable(lazy(() => import('../pages/auth/NewPassword')));
 // const VerifyCode = Loadable(lazy(() => import('../pages/auth/VerifyCode')));
 
-// MyJobs
-const MyJobs = Loadable(lazy(() => import('../pages/myjobs/MyJobs')));
-const JobDashboard = Loadable(lazy(() => import('../pages/myjobs/JobDashboard')));
-const EditJobInfo = Loadable(lazy(() => import('../pages/myjobs/EditJobInfo')));
-const ViewUnitInfo = Loadable(lazy(() => import('../pages/myjobs/ViewUnitInfo')));
-const SetUnitInfo = Loadable(lazy(() => import('../pages/myjobs/SetUnitInfo')));
-const AddNewUnit = Loadable(lazy(() => import('../pages/myjobs/AddNewUnit')));
+// Jobs
+const Jobs = Loadable(lazy(() => import('../pages/Jobs')));
+const JobDashboard = Loadable(lazy(() => import('../pages/JobDashboard')));
+const JobEdit = Loadable(lazy(() => import('../pages/JobEdit')));
+// Unit
+const UnitView = Loadable(lazy(() => import('../pages/UnitView')));
+const UnitEdit = Loadable(lazy(() => import('../pages/UnitEdit')));
+const UnitAdd = Loadable(lazy(() => import('../pages/UnitAdd')));
 // MyAccount
-const MyAccount = Loadable(lazy(() => import('../pages/MyAccount')));
+const Account = Loadable(lazy(() => import('../pages/Account')));
 
 const Page404 = Loadable(lazy(() => import('../pages/Page404')));
