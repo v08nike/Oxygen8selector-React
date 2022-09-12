@@ -22,7 +22,7 @@ import useTabs from '../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../hooks/useTable';
 // redux
 import { useSelector } from '../redux/store';
-import { getJobList, addNewJob, setJobInfo } from '../redux/slices/jobsReducer';
+import { getJobList, addNewJob, setJobInfo, deleteJob } from '../redux/slices/jobsReducer';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -121,6 +121,7 @@ export default function MyJobs() {
     setSelected([]);
     setDeleteRowID(-1);
     setJobInfo(deleteRow);
+    deleteJob({ jobData: deleteRow });
     handleOneConfirmDialogClose(false);
   };
 
@@ -147,6 +148,7 @@ export default function MyJobs() {
     const deleteRows = tableData.filter((row) => !selected.includes(row.jobId));
     setSelected([]);
     setJobInfo(deleteRows);
+    deleteJob({ jobData: deleteRows });
     setMultiConfirmDialogState(false);
   };
 

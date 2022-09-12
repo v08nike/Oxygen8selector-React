@@ -34,6 +34,11 @@ const JobsSlice = createSlice({
       const { jobId, data } = action.payload;
       state.jobList[jobId] = data;
     },
+    deleteJob(state, action) {
+      const { jobData } = action.payload;
+      state.jobList = jobData;
+      state.unitList = state.unitList.filter((item) => jobData.find((element) => element.jobId === item.jobId));
+    },
     updateUnit(state, action) {
       const { jobId, unitId, data } = action.payload;
       const selectedJobIdx = state.unitList.findIndex((item) => item.jobId.toString() === jobId);
@@ -48,7 +53,7 @@ const JobsSlice = createSlice({
       state.unitList[selectedId].data.unshift(data);
     },
     deleteUnit(state, action) {
-      const { jobId, data} = action.payload;
+      const { jobId, data } = action.payload;
       const selectedId = state.unitList.findIndex((item) => item.jobId.toString() === jobId);
       state.unitList[selectedId].data = data;
     },
@@ -74,8 +79,12 @@ export function setJobInfo(data) {
   dispatch(JobsSlice.actions.setJobInfo(data));
 }
 
-export function updateJob(jobUpdated) {
-  dispatch(JobsSlice.actions.updateJob(jobUpdated));
+export function updateJob(data) {
+  dispatch(JobsSlice.actions.updateJob(data));
+}
+
+export function deleteJob(data) {
+  dispatch(JobsSlice.actions.deleteJob(data));
 }
 
 export function addNewUnit(data) {
@@ -86,7 +95,7 @@ export function updateUnit(data) {
   dispatch(JobsSlice.actions.updateUnit(data));
 }
 
-export function deleteUnit(data){
+export function deleteUnit(data) {
   dispatch(JobsSlice.actions.deleteUnit(data));
 }
 // ----------------------------------------------------------------------
