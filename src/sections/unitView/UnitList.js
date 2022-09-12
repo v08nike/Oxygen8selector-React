@@ -17,7 +17,7 @@ import {
 
 // redux
 import { useSelector } from 'react-redux';
-// import { getUnitList } from '../../redux/slices/jobsReducer';
+import { deleteUnit } from '../../redux/slices/jobsReducer';
 // hooks
 import useTabs from '../../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
@@ -95,6 +95,7 @@ export default function UnitList() {
     const deleteRow = tableData.filter((row) => row.unitId !== deleteRowID);
     setSelected([]);
     setDeleteRowID(-1);
+    deleteUnit({ jobId, data: deleteRow });
     setTableData(deleteRow);
     handleOneConfirmDialogClose(false);
   };
@@ -120,6 +121,7 @@ export default function UnitList() {
   const handleDeleteRows = () => {
     const deleteRows = tableData.filter((row) => !selected.includes(row.unitId));
     setSelected([]);
+    deleteUnit({ jobId, data: deleteRows });
     setTableData(deleteRows);
     setMultiConfirmDialogState(false);
   };

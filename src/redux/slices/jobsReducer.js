@@ -47,6 +47,11 @@ const JobsSlice = createSlice({
       const selectedId = state.unitList.findIndex((item) => item.jobId.toString() === jobId);
       state.unitList[selectedId].data.unshift(data);
     },
+    deleteUnit(state, action) {
+      const { jobId, data} = action.payload;
+      const selectedId = state.unitList.findIndex((item) => item.jobId.toString() === jobId);
+      state.unitList[selectedId].data = data;
+    },
   },
 });
 
@@ -79,5 +84,9 @@ export function addNewUnit(data) {
 
 export function updateUnit(data) {
   dispatch(JobsSlice.actions.updateUnit(data));
+}
+
+export function deleteUnit(data){
+  dispatch(JobsSlice.actions.deleteUnit(data));
 }
 // ----------------------------------------------------------------------
