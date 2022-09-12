@@ -17,9 +17,9 @@ const navConfig = [
   {
     subheader: 'general',
     items: [
-      { title: 'My Jobs', path: 'jobs', icon: ICONS.dashboard },
-      { title: 'My Account', path: 'account', icon: ICONS.user },
-      { title: 'Resources', path: 'resources', icon: ICONS.download },
+      { title: 'My Jobs', path: '/jobs', icon: ICONS.dashboard },
+      { title: 'My Account', path: '/account', icon: ICONS.user },
+      { title: 'Resources', path: '/resources', icon: ICONS.download },
     ],
   }
 ];

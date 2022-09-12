@@ -47,7 +47,7 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '404', element: <Page404 /> },
-        // { path: '*', element: <Navigate to="/404" replace /> },
+        { path: '*', element: <Navigate to="/404" replace /> },
       ],
     },
     {
@@ -68,6 +68,7 @@ export default function Router() {
           children: [
             { path: 'jobs', element: <Jobs /> },
             { path: 'account', element: <Account /> },
+            { path: 'resources', element: <Resources /> },
             { path: 'job/dashboard/:jobId', element: <JobDashboard /> },
             { path: 'job/edit/:jobId', element: <JobEdit /> },
             { path: 'unit/view/:jobId/', element: <UnitView /> },
@@ -77,7 +78,7 @@ export default function Router() {
         },
       ],
     },
-    // { path: '*', element: <Navigate to="/404" replace /> },
+    { path: '*', element: <Navigate to="/404" replace /> },
   ]);
 }
 
@@ -99,4 +100,6 @@ const UnitAdd = Loadable(lazy(() => import('../pages/UnitAdd')));
 // MyAccount
 const Account = Loadable(lazy(() => import('../pages/Account')));
 
+// Resource
+const Resources = Loadable(lazy(() => import('../pages/Recources')))
 const Page404 = Loadable(lazy(() => import('../pages/Page404')));

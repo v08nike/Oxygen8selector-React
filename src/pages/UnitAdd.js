@@ -98,7 +98,7 @@ export default function AddNewUnit() {
   };
 
   return (
-    <Page title="Job Dashboard">
+    <Page title="Unit: Add">
       <RootStyle>
         <Container>
           <HeaderBreadcrumbs

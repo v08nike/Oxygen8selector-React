@@ -184,7 +184,7 @@ export default function MyJobs() {
     (!dataFiltered.length && !!filterStatus);
 
   return (
-    <Page title="My Jobs">
+    <Page title="Jobs">
       <RootStyle>
         <Container>
           <HeaderBreadcrumbs heading="My Jobs" links={[{ name: 'Job Lists', href: PATH_JOBS.root }]} />
@@ -200,7 +200,7 @@ export default function MyJobs() {
             />
 
             <Scrollbar>
-              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+              <TableContainer sx={{ minWidth: 800, position: 'relative', overflowX: 'initial!important' }}>
                 {selected.length > 0 && (
                   <TableSelectedActions
                     dense={dense}

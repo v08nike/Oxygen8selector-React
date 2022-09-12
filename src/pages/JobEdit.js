@@ -127,7 +127,7 @@ export default function EditJobInfo() {
   };
 
   return (
-    <Page title="Job Infomation">
+    <Page title="Job: Edit">
       <RootStyle>
         <Container sx={{ mt: '20px' }}>
           <FormProvider methods={methods} onSubmit={handleSubmit(onJobInfoSubmit)}>

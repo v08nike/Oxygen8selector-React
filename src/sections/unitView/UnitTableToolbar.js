@@ -43,7 +43,7 @@ export default function UserTableToolbar({ filterName, onFilterName, onFilterRol
       direction={{ xs: 'column', sm: 'row' }}
       sx={{ py: 2.5, px: 3 }}
     >
-      <Item sx={{ width: '20%' }}>
+      <Item sx={{ width: { md: '20%', sm: '20%', xs: '100%' } }}>
         <IconButton aria-label="filter" id="role" label="Role" sx={{ fontSize: '16px' }} onClick={handleClick}>
           <Iconify icon={'codicon:filter-filled'} /> Filter
         </IconButton>
@@ -80,7 +80,7 @@ export default function UserTableToolbar({ filterName, onFilterName, onFilterRol
           ))}
         </Menu>
       </Item>
-      <Item sx={{ width: '60%' }}>
+      <Item sx={{ width: { md: '60%', sm: '60%', xs: '100%' }}}>
         <TextField
           fullWidth
           size="small"
@@ -94,10 +94,9 @@ export default function UserTableToolbar({ filterName, onFilterName, onFilterRol
               </InputAdornment>
             ),
           }}
-          
         />
       </Item>
-      <Item sx={{ width: '20%' }}>
+      <Item sx={{ width: { md: '20%', sm: '50%', xs: '100%' } }}>
         <Button variant="contained" onClick={onAddNewUnit} startIcon={<Iconify icon={'eva:plus-fill'} />}>
           Add unit to job
         </Button>

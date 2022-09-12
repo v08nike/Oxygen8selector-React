@@ -51,12 +51,7 @@ export default function MainHeader() {
   const isOffset = useOffSetTop(HEADER.MAIN_DESKTOP_HEIGHT);
 
   const theme = useTheme();
-
-  const { pathname } = useLocation();
-
   const isDesktop = useResponsive('up', 'md');
-
-  const isHome = pathname === '/';
 
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent', zIndex: 5000, background: '#ffff' }}>
@@ -76,17 +71,17 @@ export default function MainHeader() {
             justifyContent: 'space-between',
           }}
         >
-          <Logo sx={{width: "300px", height: "40px"}}/>
+          <Logo sx={{width: {xs:"138px", md: "300px"}, height:  {xs:"30px", md: "40px"}}}/>
 
 
-          {isDesktop && <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
+          {isDesktop && <MenuDesktop isOffset={isOffset} navConfig={navConfig} />}
 
           <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
             <AccountPopover />
           </Stack>
 
 
-          {/* {!isDesktop && <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />} */}
+          {!isDesktop && <MenuMobile isOffset={isOffset} navConfig={navConfig} />}
         </Container>
       </ToolbarStyle>
 

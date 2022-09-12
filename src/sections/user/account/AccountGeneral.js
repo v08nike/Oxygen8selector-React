@@ -26,7 +26,7 @@ export default function AccountGeneral() {
     eMail: Yup.string().required('Please enter a eMail'),
     repName: Yup.string().required('Please enter an Rep.Name'),
   });
-  
+
   const defaultValues = {
     username: 'John',
     firstName: 'John',
@@ -72,16 +72,16 @@ export default function AccountGeneral() {
   // );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <Card sx={{ p: 3, ml: 'auto', mr: 'auto', maxWidth: '400px' }}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
-          <Card sx={{ p: 3 }}>
+          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Box
               sx={{
                 display: 'grid',
                 rowGap: 3,
                 columnGap: 2,
-                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
               }}
             >
               <RHFTextField name="username" label="Username" />
@@ -96,9 +96,9 @@ export default function AccountGeneral() {
                 Save Changes
               </LoadingButton>
             </Stack>
-          </Card>
+          </FormProvider>
         </Grid>
       </Grid>
-    </FormProvider>
+    </Card>
   );
 }

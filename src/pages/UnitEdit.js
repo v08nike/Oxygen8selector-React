@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 // @mui
 import { styled } from '@mui/material/styles';
@@ -115,14 +115,13 @@ export default function UnitEdit() {
   const onSubmit = (data) => {
     if (!isEdit) {
       data.unitId = 100;
-      addNewUnit({ jobId, data })
-    }
-    else updateUnit({ jobId, unitId, data });
+      addNewUnit({ jobId, data });
+    } else updateUnit({ jobId, unitId, data });
     navigate(PATH_UNIT.view(jobId));
   };
 
   return (
-    <Page title="Job Infomation">
+    <Page title={isEdit ? 'Unit: Edit' : 'Unit: New'}>
       <RootStyle>
         <Container sx={{ mt: '20px' }}>
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -137,7 +136,7 @@ export default function UnitEdit() {
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                   <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                    Save Changes
+                    {isEdit ? 'Save Changes' : 'Add Unit'}
                   </LoadingButton>
                 </Stack>
               }

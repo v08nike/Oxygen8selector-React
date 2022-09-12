@@ -38,30 +38,10 @@ const ListItemStyle = styled(ListItem)(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 MenuDesktop.propTypes = {
-  isHome: PropTypes.bool,
-  isOffset: PropTypes.bool,
   navConfig: PropTypes.array,
 };
 
-export default function MenuDesktop({ isOffset, isHome, navConfig }) {
-  const { pathname } = useLocation();
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      handleClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+export default function MenuDesktop({ navConfig }) {
   return (
     <Stack direction="row">
       <NavSectionHorizontal navConfig={navConfig} />

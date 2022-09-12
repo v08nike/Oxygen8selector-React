@@ -13,9 +13,12 @@ import {
   TableContainer,
   Typography,
   Button,
+  IconButton,
 } from '@mui/material';
 // Paths
 import { PATH_UNIT } from '../../routes/paths';
+// hooks
+import useResponsive from '../../hooks/useResponsive';
 // components
 import Iconify from '../../components/Iconify';
 import { TableHeadCustom } from '../../components/table';
@@ -45,6 +48,7 @@ UnitList.propTypes = {
 
 export default function UnitList({ unitInfo }) {
   const navigate = useNavigate();
+  const isDesktop = useResponsive('up', 'sm');
 
   const { jobId, data } = unitInfo;
 
@@ -66,13 +70,25 @@ export default function UnitList({ unitInfo }) {
         sx={{ mb: 2 }}
         action={
           <>
-            <Button size="small" onClick={hanndleEditUnitList} startIcon={<Iconify icon={'eva:edit-fill'} />}>
-              Edit unit list
-            </Button>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Button size="small" startIcon={<Iconify icon={'akar-icons:plus'} />}>
-              Add new unit
-            </Button>
+            {isDesktop ? (
+              <Button size="small" onClick={hanndleEditUnitList} startIcon={<Iconify icon={'eva:edit-fill'} />}>
+                Edit Unit List
+              </Button>
+            ) : (
+              <IconButton aria-label="delete">
+                <Iconify icon={'eva:edit-fill'} />
+              </IconButton>
+            )}
+            &nbsp;&nbsp;
+            {isDesktop ? (
+              <Button size="small" onClick={hanndleEditUnitList} startIcon={<Iconify icon={'akar-icons:plus'} />}>
+                Add new unit
+              </Button>
+            ) : (
+              <IconButton aria-label="delete">
+                <Iconify icon={'akar-icons:plus'} />
+              </IconButton>
+            )}
           </>
         }
       />

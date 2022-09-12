@@ -56,7 +56,7 @@ export default function ViewUnitInfo() {
   ];
 
   return (
-    <Page title="User: Account Settings">
+    <Page title="Unit: View">
       <RootStyle>
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs

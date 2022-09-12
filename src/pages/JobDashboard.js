@@ -87,7 +87,7 @@ export default function JobDashboard() {
   const [activeStep, setActiveStep] = useState(unitInfo.data.length > 0 ? 2 : 1);
   // const isComplete = activeStep === STEPS.length;
   return (
-    <Page title="Job Dashboard">
+    <Page title="Job: Dashboard">
       <RootStyle>
         <Container>
           <HeaderBreadcrumbs
@@ -96,7 +96,7 @@ export default function JobDashboard() {
           />
           <Card sx={{ padding: '50px', pb: '10px', pt: '20px', mb: 1 }}>
             <Grid container justifyContent={unitInfo.data.length > 0 ? 'center' : 'flex-start'}>
-              <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'left' }}>
+              <Grid item xs={12} md={6} sx={{ mb: 5, textAlign: 'left' }}>
                 <Box>
                   <m.div>
                     <Typography color="primary" variant="h5" sx={{ mb: 1 }}>
@@ -110,7 +110,7 @@ export default function JobDashboard() {
                   </m.div>
                 </Box>
               </Grid>
-              <Grid item xs={6} md={6} sx={{ mb: 5, textAlign: 'right' }}>
+              <Grid item xs={12} md={6} sx={{ mb: 5, textAlign: { md: 'right', xs: 'left' } }}>
                 <Box>
                   <Button
                     variant="outlined"
@@ -121,7 +121,7 @@ export default function JobDashboard() {
                   </Button>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={12} sx={{ mb: 5, textAlign: 'center' }}>
+              <Grid item xs={12} sx={{ mb: 5, textAlign: 'center' }}>
                 <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
                   {STEPS.map((label) => (
                     <Step key={label}>
