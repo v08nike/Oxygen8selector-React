@@ -4,11 +4,10 @@ import { Container, CardHeader, CardContent, Card, Box } from '@mui/material';
 // components
 import UnitItem from './UnitItem';
 
-
 // ----------------------------------------------------------------------
 SelectProductFamily.propTypes = {
   ProductFamilyData: PropTypes.array,
-  onSelectItem: PropTypes.func
+  onSelectItem: PropTypes.func,
 };
 export default function SelectProductFamily({ ProductFamilyData, onSelectItem }) {
   return (
@@ -25,7 +24,13 @@ export default function SelectProductFamily({ ProductFamilyData, onSelectItem })
             }}
           >
             {ProductFamilyData.map((item, index) => (
-              <UnitItem key={index} info={item} onSelectItem={onSelectItem} />
+              <UnitItem
+                key={index}
+                info={item}
+                onSelectItem={() => {
+                  onSelectItem('family', item);
+                }}
+              />
             ))}
           </Box>
         </CardContent>

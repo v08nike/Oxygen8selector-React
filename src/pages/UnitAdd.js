@@ -91,10 +91,14 @@ function StepIcon({ active, completed }) {
 export default function AddNewUnit() {
   const [activeStep, setActiveStep] = useState(1);
   const [selectStep, setActiveSelectStep] = useState(0);
+  const [unitData, setUnitData] = useState();
   // const isComplete = activeStep === STEPS.length;
 
-  const onSelectProductFamilyItem = (id) => {
-    setActiveSelectStep(1);
+  const onSelectProductFamilyItem = (type, value) => {
+    if (type === "family"){
+      setUnitData({...unitData, fimily: value});
+      setActiveSelectStep(1);
+    }
   };
 
   return (

@@ -56,6 +56,10 @@ export default function UnitList({ unitInfo }) {
     navigate(PATH_UNIT.view(jobId));
   };
 
+  const hanndleAddNewUnit = () => {
+    navigate(PATH_UNIT.add(jobId));
+  }
+
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeaderStyle
@@ -81,7 +85,7 @@ export default function UnitList({ unitInfo }) {
             )}
             &nbsp;&nbsp;
             {isDesktop ? (
-              <Button size="small" onClick={hanndleEditUnitList} startIcon={<Iconify icon={'akar-icons:plus'} />}>
+              <Button size="small" onClick={hanndleAddNewUnit} startIcon={<Iconify icon={'akar-icons:plus'} />}>
                 Add new unit
               </Button>
             ) : (

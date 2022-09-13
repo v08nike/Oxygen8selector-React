@@ -72,7 +72,7 @@ export default function Router() {
             { path: 'job/dashboard/:jobId', element: <JobDashboard /> },
             { path: 'job/edit/:jobId', element: <JobEdit /> },
             { path: 'unit/view/:jobId/', element: <UnitView /> },
-            { path: 'unit/add/:jobId/', element: <UnitEdit /> },
+            { path: 'unit/add/:jobId/', element: <UnitAdd /> },
             { path: 'unit/edit/:jobId/:unitId', element: <UnitEdit /> },
           ],
         },
