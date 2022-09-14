@@ -28,7 +28,7 @@ export default function SelectProductFamily({ ProductFamilyData, onSelectItem })
                 key={index}
                 info={item}
                 onSelectItem={() => {
-                  onSelectItem('family', item);
+                  onSelectItem(item);
                 }}
               />
             ))}

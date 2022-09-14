@@ -36,7 +36,7 @@ export default function ResetPasswordForm() {
 
       sessionStorage.setItem('email-recovery', data.email);
 
-      navigate(PATH_AUTH.newPassword);
+      navigate(PATH_AUTH.verify);
     } catch (error) {
       console.error(error);
     }

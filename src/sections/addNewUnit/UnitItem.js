@@ -9,8 +9,8 @@ import Iconify from '../../components/Iconify';
 const BoxStyle = styled(Button)(() => ({
   borderRadius: '50%',
   border: '1px solid #a3a3a3',
-  width: 300,
-  height: 300,
+  maxWidth: 300,
+  maxHeight: 300,
   margin: 'auto',
 }));
 

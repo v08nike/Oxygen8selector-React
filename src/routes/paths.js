@@ -37,6 +37,7 @@ const ROOTS_UNIT = '/unit';
 export const PATH_UNIT = {
   view: (jobid) => path(ROOTS_UNIT, `/view/${jobid}`),
   add: (jobid) => path(ROOTS_UNIT, `/add/${jobid}`),
+  configure: (jobid) => path(ROOTS_UNIT, `/configure/${jobid}`),
   edit: (jobid, unitid) => path(ROOTS_UNIT, `/edit/${jobid}/${unitid}`),
 };
 

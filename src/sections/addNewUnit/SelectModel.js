@@ -51,8 +51,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 SelectModel.propTypes = {
   ModelData: PropTypes.array,
+  onSelectItem: PropTypes.func,
 };
-export default function SelectModel({ ModelData }) {
+export default function SelectModel({ ModelData, onSelectItem }) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [selectedId, setselctedId] = useState(-1);
@@ -79,7 +80,7 @@ export default function SelectModel({ ModelData }) {
                   display: 'grid',
                   rowGap: 3,
                   columnGap: 2,
-                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(3, 1fr)' },
+                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
                 }}
               >
                 {ModelData.map((item, index) => (
@@ -87,13 +88,16 @@ export default function SelectModel({ ModelData }) {
                     key={index}
                     id={index}
                     info={item}
-                    onSelectItem={handleDrawerOpen}
+                    onSelectItem={() => {
+                      handleDrawerOpen(index);
+                      onSelectItem(item);
+                    }}
                     active={selectedId === index}
                   />
                 ))}
               </Box>
             </CardContent>
-          </Card>{' '}
+          </Card>
         </Main>
         <Drawer
           sx={{

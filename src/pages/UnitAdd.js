@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Grid, Card, Step, Stepper, Container, StepLabel, StepConnector, Button } from '@mui/material';
 // _mock_
 import { _modelInfos, _productFamilyInfos } from '../_mock';
 // routes
-import { PATH_JOBS } from '../routes/paths';
+import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../routes/paths';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -89,16 +90,24 @@ function StepIcon({ active, completed }) {
 }
 
 export default function AddNewUnit() {
+  const { jobId } = useParams();
   const [activeStep, setActiveStep] = useState(1);
   const [selectStep, setActiveSelectStep] = useState(0);
   const [unitData, setUnitData] = useState();
+  const navigate = useNavigate();
   // const isComplete = activeStep === STEPS.length;
 
-  const onSelectProductFamilyItem = (type, value) => {
-    if (type === "family"){
-      setUnitData({...unitData, fimily: value});
-      setActiveSelectStep(1);
-    }
+  const onSelectProductFamilyItem = (value) => {
+    setUnitData({ ...unitData, fimily: value });
+    setActiveSelectStep(1);
+  };
+
+  const onSelectProductModelItem = (value) => {
+    setUnitData({ ...unitData, model: value });
+  };
+
+  const onClickNextStep = () => {
+    navigate(PATH_UNIT.configure(jobId), {unitData});
   };
 
   return (
@@ -118,13 +127,13 @@ export default function AddNewUnit() {
           {selectStep === 0 ? (
             <SelectProductFamily ProductFamilyData={_productFamilyInfos} onSelectItem={onSelectProductFamilyItem} />
           ) : (
-            <SelectModel ModelData={_modelInfos} />
+            <SelectModel ModelData={_modelInfos} onSelectItem={onSelectProductModelItem} />
           )}
         </Container>
         <FooterStepStyle>
           <Grid container>
             <Grid item xs={2} textAlign="center">
-              <Button href='/jobDashboard' color="primary" type="button">
+              <Button href={PATH_JOB.dashboard(jobId)} color="primary" type="button">
                 <Iconify icon={'akar-icons:arrow-left'} />
                 Back to job dashboard
               </Button>
@@ -149,7 +158,7 @@ export default function AddNewUnit() {
               </Stepper>
             </Grid>
             <Grid item xs={2} textAlign="center">
-              <Button color="primary">
+              <Button color="primary" onClick={onClickNextStep} disabled={selectStep === 0 || unitData.model === undefined}>
                 Next Step
                 <Iconify icon={'akar-icons:arrow-right'} />
               </Button>

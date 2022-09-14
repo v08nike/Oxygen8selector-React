@@ -39,6 +39,7 @@ export default function Router() {
           ),
         },
         { path: 'reset-password', element: <ResetPassword /> },
+        { path: 'verify', element: <VerifyCode /> },
       ],
     },
     // Main Routes
@@ -73,7 +74,8 @@ export default function Router() {
             { path: 'job/edit/:jobId', element: <JobEdit /> },
             { path: 'unit/view/:jobId/', element: <UnitView /> },
             { path: 'unit/add/:jobId/', element: <UnitAdd /> },
-            { path: 'unit/edit/:jobId/:unitId', element: <UnitEdit /> },
+            { path: 'unit/configure/:jobId', element: <SetUnitInfo /> },
+            { path: 'unit/edit/:jobId/:unitId', element: <SetUnitInfo /> },
           ],
         },
       ],
@@ -86,8 +88,8 @@ export default function Router() {
 const Login = Loadable(lazy(() => import('../pages/auth/Login')));
 // const Register = Loadable(lazy(() => import('../pages/auth/Register')));
 const ResetPassword = Loadable(lazy(() => import('../pages/auth/ResetPassword')));
+const VerifyCode = Loadable(lazy(() => import('../pages/auth/VerifyCode')));
 // const NewPassword = Loadable(lazy(() => import('../pages/auth/NewPassword')));
-// const VerifyCode = Loadable(lazy(() => import('../pages/auth/VerifyCode')));
 
 // Jobs
 const Jobs = Loadable(lazy(() => import('../pages/Jobs')));
@@ -95,11 +97,11 @@ const JobDashboard = Loadable(lazy(() => import('../pages/JobDashboard')));
 const JobEdit = Loadable(lazy(() => import('../pages/JobEdit')));
 // Unit
 const UnitView = Loadable(lazy(() => import('../pages/UnitView')));
-const UnitEdit = Loadable(lazy(() => import('../pages/UnitEdit')));
+const SetUnitInfo = Loadable(lazy(() => import('../pages/SetUnitInfo')));
 const UnitAdd = Loadable(lazy(() => import('../pages/UnitAdd')));
 // MyAccount
 const Account = Loadable(lazy(() => import('../pages/Account')));
 
 // Resource
-const Resources = Loadable(lazy(() => import('../pages/Recources')))
+const Resources = Loadable(lazy(() => import('../pages/Recources')));
 const Page404 = Loadable(lazy(() => import('../pages/Page404')));
