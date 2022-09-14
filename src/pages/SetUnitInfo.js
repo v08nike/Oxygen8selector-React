@@ -51,7 +51,7 @@ export default function SetUnitInfo() {
     {
       value: 'Selection',
       icon: <Iconify icon={'mdi:selection-ellipse'} width={20} height={20} />,
-      // component: <Selection />,
+      component: <Selection />,
     },
   ];
 

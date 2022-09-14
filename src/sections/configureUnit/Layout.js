@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+// import { useState } from 'react';
+// import { useNavigate, useParams } from 'react-router-dom';
 // @mui
-import { Box, Card, CardContent, CardActions, Container, Grid, Button, Stack, Alert } from '@mui/material';
+import { Box, Card, CardContent, CardActions, Container, Grid, Button, Stack} from '@mui/material';
 // form
 import { useForm } from 'react-hook-form';
 // redux
@@ -12,12 +12,12 @@ import { useForm } from 'react-hook-form';
 // components
 import Iconify from '../../components/Iconify';
 import Image from '../../components/Image';
-import { FormProvider, RHFTextField, RHFSelect } from '../../components/hook-form';
+import { FormProvider, RHFSelect } from '../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
 export default function Layout() {
-  const { jobId, unitId } = useParams();
+  // const { jobId, unitId } = useParams();
 
   const defaultValues = {
     heading: 'left',
@@ -34,7 +34,7 @@ export default function Layout() {
   const {
     reset,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    // formState: { errors, isSubmitting },
   } = methods;
 
   const onSubmit = async (data) => {
