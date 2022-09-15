@@ -35,8 +35,8 @@ const FooterStepStyle = styled(Card)(() => ({
 }));
 
 // ----------------------------------------------------------------------
-
-const STEPS = ['Complete job info', 'Add units', 'Make a selection', 'Submit drawing'];
+// , 'Make a selection', 'Submit drawing'
+const STEPS = ['Complete job info', 'Add units'];
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   top: 10,

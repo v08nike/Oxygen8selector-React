@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 // @mui
 import { m } from 'framer-motion';
 import { styled } from '@mui/material/styles';
@@ -21,7 +21,7 @@ import {
 // redux
 import { useSelector } from 'react-redux';
 // routes
-import { PATH_JOBS } from '../routes/paths';
+import { PATH_JOB, PATH_JOBS } from '../routes/paths';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -39,8 +39,8 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
-
-const STEPS = ['Complete job info', 'Add units', 'Make a selection', 'Submit drawing'];
+// , 'Make a selection', 'Submit drawing'
+const STEPS = ['Complete job info', 'Add units'];
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   top: 10,
@@ -89,6 +89,7 @@ function StepIcon({ active, completed }) {
 
 export default function JobDashboard() {
   const { jobId } = useParams();
+  const navigate = useNavigate();
   const info = useSelector((state) => ({
     jobInfo: state.jobs.jobList.filter((item) => item.jobId.toString() === jobId),
     unitInfo: state.jobs.unitList.filter((item) => item.jobId.toString() === jobId),
@@ -99,6 +100,11 @@ export default function JobDashboard() {
 
   const [activeStep, setActiveStep] = useState(unitInfo.data.length > 0 ? 2 : 1);
   // const isComplete = activeStep === STEPS.length;
+
+  const onClickRequestSubmittal = () => {
+    navigate(PATH_JOB.submittal(jobId));
+  };
+
   return (
     <Page title="Job: Dashboard">
       <RootStyle>
@@ -136,6 +142,7 @@ export default function JobDashboard() {
                     variant="outlined"
                     startIcon={<Iconify icon={'ant-design:mail-outlined'} />}
                     disabled={unitInfo.data.length === 0}
+                    onClick={onClickRequestSubmittal}
                   >
                     Request submittal
                   </Button>

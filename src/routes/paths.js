@@ -20,16 +20,17 @@ export const PATH_AUTH = {
 };
 
 // ----------------------------------------------------------------------
-const ROOTS_JOBS = '/jobs';
+const ROOT_JOBS = '/jobs';
 export const PATH_JOBS = {
-  root: ROOTS_JOBS,
+  root: ROOT_JOBS,
 }
 
-const ROOTS_JOB = '/job';
+const ROOT_JOB = '/job';
 export const PATH_JOB = {
-  root: ROOTS_JOB,
-  dashboard: (id) => path(ROOTS_JOB, `/dashboard/${id}`),
-  jobEdit: (id) => path(ROOTS_JOB, `/edit/${id}`),
+  root: ROOT_JOB,
+  dashboard: (id) => path(ROOT_JOB, `/dashboard/${id}`),
+  jobEdit: (id) => path(ROOT_JOB, `/edit/${id}`),
+  submittal: (id) => path(ROOT_JOB, `/submittal/${id}`)
 };
 
 // ----------------------------------------------------------------------

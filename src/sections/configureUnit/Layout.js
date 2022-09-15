@@ -87,6 +87,7 @@ export default function Layout() {
                 </CardActions>
               </Card>
             </FormProvider>
+            
           </Grid>
           <Grid item xs={6}>
             <Image src={'/assets/Layouts/layout_nova_in_h_rh.png'} wdith="100%" height="100%"/>

@@ -9,7 +9,7 @@ import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // paths
-import { PATH_JOB } from '../routes/paths';
+import { PATH_JOB, PATH_JOBS } from '../routes/paths';
 // redux
 import { useSelector } from '../redux/store';
 import { updateJob } from '../redux/slices/jobsReducer';
@@ -35,7 +35,7 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 //------------------------------------------------
 
-export default function EditJobInfo() {
+export default function JobSubmittal() {
   const { jobId } = useParams();
   const navigate = useNavigate();
 
@@ -132,8 +132,12 @@ export default function EditJobInfo() {
         <Container sx={{ mt: '20px' }}>
           <FormProvider methods={methods} onSubmit={handleSubmit(onJobInfoSubmit)}>
             <HeaderBreadcrumbs
-              heading="Edit Job Info"
-              links={[{ name: 'My Jobs', href: PATH_JOBS.root },{ name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) }, { name: 'Edit Job Info' }]}
+              heading="Job Submittal"
+              links={[
+                { name: 'My Jobs', href: PATH_JOBS.root },
+                { name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) },
+                { name: 'Job Submittal' },
+              ]}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                   <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

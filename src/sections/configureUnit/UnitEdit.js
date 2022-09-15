@@ -130,7 +130,7 @@ export default function UnitEdit() {
           </Button>
         </Stack>
         <Grid container spacing={3}>
-          <Grid item xs={4} md={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ mb: 3 }}>
               <CardHeaderStyle title="GENTERAL UNIT INFORMATION" />
               <CardContent sx={{ height: '600px' }}>
@@ -166,7 +166,7 @@ export default function UnitEdit() {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={4} md={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ mb: 3 }}>
               <CardHeaderStyle title="AIR FLOW DATA" />
               <CardContent sx={{ height: '600px' }}>
@@ -186,7 +186,7 @@ export default function UnitEdit() {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={4} md={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ mb: 3 }}>
               <CardHeaderStyle title="COMPONENTS" />
               <CardContent sx={{ height: '600px' }}>

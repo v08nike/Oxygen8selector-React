@@ -2,8 +2,11 @@ import * as React from 'react';
 
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+
 // @mui
 import { styled } from '@mui/material/styles';
+
 import {
   Box,
   Card,
@@ -25,17 +28,30 @@ import {
 // components
 // import Iconify from '../../components/Iconify';
 
+// hooks
+import { FormProvider, RHFTextField } from '../../components/hook-form';
+
 // ----------------------------------------------------------------------
 
-const GroupHeaderStyle = styled('h1')(({ theme }) => ({
+const GroupHeaderStyle = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,
-  paddingLeft: '30px',
+  padding: '5px 25px',
+  backgroundColor: theme.palette.primary.main,
 }));
 
 const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
-  padding: '5px 24px',
+  padding: '0 0 2px',
   color: 'white',
   backgroundColor: theme.palette.primary.main,
+}));
+
+const CardHeaderRHFTextFieldStyle = styled(RHFTextField)(() => ({
+  '& .MuiFilledInput-root': {
+    background: 'rgb(255, 255, 255)',
+    '&:hover':{
+      background: 'rgb(239, 239, 239)',
+    }
+  },
 }));
 
 // ----------------------------------------------------------------------
@@ -167,39 +183,60 @@ export default function Selection() {
     },
   ];
 
+  const methods = useForm();
+
   return (
     <Container>
-      <Card>
-        <Stack spacing={3}>
+      <FormProvider methods={methods}>
+        <Stack spacing={5} sx={{ mt: 2 }}>
           {SelectionInfo.map((item, index) => (
             <div key={index}>
-              <GroupHeaderStyle>{item.groupName}</GroupHeaderStyle>
-              {item.subGroups.map((element, index) => (
-                <Card key={element.title + index} sx={{p: '20px'}}>
-                  <CardHeaderStyle title={element.title} />
-                  <CardContent>
-                    <TableContainer component={Paper}>
-                      <Table size="small">
-                        <TableBody>
-                          {element.data.map((row, index) => (
-                            <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                              {row.map((item, index) => (
-                                <TableCell key={index} component="th" scope="row" align="left">
-                                  {item}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </CardContent>
-                </Card>
-              ))}
+              <GroupHeaderStyle>
+                <RHFTextField
+                  size="small"
+                  name={item.groupName}
+                  color={'info'}
+                  label={item.groupName}
+                  sx={{ color: 'white' }}
+                />
+              </GroupHeaderStyle>
+              <Stack spacing={3} sx={{ background: '#efefef' }}>
+                {item.subGroups.map((element, index) => (
+                  <Card key={element.title + index} sx={{ m: '20px 30px!important' }}>
+                    <CardHeaderStyle
+                      title={
+                        <CardHeaderRHFTextFieldStyle
+                          size="small"
+                          name={element.title}
+                          label={element.title}
+                          variant={'filled'}
+                        />
+                      }
+                    />
+                    <CardContent>
+                      <TableContainer component={Paper}>
+                        <Table size="small">
+                          <TableBody>
+                            {element.data.map((row, index) => (
+                              <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                {row.map((item, index) => (
+                                  <TableCell key={index} component="th" scope="row" align="left">
+                                    {item}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
             </div>
           ))}
         </Stack>
-      </Card>
+      </FormProvider>
     </Container>
   );
 }
