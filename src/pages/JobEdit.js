@@ -9,7 +9,7 @@ import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // paths
-import { PATH_JOB } from '../routes/paths';
+import { PATH_JOB, PATH_JOBS } from '../routes/paths';
 // redux
 import { useSelector } from '../redux/store';
 import { updateJob } from '../redux/slices/jobsReducer';
@@ -17,6 +17,7 @@ import { updateJob } from '../redux/slices/jobsReducer';
 import Page from '../components/Page';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFSelect } from '../components/hook-form';
+import Iconify from '../components/Iconify';
 
 //------------------------------------------------
 
@@ -136,7 +137,7 @@ export default function EditJobInfo() {
               links={[{ name: 'My Jobs', href: PATH_JOBS.root },{ name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) }, { name: 'Edit Job Info' }]}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-                  <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  <LoadingButton type="submit" variant="string" startIcon={<Iconify icon={'fluent:save-24-regular'} />} loading={isSubmitting}>
                     Save Changes
                   </LoadingButton>
                 </Stack>

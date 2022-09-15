@@ -3,7 +3,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Container, Box, Grid, CardHeader, CardContent, Card, Stack, Checkbox, FormControlLabel } from '@mui/material';
+import {
+  Container,
+  Box,
+  Grid,
+  CardHeader,
+  CardContent,
+  Card,
+  Stack,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,7 +31,9 @@ import { updateJob } from '../redux/slices/jobsReducer';
 // components
 import Page from '../components/Page';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
-import { FormProvider, RHFTextField, RHFSelect } from '../components/hook-form';
+import Iconify from '../components/Iconify';
+import Scrollbar from '../components/Scrollbar';
+import { FormProvider, RHFTextField, RHFSelect, RHFCheckbox } from '../components/hook-form';
 
 //------------------------------------------------
 
@@ -35,6 +52,108 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 //------------------------------------------------
 
+const ProjectInfoTableHeader = [
+  'QTY',
+  'TAG',
+  'ITEM',
+  'MODEL',
+  'VOLTAGE',
+  'CONTROLS PREFERENCE',
+  'INSTALLATION',
+  'DUCT CONNECTION',
+  'HANDING',
+  'PART DESC',
+  'PART NUMBER',
+  'PRICING',
+];
+
+const ProjectInfo = [
+  [
+    '1',
+    'ERV1',
+    'ERV',
+    'C24IN',
+    '208V/3ph/60Hz',
+    'Constant Volume',
+    'Vertical',
+    'FP1',
+    'LH',
+    'NOVA_C24_ERV_S_I_L_V_S1_ND_01_02_03_04_2083_13_08',
+    '900091-001',
+    '$15,266.31',
+  ],
+  [
+    '1',
+    'ERV1',
+    'ERV',
+    'C24IN',
+    '208V/3ph/60Hz',
+    'Constant Volume',
+    'Vertical',
+    'FP1',
+    'LH',
+    'NOVA_C24_ERV_S_I_L_V_S1_ND_01_02_03_04_2083_13_08',
+    '900091-001',
+    '$15,266.31',
+  ],
+  [
+    '1',
+    'ERV1',
+    'ERV',
+    'C24IN',
+    '208V/3ph/60Hz',
+    'Constant Volume',
+    'Vertical',
+    'FP1',
+    'LH',
+    'NOVA_C24_ERV_S_I_L_V_S1_ND_01_02_03_04_2083_13_08',
+    '900091-001',
+    '$15,266.31',
+  ],
+  [
+    '1',
+    'ERV1',
+    'ERV',
+    'C24IN',
+    '208V/3ph/60Hz',
+    'Constant Volume',
+    'Vertical',
+    'FP1',
+    'LH',
+    'NOVA_C24_ERV_S_I_L_V_S1_ND_01_02_03_04_2083_13_08',
+    '900091-001',
+    '$15,266.31',
+  ],
+  [
+    '1',
+    'ERV1',
+    'ERV',
+    'C24IN',
+    '208V/3ph/60Hz',
+    'Constant Volume',
+    'Vertical',
+    'FP1',
+    'LH',
+    'NOVA_C24_ERV_S_I_L_V_S1_ND_01_02_03_04_2083_13_08',
+    '900091-001',
+    '$15,266.31',
+  ],
+  [
+    '1',
+    'ERV1',
+    'ERV',
+    'C24IN',
+    '208V/3ph/60Hz',
+    'Constant Volume',
+    'Vertical',
+    'FP1',
+    'LH',
+    'NOVA_C24_ERV_S_I_L_V_S1_ND_01_02_03_04_2083_13_08',
+    '900091-001',
+    '$15,266.31',
+  ],
+];
+
 export default function JobSubmittal() {
   const { jobId } = useParams();
   const navigate = useNavigate();
@@ -44,72 +163,30 @@ export default function JobSubmittal() {
 
   const UpdateJobInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Job Name'),
-    basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
-    referenceNo: Yup.string().required('Please select a Reference'),
-    revision: Yup.string().required('Please enter a Revision'),
-    createdDate: Yup.string().required('Please enter a Created Date'),
-    revisedDate: Yup.string().required('Please enter a Revised Date'),
-    rep: Yup.string().required('Please enter a Rep'),
-    companyName: Yup.string().required('Please enter a Company Name'),
-    contactName: Yup.string().required('Please enter a Contact Name'),
-    application: Yup.string().required('Please enter a Application'),
-    uom: Yup.string().required('Please select a UoM'),
-    country: Yup.string().required('Please select a County'),
-    state: Yup.string().required('Please select a Province / State'),
-    city: Yup.string().required('Please enter a city'),
-    ashareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
-    alltitude: Yup.string(),
-    summer_air_db: Yup.string(),
-    summer_air_wb: Yup.string(),
-    summer_air_rh: Yup.string(),
-    winter_air_db: Yup.string(),
-    winter_air_wb: Yup.string(),
-    winter_air_rh: Yup.string(),
-    summer_return_db: Yup.string(),
-    summer_return_wb: Yup.string(),
-    summer_return_rh: Yup.string(),
-    winter_return_db: Yup.string(),
-    winter_return_wb: Yup.string(),
-    winter_return_rh: Yup.string(),
+    repName: Yup.string().required('Please enter a Rep Name'),
+    salesEngineer: Yup.string().required('Please enter a Sales Engineer'),
+    leadTime: Yup.string().required('Please enter a Lead Time'),
+    revisionNo: Yup.string().required('Please enter a Revision No'),
+    PONumber: Yup.string().required('Please enter a PO Number'),
+    shipName: Yup.string().required('Please enter a Ship Name'),
+    streetAddress: Yup.string().required('Please enter a Street Address'),
+    city: Yup.string().required('Please enter a City'),
+    state: Yup.string().required('Please enter a State'),
+    zip: Yup.string().required('Please enter a Zip'),
+    Country: Yup.string().required('Please Select a Country'),
+    dockType: Yup.string().required('Please Select a Dock type'),
+    coilHandling: Yup.string().required('Please Select a Coil Handling'),
+    notes: Yup.string().required('Please enter a Notes'),
+    shipping: Yup.string().required('Please enter a Shipping'),
   });
 
-  const defaultValues = {
-    jobName: '',
-    basisOfDesign: 'no',
-    referenceNo: '',
-    revision: 'Welcome',
-    createdDate: '',
-    revisedDate: '',
-    companyName: 'oxygen8',
-    contactName: 'Joe',
-    application: 'I hope to work',
-    uom: 'Joe',
-    country: 'usa',
-    state: 'al',
-    city: 'al',
-    ashareDesignConditions: '2',
-    alltitude: '',
-    summer_air_db: '',
-    summer_air_wb: '',
-    summer_air_rh: '',
-    winter_air_db: '',
-    winter_air_wb: '',
-    winter_air_rh: '',
-    summer_return_db: '',
-    summer_return_wb: '',
-    summer_return_rh: '',
-    winter_return_db: '',
-    winter_return_wb: '',
-    winter_return_rh: '',
-  };
-
-  Object.entries(jobInfo).forEach(([key, value]) => {
-    defaultValues[key] = value;
-  });
+  // const defaultValues = {
+  //   jobName: '',
+  // };
 
   const methods = useForm({
     resolver: yupResolver(UpdateJobInfoSchema),
-    defaultValues,
+    // defaultValues,
   });
 
   const {
@@ -119,7 +196,6 @@ export default function JobSubmittal() {
 
   const onJobInfoSubmit = async (data) => {
     try {
-      updateJob({ jobId: jobInfo.jobId, data });
       navigate(PATH_JOB.dashboard(jobId));
     } catch (error) {
       console.error(error);
@@ -140,109 +216,168 @@ export default function JobSubmittal() {
               ]}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-                  <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  <LoadingButton
+                    type="submit"
+                    variant="string"
+                    startIcon={<Iconify icon={'fluent:save-24-regular'} />}
+                    loading={isSubmitting}
+                  >
                     Save Changes
                   </LoadingButton>
                 </Stack>
               }
             />
             <Grid container spacing={3}>
-              <Grid item xs={4} md={4}>
+              <Grid item xs={12} sm={6} md={4}>
+                <Card sx={{ mb: 3 }}>
+                  <CardHeaderStyle title="Summary" />
+                  <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField size="small" name="jobName" label="Project Name" disabled />
+                      <RHFTextField size="small" name="repName" label="Rep Name" disabled />
+                      <RHFTextField size="small" name="salesEngineer" label="Sales Engineer" disabled />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Card sx={{ mb: 3 }}>
+                  <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField size="small" name="leadTime" label="Lead Time" />
+                      <RHFTextField size="small" name="revisionNo" label="revisionNo" />
+                      <RHFTextField size="small" name="PONumber" label="PO Number" />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Card sx={{ mb: 3 }}>
+                  <CardHeaderStyle title="Ship To Address" />
+                  <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField size="small" name="shipName" label="Name" />
+                      <RHFTextField size="small" name="streetAddress" label="Street Address" />
+                      <RHFTextField size="small" name="city" label="City" />
+                      <RHFTextField size="small" name="state" label="State / Province" />
+                      <RHFTextField size="small" name="zip" label="Zip / Postal Code" />
+                      <RHFSelect size="small" name="Country" label="Country" placeholder="">
+                        <option value="" />
+                        <option value="can">Canada</option>
+                        <option value="usa">USA</option>
+                      </RHFSelect>{' '}
+                      <RHFSelect size="small" name="dockType" label="Dock Type" placeholder="">
+                        <option value="" />
+                        <option value="type1">Type1</option>
+                        <option value="type2">Type2</option>
+                      </RHFSelect>{' '}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6} md={4}>
+                <Card sx={{ mb: 3 }}>
+                  <CardHeaderStyle title="All (defualt)" />
+                  <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFCheckbox size="small" name="voltageTable" label="Voltage Table" />
+                      <RHFCheckbox size="small" name="BACNetPointsList" label="BACNet Points List" />
+                      <RHFCheckbox size="small" name="OJHMISpec" label="OJ HMI Spec" />
+                      <RHFCheckbox
+                        size="small"
+                        name="terminalStringWiringDiagram"
+                        label="Terminal string wiring diagram"
+                      />
+                      <RHFCheckbox size="small" name="fireAlarm" label="Fire alarm" />
+                      <RHFCheckbox size="small" name="backdraftDampers" label="Backdraft dampers" />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Card sx={{ mb: 3 }}>
+                  <CardHeaderStyle title="SOO" />
+                  <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFCheckbox size="small" name="bpassForDefrost" label="Bpass for Defrost" />
+                      <RHFCheckbox size="small" name="constantVolume" label="Constant Volume" />
+                      <RHFCheckbox size="small" name="hydronicPreHeat" label="Hydronic pre-heat" />
+                      <RHFCheckbox size="small" name="humidification" label="Humidification" />
+                      <RHFCheckbox size="small" name="temperatureControl" label="Temperature control" />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Card sx={{ mb: 3 }}>
+                  <CardHeaderStyle title="Handling" />
+                  <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFSelect size="small" name="coilHandling" label="Coil handling" placeholder="">
+                        <option value="" />
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                      </RHFSelect>{' '}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
                 <Card sx={{ mb: 3 }}>
                   <CardHeaderStyle title="Project Information" />
                   <CardContent>
-                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="jobName" label="Project Name" />
-                      <RHFSelect size="small" name="basisOfDesign" label="Basis of Design" placeholder="">
-                        <option value="" />
-                        <option value="N/a">N/a</option>
-                        <option value="no">No</option>
-                        <option value="yes">Yes</option>
-                        <option value="tbd">TBD</option>
-                      </RHFSelect>
-                      <RHFTextField size="small" name="referenceNo" label="Reference #" />
-                      <RHFTextField size="small" name="revision" label="Revision #" />
-                      <RHFTextField size="small" name="createdDate" label="Created Date" />
-                      <RHFTextField size="small" name="revisedDate" label="Revised Date" />
-                      <RHFTextField size="small" name="rep" label="Rep" />
-                      <RHFSelect size="small" name="companyName" label="Company Name" placeholder="">
-                        <option value="" />
-                        <option value="oxygen8">Oxygen8</option>
-                      </RHFSelect>
-                      <RHFSelect size="small" name="contactName" label="Contact Name" placeholder="">
-                        <option value="" />
-                        <option value="Joe">Joe</option>
-                      </RHFSelect>
-                      <RHFTextField size="small" name="application" label="Applicaton" />
-                      <RHFSelect size="small" name="uom" label="UoM" placeholder="">
-                        <option value="" />
-                        <option value="Joe">IDE</option>
-                      </RHFSelect>
-                    </Box>
+                    <TableContainer component={Paper} dense>
+                      <Scrollbar>
+                        <Table size="small">
+                          <TableHead>
+                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                              {ProjectInfoTableHeader.map((item, index) => (
+                                <TableCell key={index} component="th" scope="row" align="left">
+                                  {item}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+
+                          <TableBody>
+                            {ProjectInfo.map((row, index) => (
+                              <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                {row.map((item, index) => (
+                                  <TableCell key={index} component="th" scope="row" align="left">
+                                    {item}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Scrollbar>
+                    </TableContainer>
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={4} md={4}>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
                 <Card sx={{ mb: 3 }}>
-                  <CardHeaderStyle title="Project Location" />
+                  <CardHeaderStyle title="Added Notes" />
                   <CardContent>
-                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFSelect size="small" name="country" label="Country" placeholder="">
-                        <option value="" />
-                        <option value="can">CAN</option>
-                        <option value="usa">USA</option>
-                      </RHFSelect>
-                      <RHFSelect size="small" name="state" label="Province / State" placeholder="">
-                        <option value="" />
-                        <option value="ak">AK</option>
-                        <option value="al">AL</option>
-                        <option value="ar">AR</option>
-                      </RHFSelect>
-                      <RHFSelect size="small" name="city" label="City" placeholder="">
-                        <option value="" />
-                        <option value="ak">ADAK (NAS)</option>
-                        <option value="al">AMBLER</option>
-                        <option value="ar">ANVIK</option>
-                      </RHFSelect>
-                      <RHFSelect
-                        size="small"
-                        name="ashareDesignConditions"
-                        label="ASHRAE Design Conditions"
-                        placeholder=""
-                      >
-                        <option value="" />
-                        <option value="1">0.4% / 99.6%</option>
-                        <option value="2">1% / 99%</option>
-                      </RHFSelect>
-                    </Box>
+                    <RHFTextField size="small" name="notes" label="Enter Notes" />
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={4} md={4}>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
                 <Card sx={{ mb: 3 }}>
-                  <CardHeaderStyle title="Outdoor Air Design Conditions" />
+                  <CardHeaderStyle title="Added Shipping Instructions" />
                   <CardContent>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="alltitude" label="Alltitude" />
-                      <RHFTextField size="small" name="summer_air_db" label="Summer Outdoor Air DB (F)" />
-                      <RHFTextField size="small" name="summer_air_wb" label="Summer Outdoor Air WB (F)" />
-                      <RHFTextField size="small" name="summer_air_rh" label="Summer Outdoor Air RH (%)" />
-                      <RHFTextField size="small" name="winter_air_db" label="Winter Outdoor Air DB" />
-                      <RHFTextField size="small" name="winter_air_wb" label="Winter Outdoor Air WB" />
-                      <RHFTextField size="small" name="winter_air_rh" label="Winter Outdoor Air RH" />
-                    </Box>
-                  </CardContent>
-                </Card>
-                <Card sx={{ mb: 3 }}>
-                  <CardHeaderStyle title="Return Air Design Conditions" />
-                  <CardContent>
-                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="summer_return_db" label="Summer Return Air DB (F)" />
-                      <RHFTextField size="small" name="summer_return_wb" label="Summer Return Air WB (F)" />
-                      <RHFTextField size="small" name="summer_return_rh" label="Summer Return Air RH (%)" />
-                      <RHFTextField size="small" name="winter_return_db" label="Winter Return Air DB" />
-                      <RHFTextField size="small" name="winter_return_wb" label="Winter Return Air WB" />
-                      <RHFTextField size="small" name="winter_return_rh" label="Winter Return Air RH" />
+                      <RHFTextField size="small" name="shipping" label="Enter Shipping" />
                     </Box>
                   </CardContent>
                 </Card>

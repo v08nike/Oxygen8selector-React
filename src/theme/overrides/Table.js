@@ -18,6 +18,7 @@ export default function Table(theme) {
       styleOverrides: {
         root: {
           borderBottom: 'none',
+          fontSize: '12px'
         },
         head: {
           color: theme.palette.text.secondary,
