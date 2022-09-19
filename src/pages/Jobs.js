@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -13,6 +13,7 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  CircularProgress,
 } from '@mui/material';
 
 // routes
@@ -21,14 +22,20 @@ import { PATH_JOBS, PATH_JOB } from '../routes/paths';
 import useTabs from '../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../hooks/useTable';
 // redux
-import { useSelector } from '../redux/store';
-import { getJobList, addNewJob, setJobInfo, deleteJob } from '../redux/slices/jobsReducer';
+import { useSelector, useDispatch } from '../redux/store';
+import jobsReducer, { getJobsInfo, addNewJob, setJobInfo, deleteJob } from '../redux/slices/jobsReducer';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
 import Scrollbar from '../components/Scrollbar';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
-import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../components/table';
+import {
+  TableEmptyRows,
+  TableHeadCustom,
+  TableNoData,
+  TableLoadingData,
+  TableSelectedActions,
+} from '../components/table';
 // sections
 import { JobsTableToolbar, JobsTableRow } from '../sections/jobslist';
 import NewJobFormDialog from '../sections/dialog/NewJobFormDialog';
@@ -47,21 +54,23 @@ const RootStyle = styled('div')(({ theme }) => ({
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 
 const TABLE_HEAD = [
-  { id: 'projectName', label: 'Project Name', align: 'left' },
-  { id: 'referenceNo', label: 'Reference no', align: 'left' },
-  { id: 'revNo', label: 'Rev no', align: 'left' },
-  { id: 'rep', label: 'Rep', align: 'left' },
-  { id: 'createdBy', label: 'Created By', align: 'left' },
-  { id: 'revisiedBy', label: 'Revisied By', align: 'left' },
-  { id: 'createdDate', label: 'Created Date', align: 'left' },
-  { id: 'revisedDate', label: 'Revised Date', align: 'left' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'job_name', label: 'Project Name', align: 'left' },
+  { id: 'reference_no', label: 'Reference no', align: 'left' },
+  { id: 'revision_no', label: 'Rev no', align: 'left' },
+  { id: 'Customer_Name', label: 'Rep', align: 'left' },
+  { id: 'Created_User_Full_Name', label: 'Created By', align: 'left' },
+  { id: 'Revised_User_Full_Name', label: 'Revisied By', align: 'left' },
+  { id: 'created_date', label: 'Created Date', align: 'left' },
+  { id: 'revised_date', label: 'Revised Date', align: 'left' },
+  // { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function MyJobs() {
+  const dispatch = useDispatch();
+
   const {
     page,
     order,
@@ -83,8 +92,16 @@ export default function MyJobs() {
 
   const navigate = useNavigate();
 
-  const tableData = useSelector(getJobList);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    dispatch(getJobsInfo());
+  }, [dispatch]);
+
+  const { jobList, isLoading } = useSelector((state) => state.jobs);
+  const tableData = jobList;
+
+  console.log(isLoading, jobList);
   // const [tableData, setTableData] = useState(myJobList);
 
   const [filterName, setFilterName] = useState('');
@@ -235,26 +252,24 @@ export default function MyJobs() {
                     onSelectAllRows={(checked) =>
                       onSelectAllRows(
                         checked,
-                        tableData.map((row) => row.jobId)
+                        tableData.map((row) => row.id)
                       )
                     }
                   />
-
                   <TableBody>
                     {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                       <JobsTableRow
                         key={index}
                         row={row}
-                        selected={selected.includes(row.jobId)}
-                        onSelectRow={() => onSelectRow(row.jobId)}
-                        onDeleteRow={() => handleOneConfirmDialogOpen(row.jobId)}
-                        onEditRow={() => handleEditRow(row.jobId)}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
-
                     <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, tableData.length)} />
-
-                    <TableNoData isNotFound={isNotFound} />
+                    <TableLoadingData isLoading={isLoading} />
+                    <TableNoData isNotFound={isNotFound} isLoading={isLoading} />
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -311,13 +326,13 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
   if (filterName) {
     tableData = tableData.filter(
       (item) =>
-        item.projectName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.referenceNo.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.rep.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.createdBy.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.createdDate.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.revisedDate.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.status.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.job_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.reference_no.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.revision_no.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.Customer_Name.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.Created_User_Full_Name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.created_date.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.revised_date.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 
@@ -326,7 +341,12 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
   }
 
   if (filterRole !== 'All') {
-    tableData = tableData.filter((item) => item.role === filterRole);
+    if(filterRole === "My Jobs"){
+      console.log(localStorage.getItem("userId"));
+      tableData = tableData.filter((item) => item.created_user_id.toString() === localStorage.getItem("userId"));
+    } else {
+      tableData = tableData.filter((item) => item.created_user_id.toString() !== localStorage.getItem("userId"));
+    }
   }
 
   return tableData;

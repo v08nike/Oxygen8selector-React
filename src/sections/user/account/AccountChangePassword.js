@@ -4,10 +4,12 @@ import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // @mui
-import { Stack, Card } from '@mui/material';
+import { Stack, Card, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
+import axios from '../../../utils/axios';
+import { serverUrl } from '../../../config';
 
 // ----------------------------------------------------------------------
 
@@ -34,14 +36,23 @@ export default function AccountChangePassword() {
   const {
     reset,
     handleSubmit,
-    formState: { isSubmitting },
+    setError,
+    formState: { errors, isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      enqueueSnackbar('Update success!');
+      const response = await axios.post(`${serverUrl}/api/user/updatePassword`, {
+        userId: localStorage.getItem('userId'),
+        currentPassword: data.oldPassword,
+        updatedPassword: data.newPassword,
+      });
+
+      if (response.data === 'incorrect_current_password') {
+        setError('afterSubmit', { message: 'Incorrect Old Password!' });
+      } else if (response.data === 'success') {
+        setError('afterSubmitSuccess', { message: 'Updated successfully!' });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -51,6 +62,17 @@ export default function AccountChangePassword() {
     <Card sx={{ p: 3, mr: 'auto', ml: 'auto', maxWidth: '400px' }}>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3} alignItems="flex-end">
+          {!!errors.afterSubmit && (
+            <Alert sx={{ width: '100%' }} severity="error">
+              {errors.afterSubmit.message}
+            </Alert>
+          )}
+          {!!errors.afterSubmitSuccess && (
+            <Alert sx={{ width: '100%' }} severity="success">
+              {errors.afterSubmitSuccess.message}
+            </Alert>
+          )}
+
           <RHFTextField name="oldPassword" type="password" label="Old Password" />
 
           <RHFTextField name="newPassword" type="password" label="New Password" />

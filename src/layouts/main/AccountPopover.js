@@ -87,12 +87,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {/* {user?.displayName} */}
-            John Doe
+            {localStorage.getItem("username")}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {/* {user?.email} */}
-            johndoe@demo.com
+            {localStorage.getItem("email")}
           </Typography>
         </Box>
 

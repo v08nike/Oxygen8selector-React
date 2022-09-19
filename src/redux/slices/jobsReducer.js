@@ -7,24 +7,32 @@ import { dispatch } from '../store';
 import { _jobList, _unitList } from '../../_mock/_myJobs';
 // paths
 // import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../../routes/paths';
+// utils
+import axios from '../../utils/axios';
+// config
+import { serverUrl } from '../../config';
 
 // ----------------------------------------------------------------------
 
 const initialState = {
-  jobList: _jobList,
-  unitList: _unitList,
+  isLoading: true,
+  jobList: [],
 };
 
 const JobsSlice = createSlice({
   name: 'jobs',
   initialState,
   reducers: {
+    startLoading(state) {
+      state.isLoading = true;
+    },
+    setJobInfo(state, action) {
+      state.isLoading = false;
+      state.jobList = action.payload;
+    },
     // GET JOB DATA
     getJobInfo(state, action) {
       return state.jobList;
-    },
-    setJobInfo(state, action) {
-      state.jobList = action.payload;
     },
     getJobInfoByID(state, action) {},
     addJob(state, action) {
@@ -67,9 +75,22 @@ export default JobsSlice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getJobList(state) {
-  return state.jobs.jobList;
-}
+// export const getJobList = async (state) => {
+//   const response = await axios.post((`${serverUrl}/api/auth/login`), {
+//     userId: localStorage.getItem("userId"),
+//     action: "all",
+//   });
+
+//   return response.data;
+// }
+
+export function getJobsInfo() {
+  return async () => {
+    dispatch(JobsSlice.actions.startLoading());
+    const response = await axios.post(`${serverUrl}/api/jobs/get`);
+    dispatch(JobsSlice.actions.setJobInfo(response.data));
+  };
+};
 
 export function addNewJob(data) {
   dispatch(JobsSlice.actions.addJob(data));

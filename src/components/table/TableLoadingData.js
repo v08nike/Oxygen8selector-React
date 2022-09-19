@@ -1,27 +1,23 @@
 import PropTypes from 'prop-types';
 // @mui
-import { TableRow, TableCell } from '@mui/material';
+import { TableRow, TableCell, Box, CircularProgress } from '@mui/material';
 //
 import EmptyContent from '../EmptyContent';
 
 // ----------------------------------------------------------------------
 
-TableNoData.propTypes = {
-  isNotFound: PropTypes.bool,
+TableLoadingData.propTypes = {
   isLoading: PropTypes.bool,
 };
 
-export default function TableNoData({ isNotFound, isLoading }) {
+export default function TableLoadingData({ isLoading }) {
   return (
     <TableRow>
-      {isNotFound && !isLoading ? (
+      {isLoading ? (
         <TableCell colSpan={12}>
-          <EmptyContent
-            title="No Data"
-            sx={{
-              '& span.MuiBox-root': { height: 160 },
-            }}
-          />
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+            <CircularProgress size="lg" />
+          </Box>
         </TableCell>
       ) : (
         <TableCell colSpan={12} sx={{ p: 0 }} />

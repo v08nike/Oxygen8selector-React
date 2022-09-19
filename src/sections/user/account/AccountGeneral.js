@@ -84,18 +84,18 @@ export default function AccountGeneral() {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
               }}
             >
-              <RHFTextField name="username" label="Username" />
-              <RHFTextField name="firstName" label="First Name" />
-              <RHFTextField name="lastName" label="Last Name" />
-              <RHFTextField name="eMail" label="E-Mail" />
-              <RHFTextField name="repName" label="Rep.Name" />
+              <RHFTextField name="username" label="Username" disabled/>
+              <RHFTextField name="firstName" label="First Name" disabled/>
+              <RHFTextField name="lastName" label="Last Name" disabled/>
+              <RHFTextField name="eMail" label="E-Mail" disabled/>
+              <RHFTextField name="repName" label="Rep.Name" disabled/>
             </Box>
 
-            <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
+            {/* <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save Changes
               </LoadingButton>
-            </Stack>
+            </Stack> */}
           </FormProvider>
         </Grid>
       </Grid>

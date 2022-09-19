@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
@@ -21,7 +22,17 @@ UserTableRow.propTypes = {
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { projectName, referenceNo, revNo, rep, createdBy, revisiedBy, createdDate,  revisedDate, status} = row;
+  const {
+    job_name,
+    reference_no,
+    revision_no,
+    Customer_Name,
+    Created_User_Full_Name,
+    Revised_User_Full_Name,
+    created_date,
+    revised_date,
+    status,
+  } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -39,20 +50,16 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell align="left">
-        {projectName}
-      </TableCell>
-      <TableCell align="left">{referenceNo}</TableCell>
-      <TableCell align="left">
-        {revNo}
-      </TableCell>
+      <TableCell align="left">{job_name}</TableCell>
+      <TableCell align="left">{reference_no}</TableCell>
+      <TableCell align="left">{revision_no}</TableCell>
 
-      <TableCell align="center">{rep}</TableCell>
-      <TableCell align="center">{createdBy}</TableCell>
-      <TableCell align="center">{revisiedBy}</TableCell>
-      <TableCell align="center">{createdDate}</TableCell>
-      <TableCell align="center">{revisedDate}</TableCell>
-      <TableCell align="left">
+      <TableCell align="left">{Customer_Name}</TableCell>
+      <TableCell align="left">{Created_User_Full_Name}</TableCell>
+      <TableCell align="left">{Created_User_Full_Name}</TableCell>
+      <TableCell align="left">{created_date}</TableCell>
+      <TableCell align="left">{revised_date}</TableCell>
+      {/* <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={(status === 'pending' && 'info') || 'success'}
@@ -60,7 +67,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         >
           {status}
         </Label>
-      </TableCell>
+      </TableCell> */}
 
       <TableCell align="right">
         <TableMoreMenu
@@ -69,16 +76,11 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           onClose={handleCloseMenu}
           actions={
             <>
-              <MenuItem
-                sx={{ color: 'info.main' }}
-                onClick={onEditRow}
-              >
+              <MenuItem sx={{ color: 'info.main' }} onClick={onEditRow}>
                 <Iconify icon={'akar-icons:eye'} />
                 View Job
-              </MenuItem>            
-              <MenuItem
-                sx={{ color: 'info.main' }}
-              >
+              </MenuItem>
+              <MenuItem sx={{ color: 'info.main' }}>
                 <Iconify icon={'codicon:copy'} />
                 Duplicate
               </MenuItem>
@@ -97,5 +99,6 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           }
         />
       </TableCell>
-    </TableRow>);
+    </TableRow>
+  );
 }

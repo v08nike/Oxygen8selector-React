@@ -110,3 +110,5 @@ export const allLangs = [
 ];
 
 export const defaultLang = allLangs[0]; // English
+
+export const serverUrl = "http://localhost:51045";

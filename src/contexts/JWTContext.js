@@ -3,8 +3,7 @@ import { createContext, useEffect, useReducer } from 'react';
 // utils
 import axios from '../utils/axios';
 import { isValidToken, setSession } from '../utils/jwt';
-// _mock
-import {_userList} from '../_mock/_user';
+import { serverUrl } from '../config';
 
 // ----------------------------------------------------------------------
 
@@ -76,8 +75,20 @@ function AuthProvider({ children }) {
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
 
-          const response = await axios.get('/api/account/my-account');
-          const { user } = response.data;
+          const user = {
+            userId : localStorage.getItem("userId"),
+            username : localStorage.getItem("username"),
+            firstname : localStorage.getItem("firstname"),
+            lastname : localStorage.getItem("lastname"),
+            initials : localStorage.getItem("initials"),
+            email : localStorage.getItem("email"),
+            title : localStorage.getItem("title"),
+            cutomerId : localStorage.getItem("cutomerId"),
+            access : localStorage.getItem("access"),
+            AUL : localStorage.getItem("AUL"),
+            accessPricing : localStorage.getItem("accessPricing"),
+            created_date : localStorage.getItem("created_date")
+          }
 
           dispatch({
             type: 'INITIALIZE',
@@ -111,24 +122,41 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    // const response = await axios.post('/api/account/login', {
-    //   email,
-    //   password,
-    // });
-
-    const user = _userList.filter((item) => item.email === email);
-    if (password !== '1234') return;
-
-    // const { accessToken, user } = response.data;
-
-    // setSession(accessToken);
-
-    dispatch({
-      type: 'LOGIN',
-      payload: {
-        user,
-      },
+    const response = await axios.post((`${serverUrl}/api/auth/login`), {
+      email,
+      password,
     });
+
+    // const user = _userList.filter((item) => item.email === email);
+    // if (password !== '1234') return;
+
+    const { action, data, accessToken } = response.data;
+
+    if (action === 'success') {
+      setSession(accessToken);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('userId', data[0].id);
+      localStorage.setItem('username', data[0].username);
+      localStorage.setItem('firstname', data[0].first_name);
+      localStorage.setItem('lastname', data[0].last_name);
+      localStorage.setItem('initials', data[0].initials);
+      localStorage.setItem('email', data[0].email);
+      localStorage.setItem('title', data[0].title);
+      localStorage.setItem('cutomerId', data[0].customer_id);
+      localStorage.setItem('access', data[0].access);
+      localStorage.setItem('AUL', data[0].access_level);
+      localStorage.setItem('accessPricing', data[0].access_pricing);
+      localStorage.setItem('created_date', data[0].created_date);
+
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          user: data,
+        },
+      });
+    }
+
+    return action;
   };
 
   const register = async (email, password, firstName, lastName) => {

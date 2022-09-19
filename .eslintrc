@@ -57,6 +57,7 @@
     "react/no-unstable-nested-components": 0,
     "react/function-component-definition": 0,
     "react/jsx-no-constructed-context-values": 0,
+    "camelcase": ["error", {"allow": ["aa_bb"]}],
     "no-unused-vars": [
       1,
       {
