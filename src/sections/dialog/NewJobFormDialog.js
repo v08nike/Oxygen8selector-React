@@ -21,17 +21,14 @@ NewJobFormDialog.propTypes = {
   newJobDialogOpen: PropTypes.bool,
   handleNewJobDialogClose: PropTypes.func,
   addNewJob: PropTypes.func,
+  initialInfo: PropTypes.object,
 };
 
-export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogClose, addNewJob }) {
+export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogClose, addNewJob, initialInfo }) {
   const navigate = useNavigate();
-
-  const applicaitons = [
-    { id: '1', label: 'One' },
-    { id: '2', label: 'Two' },
-    { id: '3', label: 'Three' },
-    { id: '4', label: 'Four' },
-  ];
+  const { applications, companyInfo } = initialInfo;
+  
+  // console.log(initialInfo);
 
   const NewUserSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a job name'),
@@ -78,14 +75,26 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
 
               <RHFSelect size="small" name="application" label="Application" placeholder="Application">
                 <option value="" />
-                {applicaitons.map((option) => (
-                  <option key={option.id} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
+                {applications !== undefined &&
+                  applications.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.items}
+                    </option>
+                  ))}
               </RHFSelect>
               <RHFTextField size="small" name="reference" label="Reference #" />
-              <RHFTextField size="small" name="companyName" label="Company name" />
+              <RHFSelect size="small" name="companyName" label="Company name" placeholder="Application">
+                <option value="" />
+                {companyInfo !== undefined &&
+                  companyInfo.map(
+                    (option) =>
+                      option.id.toString() === localStorage.getItem('cutomerId') && (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      )
+                  )}
+              </RHFSelect>
             </Box>
           </Card>
         </DialogContent>

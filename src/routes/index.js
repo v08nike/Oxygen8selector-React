@@ -70,6 +70,7 @@ export default function Router() {
             { path: 'jobs', element: <Jobs /> },
             { path: 'account', element: <Account /> },
             { path: 'resources', element: <Resources /> },
+            { path: 'job/new/', element: <JobEdit /> },
             { path: 'job/dashboard/:jobId', element: <JobDashboard /> },
             { path: 'job/edit/:jobId', element: <JobEdit /> },
             { path: 'job/submittal/:jobId', element: <JobSubmittal />},

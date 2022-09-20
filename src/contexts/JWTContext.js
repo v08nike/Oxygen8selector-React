@@ -87,7 +87,7 @@ function AuthProvider({ children }) {
             access : localStorage.getItem("access"),
             AUL : localStorage.getItem("AUL"),
             accessPricing : localStorage.getItem("accessPricing"),
-            created_date : localStorage.getItem("created_date")
+            createdDate : localStorage.getItem("created_date")
           }
 
           dispatch({
@@ -142,11 +142,11 @@ function AuthProvider({ children }) {
       localStorage.setItem('initials', data[0].initials);
       localStorage.setItem('email', data[0].email);
       localStorage.setItem('title', data[0].title);
-      localStorage.setItem('cutomerId', data[0].customer_id);
+      localStorage.setItem('customerId', data[0].customer_id);
       localStorage.setItem('access', data[0].access);
       localStorage.setItem('AUL', data[0].access_level);
       localStorage.setItem('accessPricing', data[0].access_pricing);
-      localStorage.setItem('created_date', data[0].created_date);
+      localStorage.setItem('createdDate', data[0].created_date);
 
       dispatch({
         type: 'LOGIN',

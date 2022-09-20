@@ -28,6 +28,7 @@ export const PATH_JOBS = {
 const ROOT_JOB = '/job';
 export const PATH_JOB = {
   root: ROOT_JOB,
+  jobNew: `${ROOT_JOB}/new/`,
   dashboard: (id) => path(ROOT_JOB, `/dashboard/${id}`),
   jobEdit: (id) => path(ROOT_JOB, `/edit/${id}`),
   submittal: (id) => path(ROOT_JOB, `/submittal/${id}`)

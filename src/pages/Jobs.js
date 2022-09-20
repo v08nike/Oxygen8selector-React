@@ -92,17 +92,14 @@ export default function MyJobs() {
 
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     dispatch(getJobsInfo());
   }, [dispatch]);
 
-  const { jobList, isLoading } = useSelector((state) => state.jobs);
+  const { jobList, isLoading, jobInitInfo } = useSelector((state) => state.jobs);
   const tableData = jobList;
 
-  console.log(isLoading, jobList);
-  // const [tableData, setTableData] = useState(myJobList);
+  // console.log(jobInitInfo);
 
   const [filterName, setFilterName] = useState('');
 
@@ -174,17 +171,22 @@ export default function MyJobs() {
   };
 
   const handleAddNewJob = (data) => {
-    addNewJob({
+    console.log(data);
+
+    const jobInfo = {
       jobName: data.jobName,
       referenceNo: data.reference,
       revNo: 1,
-      rep: 'Admin',
-      createdBy: 'Admin',
-      revisiedBy: 'Admin',
-      createdDate: '2020-09-23',
-      revisedDate: '2020-09-23',
-      status: 'Open',
-    });
+      applicationId: data.application,
+      companyNameId: data.companyName,
+      rep: localStorage.getItem("customerId"),
+      createdBy: localStorage.getItem("userId"),
+      revisiedBy: localStorage.getItem("userId"),
+      createdDate: jobInitInfo.createdDate,
+      revisedDate: jobInitInfo.revisedDate
+    }
+
+    navigate(PATH_JOB.jobNew, { state : jobInfo })
   };
 
   const dataFiltered = applySortFilter({
@@ -292,6 +294,7 @@ export default function MyJobs() {
           newJobDialogOpen={newJobDialogOpen}
           handleNewJobDialogClose={handleNewJobDialogClose}
           addNewJob={handleAddNewJob}
+          initialInfo={jobInitInfo}
         />
         <ConfirmDialog
           isOpen={isOneConfirmDialog}

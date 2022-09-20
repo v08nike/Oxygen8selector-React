@@ -17,6 +17,7 @@ import { serverUrl } from '../../config';
 const initialState = {
   isLoading: true,
   jobList: [],
+  jobInitInfo: {}
 };
 
 const JobsSlice = createSlice({
@@ -28,7 +29,12 @@ const JobsSlice = createSlice({
     },
     setJobInfo(state, action) {
       state.isLoading = false;
-      state.jobList = action.payload;
+      state.jobList = action.payload.jobList;
+      state.jobInitInfo = action.payload.jobInitInfo;
+    },
+    setJobInitInfo(state, action) {
+      state.isLoading = false;
+      state.jobInitInfo = action.payload;
     },
     // GET JOB DATA
     getJobInfo(state, action) {
@@ -89,6 +95,14 @@ export function getJobsInfo() {
     dispatch(JobsSlice.actions.startLoading());
     const response = await axios.post(`${serverUrl}/api/jobs/get`);
     dispatch(JobsSlice.actions.setJobInfo(response.data));
+  };
+};
+
+export function getJobsIntInfo() {
+  return async () => {
+    dispatch(JobsSlice.actions.startLoading());
+    const response = await axios.post(`${serverUrl}/api/job/get`);
+    dispatch(JobsSlice.actions.setJobInitInfo(response.data));
   };
 };
 
