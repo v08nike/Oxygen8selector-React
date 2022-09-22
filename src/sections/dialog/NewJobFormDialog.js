@@ -33,7 +33,8 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
   const NewUserSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a job name'),
     application: Yup.string().required('Please enter an applicaiton type'),
-    reference: Yup.string(),
+    reference: Yup.string().required('Please enter an reference'),
+    companyNameId: Yup.string().required('Please select company name'),
     companyName: Yup.string(),
   });
 
@@ -41,6 +42,7 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
     jobName: '',
     application: '',
     reference: '',
+    companyNameId: '',
     companyName: '',
   };
 
@@ -51,9 +53,15 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
 
   const {
     reset,
+    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+  const handleOnchangeCompanyName = (e) => {
+    setValue('companyNameId', e.target.value);
+    setValue('companyName', e.nativeEvent.target[e.target.selectedIndex].text);
+  }
 
   const onSubmit = async (data) => {
     try {
@@ -83,7 +91,7 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
                   ))}
               </RHFSelect>
               <RHFTextField size="small" name="reference" label="Reference #" />
-              <RHFSelect size="small" name="companyName" label="Company name" placeholder="Application">
+              <RHFSelect size="small" name="companyNameId" label="Company name" placeholder="Application" onChange={handleOnchangeCompanyName}>
                 <option value="" />
                 {companyInfo !== undefined &&
                   companyInfo.map(

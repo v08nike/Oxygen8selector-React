@@ -1,21 +1,10 @@
 import * as Yup from 'yup';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import {
-  Container,
-  Box,
-  Grid,
-  CardHeader,
-  CardContent,
-  Card,
-  Stack,
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-} from '@mui/material';
+import { Container, Box, Grid, CardHeader, CardContent, Card, Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -24,7 +13,7 @@ import { useForm } from 'react-hook-form';
 import { PATH_JOB, PATH_JOBS } from '../routes/paths';
 // redux
 import { useSelector, useDispatch } from '../redux/store';
-import { updateJob, getJobsIntInfo } from '../redux/slices/jobsReducer';
+import { getJobsIntInfo, addNewJob } from '../redux/slices/jobsReducer';
 // components
 import Page from '../components/Page';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
@@ -51,68 +40,38 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 //------------------------------------------------
 
-export default function EditJobInfo() {
+export default function EditJobInfo(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { jobId } = useParams();
   const { state } = useLocation();
-  const { jobInitInfo, isLoading } = useSelector((state) => state.jobs);
+  const { jobList, jobInitInfo, isLoading } = useSelector((state) => state.jobs);
+  const isNew = window.location.href.includes('new');
 
-  useEffect(() => {
-    dispatch(getJobsIntInfo());
-  }, [dispatch]);
+  const { baseOfDesign, UoM, country, applications, designCondition, companyInfo, weatherData, provState, usersInfo } =
+    jobInitInfo;
 
-  let baseOfDesign = [];
-  let UoM = [];
-  let country = [];
-  let applications = [];
-  let designCondition = [];
-  let companyInfo = [];
-  let weatherData = [];
-  let provState = [];
-  let designDataCooling = [];
+  const jobInfo = jobList.filter((item) => item.id.toString() === jobId);
+  const [provStateInfo, setProvStateInfo] = useState([]);
+  const [cityInfo, setCityInfo] = useState([]);
+  const [companyNameId, setCompanyNameId] = useState(state.companyNameId);
 
-  if (!isLoading) {
-    baseOfDesign = jobInitInfo.baseOfDesign;
-    UoM = jobInitInfo.UoM;
-    country = jobInitInfo.country;
-    applications = jobInitInfo.applications;
-    designCondition = jobInitInfo.designCondition;
-    companyInfo = jobInitInfo.companyInfo;
-    weatherData = jobInitInfo.weatherData;
-    provState = jobInitInfo.provState;
-    designDataCooling = jobInitInfo.designDataCooling;
-  }
-
-  const provStateInfoTemp = provState.filter((item) => item.country === country[0].value);
-  const cityInfoTemp = weatherData.filter(
-    (item) => item.country === country[0].value && item.prov_state === provStateInfoTemp[0].prov_state
-  );
-
-  const [jobInfo, setJobInfo] = useState({});
-  const [provStateInfo, setProvStateInfo] = useState(provStateInfoTemp);
-  const [cityInfo, setCityInfo] = useState(cityInfoTemp);
-
-  if (jobId > 0) {
-    const jobList = useSelector((state) => state.jobs.jobList.filter((item) => item.jobId.toString() === jobId));
-    setJobInfo(jobList[0]);
-  }
-
-  const UpdateJobInfoSchema = Yup.object().shape({
+  const jobInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Job Name'),
     basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
     referenceNo: Yup.string().required('Please select a Reference'),
     revision: Yup.string().required('Please enter a Revision'),
     createdDate: Yup.string().required('Please enter a Created Date'),
     revisedDate: Yup.string().required('Please enter a Revised Date'),
-    rep: Yup.string().required('Please enter a Rep'),
-    companyName: Yup.string().required('Please enter a Company Name'),
-    contactName: Yup.string().required('Please enter a Contact Name'),
+    companyName: Yup.string(),
+    companyNameId: Yup.string().required('Please enter a Company Name'),
+    contactName: Yup.string(),
+    contactNameId: Yup.number(),
     application: Yup.string().required('Please enter a Application'),
     uom: Yup.string().required('Please select a UoM'),
     country: Yup.string().required('Please select a County'),
-    state: Yup.string().required('Please select a County'),
-    city: Yup.string().required('Please select a County'),
+    state: Yup.string().required('Please select a Province / State'),
+    city: Yup.string().required('Please select a City'),
     ashareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
     alltitude: Yup.string(),
     summer_air_db: Yup.string(),
@@ -130,70 +89,68 @@ export default function EditJobInfo() {
     testNewPrice: Yup.bool(),
   });
 
-  const defaultValues = {
-    jobName: '',
-    basisOfDesign: 1,
-    referenceNo: 0,
-    revision: 0,
-    createdDate: '',
-    revisedDate: '',
-    companyName: '',
-    application: '',
-    uom: 1,
-    country: ' ',
-    state: '',
-    city: '',
-    ashareDesignConditions: 1,
-    altitude: 0,
-    summer_air_db: 0,
-    summer_air_wb: 0,
-    summer_air_rh: 0,
-    winter_air_db: 0,
-    winter_air_wb: 0,
-    winter_air_rh: 0,
-    summer_return_db: 75,
-    summer_return_wb: 63,
-    summer_return_rh: 51.17,
-    winter_return_db: 70,
-    winter_return_wb: 52.9,
-    winter_return_rh: 30,
-    testNewPrice: false,
-  };
-
-  if (!jobId) {
-    defaultValues.jobName = state.jobName;
-    defaultValues.referenceNo = state.referenceNo;
-    defaultValues.createdDate = state.createdDate;
-    defaultValues.revisedDate = state.revisedDate;
-    defaultValues.companyName = state.companyNameId;
-    defaultValues.application = state.applicationId;
-  } else {
-    Object.entries(jobInfo).forEach(([key, value]) => {
-      defaultValues[key] = value;
-    });
-  }
+  const defaultValues = useMemo(
+    () => ({
+      jobName: jobInfo?.jobName || state.jobName,
+      basisOfDesign: jobInfo?.basisOfDesign || 1,
+      referenceNo: jobInfo?.referenceNo || state.referenceNo,
+      revision: jobInfo?.revision || 0,
+      createdDate: jobInfo?.createdDate || state.createdDate,
+      revisedDate: jobInfo?.revisedDate || state.revisedDate,
+      companyName: jobInfo?.companyName || state.companyName,
+      companyNameId: jobInfo?.companyName || state.companyNameId,
+      contactName: jobInfo?.companyName || '',
+      contactNameId: jobInfo?.companyName || 0,
+      application: jobInfo?.application || state.applicationId,
+      uom: jobInfo?.uom || 1,
+      country: jobInfo?.country || '',
+      state: jobInfo?.state || '',
+      city: jobInfo?.city || '',
+      ashareDesignConditions: jobInfo?.ashareDesignConditions || 1,
+      altitude: jobInfo?.altitude || 0,
+      summer_air_db: jobInfo?.summer_air_db || 0,
+      summer_air_wb: jobInfo?.summer_air_wb || 0,
+      summer_air_rh: jobInfo?.summer_air_rh || 0,
+      winter_air_db: jobInfo?.winter_air_db || 0,
+      winter_air_wb: jobInfo?.winter_air_wb || 0,
+      winter_air_rh: jobInfo?.winter_air_rh || 0,
+      summer_return_db: jobInfo?.summer_return_db || 75,
+      summer_return_wb: jobInfo?.summer_return_wb || 63,
+      summer_return_rh: jobInfo?.summer_return_rh || 51.17,
+      winter_return_db: jobInfo?.winter_return_db || 70,
+      winter_return_wb: jobInfo?.winter_return_wb || 52.9,
+      winter_return_rh: jobInfo?.winter_return_rh || 30,
+      testNewPrice: jobInfo?.testNewPrice || false,
+    }),
+    [jobInfo, state]
+  );
 
   const methods = useForm({
-    resolver: yupResolver(UpdateJobInfoSchema),
+    resolver: yupResolver(jobInfoSchema),
     defaultValues,
   });
 
+  useEffect(() => {
+    dispatch(getJobsIntInfo());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (provState && weatherData) {
+      const provStateInfoTemp = provState.filter((item) => item.country === country[0].value);
+      const cityInfoTemp = weatherData.filter(
+        (item) => item.country === country[0].value && item.prov_state === provStateInfoTemp[0].prov_state
+      );
+      setProvStateInfo(provStateInfoTemp);
+      setCityInfo(cityInfoTemp);
+    }
+  }, [country, provState, weatherData]);
+
   const {
-    handleSubmit,
     setValue,
     getValues,
+    handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
-  const onJobInfoSubmit = async (data) => {
-    try {
-      console.log(data);
-      // updateJob({ jobId: jobInfo.jobId, data });
-      // navigate(PATH_JOB.dashboard(jobId));
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   // get all ourdoor infomation from server
   const getAllOutdoorInfo = () => {
@@ -205,7 +162,7 @@ export default function EditJobInfo() {
         designCondition: getValues('ashareDesignConditions'),
       })
       .then((response) => {
-        const data = response.data;
+        const { data } = response;
         setValue('altitude', data.altitude);
         setValue('summer_air_db', data.summerOutdoorAirDB);
         setValue('summer_air_wb', data.summerOutdoorAirWB);
@@ -216,14 +173,15 @@ export default function EditJobInfo() {
       });
   };
 
- // get HR value from server
-  const get_HR_By_DBWB = (first, second, setValueId) => {
+  // get HR value from server
+  const get_RH_By_DBWB = (first, second, setValueId) => {
+    if (first === '' || second === '') return;
     axios
       .post(`${serverUrl}/api/job/getoutdoorinfo`, {
-        action: 'GET_HR_BY_DB_WB',
-        first: first,
-        second: second,
-        designCondition: getValues('ashareDesignConditions'),
+        action: 'GET_RH_BY_DB_WB',
+        first,
+        second,
+        altitude: getValues('altitude'),
       })
       .then((response) => {
         setValue(setValueId, response.data);
@@ -232,47 +190,65 @@ export default function EditJobInfo() {
 
   // get WB value from server
   const get_WB_By_DBRH = (first, second, setValueId) => {
+    if (first === '' || second === '') return;
     axios
       .post(`${serverUrl}/api/job/getoutdoorinfo`, {
         action: 'GET_WB_BY_DB_HR',
-        first: first,
-        second: second,
-        designCondition: getValues('ashareDesignConditions'),
+        first,
+        second,
+        altitude: getValues('altitude'),
       })
       .then((response) => {
         setValue(setValueId, response.data);
       });
   };
 
-   // onChange handle for country
+  // onChange handle for company Name
+  const handleChangeCompanyName = (e) => {
+    setValue('companyNameId', e.target.value);
+    setValue('companyName', e.nativeEvent.target[e.target.selectedIndex].text);
+    setCompanyNameId(e.target.value);
+  };
+
+  // onChange handle for contactName
+  const handleChangeContactName = (e) => {
+    setValue('contactNameId', e.target.value);
+    setValue('contactName', e.nativeEvent.target[e.target.selectedIndex].text);
+  };
+
+  // onChange handle for country
   const handleChangeCountry = (e) => {
     try {
       setValue('country', e.target.value);
-      
+
       const provStateInfoTemp = provState.filter((item) => item.country === e.target.value);
       setProvStateInfo(provStateInfoTemp);
       setValue('state', provStateInfoTemp[0].prov_state);
 
-      const cityInfoTemp = weatherData.filter((item) => item.prov_state === provStateInfoTemp[0].prov_state && item.country === e.target.value);
+      const cityInfoTemp = weatherData.filter(
+        (item) => item.prov_state === provStateInfoTemp[0].prov_state && item.country === e.target.value
+      );
       setCityInfo(cityInfoTemp);
       setValue('city', cityInfoTemp[0].id);
-      
+
       getAllOutdoorInfo();
     } catch (e) {
       console.log(e);
     }
   };
 
- // onChange handle for State
+  // onChange handle for State
   const handleChangeProvState = (e) => {
     try {
       setValue('state', e.target.value);
 
-      const cityInfoTemp = weatherData.filter((item) => item.prov_state === e.target.value && item.country === getValues('country'));
+      const cityInfoTemp = weatherData.filter(
+        (item) => item.prov_state === e.target.value && item.country === getValues('country')
+      );
       setCityInfo(cityInfoTemp);
       setValue('city', cityInfoTemp[0].id);
-      
-      getAllOutdoorInfo();  
+
+      getAllOutdoorInfo();
     } catch (e) {
       console.log(e);
     }
@@ -292,19 +268,18 @@ export default function EditJobInfo() {
 
   // Onchange handle for Text New Price Check box
   const handleChangeTestNewPrice = (e) => {
-    console.log(e);
     setValue('testNewPrice', e.target.checked);
-  }
+  };
 
   // Summer Outdoor Air DB
   const handleChangeSummerOutdoorAirDBChanged = (e) => {
     setValue('summer_air_db', e.target.value);
-    get_HR_By_DBWB(getValues('summer_air_db'), getValues('summer_air_wb'), 'summer_air_rh');
+    get_RH_By_DBWB(getValues('summer_air_db'), getValues('summer_air_wb'), 'summer_air_rh');
   };
   // Summer Outdoor Air WB
   const handleChangeSummerOutdoorAirWBChanged = (e) => {
     setValue('summer_air_wb', e.target.value);
-    get_HR_By_DBWB(getValues('summer_air_db'), getValues('summer_air_wb'), 'summer_air_rh');
+    get_RH_By_DBWB(getValues('summer_air_db'), getValues('summer_air_wb'), 'summer_air_rh');
   };
   // Summer Outdoor Air RH
   const handleChangeSummerOutdoorAirRHChanged = (e) => {
@@ -315,13 +290,13 @@ export default function EditJobInfo() {
   // Winter Outdoor Air DB
   const handleChangeWinterOutdoorAirDBChanged = (e) => {
     setValue('winter_air_db', e.target.value);
-    get_HR_By_DBWB(getValues('winter_air_db'), getValues('winter_air_wb'), 'winter_air_rh');
+    get_RH_By_DBWB(getValues('winter_air_db'), getValues('winter_air_wb'), 'winter_air_rh');
   };
 
   // Winter Outdoor Air WB
   const handleChangeWinterOutdoorAirWBChanged = (e) => {
     setValue('winter_air_wb', e.target.value);
-    get_HR_By_DBWB(getValues('winter_air_db'), getValues('winter_air_wb'), 'winter_air_rh');
+    get_RH_By_DBWB(getValues('winter_air_db'), getValues('winter_air_wb'), 'winter_air_rh');
   };
 
   // Winter Outdoor Air RH
@@ -333,12 +308,12 @@ export default function EditJobInfo() {
   // Summer Return Air DB
   const handleChangeSummerReturnAirDBChanged = (e) => {
     setValue('summer_return_db', e.target.value);
-    get_HR_By_DBWB(getValues('summer_return_db'), getValues('summer_return_wb'), 'summer_return_rh');
+    get_RH_By_DBWB(getValues('summer_return_db'), getValues('summer_return_wb'), 'summer_return_rh');
   };
   // Summer Return Air WB
   const handleChangeSummerReturnAirWBChanged = (e) => {
     setValue('summer_return_wb', e.target.value);
-    get_HR_By_DBWB(getValues('summer_return_db'), getValues('summer_return_wb'), 'summer_return_rh');
+    get_RH_By_DBWB(getValues('summer_return_db'), getValues('summer_return_wb'), 'summer_return_rh');
   };
   // Summer Return Air RH
   const handleChangeSummerReturnAirRHChanged = (e) => {
@@ -349,13 +324,13 @@ export default function EditJobInfo() {
   // Winter Return Air DB
   const handleChangeWinterReturnAirDBChanged = (e) => {
     setValue('winter_return_db', e.target.value);
-    get_HR_By_DBWB(getValues('winter_return_db'), getValues('winter_return_wb'), 'winter_return_rh');
+    get_RH_By_DBWB(getValues('winter_return_db'), getValues('winter_return_wb'), 'winter_return_rh');
   };
 
   // Winter Return Air WB
   const handleChangeWinterReturnAirWBChanged = (e) => {
     setValue('winter_return_wb', e.target.value);
-    get_HR_By_DBWB(getValues('winter_return_db'), getValues('winter_return_wb'), 'winter_return_rh');
+    get_RH_By_DBWB(getValues('winter_return_db'), getValues('winter_return_wb'), 'winter_return_rh');
   };
 
   // Winter Return Air RH
@@ -363,6 +338,38 @@ export default function EditJobInfo() {
     setValue('winter_return_rh', e.target.value);
     get_WB_By_DBRH(getValues('winter_return_db'), getValues('winter_return_rh'), 'winter_return_wb');
   };
+
+  // handle submit
+  const onJobInfoSubmit = async (data) => {
+    try {
+      const result = await dispatch(
+        addNewJob({
+          ...data,
+          jobId: -1,
+          createdUserId: localStorage.getItem('userId'),
+          revisedUserId: localStorage.getItem('userId'),
+          applicationOther: '',
+          testNewPrice: data.testNewPrice ? 1 : 0,
+        })
+      );
+
+      navigate(PATH_JOB.dashboard(result));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const newProjectNavigator = [
+    { name: 'My Jobs', href: PATH_JOBS.root },
+    { name: 'Add Project'}
+  ]
+
+  const editProjectNavigator = [
+    { name: 'My Jobs', href: PATH_JOBS.root },
+    { name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) },
+    { name: 'Edit Project Information' }
+  ]
+
   return (
     <Page title="Job: Edit">
       <RootStyle>
@@ -370,11 +377,7 @@ export default function EditJobInfo() {
           <FormProvider methods={methods} onSubmit={handleSubmit(onJobInfoSubmit)}>
             <HeaderBreadcrumbs
               heading="Edit Job Info"
-              links={[
-                { name: 'My Jobs', href: PATH_JOBS.root },
-                { name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) },
-                { name: 'Edit Job Info' },
-              ]}
+              links={isNew? newProjectNavigator : editProjectNavigator}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                   <LoadingButton
@@ -383,7 +386,7 @@ export default function EditJobInfo() {
                     startIcon={<Iconify icon={'fluent:save-24-regular'} />}
                     loading={isSubmitting}
                   >
-                    Save Changes
+                    {isNew ? 'Add Project' : 'Save Changes'}
                   </LoadingButton>
                 </Stack>
               }
@@ -409,12 +412,37 @@ export default function EditJobInfo() {
                         <RHFTextField size="small" name="revision" label="Revision #" />
                         <RHFTextField size="small" name="createdDate" label="Created Date" />
                         <RHFTextField size="small" name="revisedDate" label="Revised Date" />
-                        <RHFSelect size="small" name="companyName" label="Company Name" placeholder="">
+                        <RHFSelect
+                          size="small"
+                          name="companyNameId"
+                          label="Company Name"
+                          placeholder=""
+                          onChange={handleChangeCompanyName}
+                        >
+                          <option value="" />
                           {companyInfo.map(
                             (info, index) =>
                               info.id.toString() === localStorage.getItem('customerId') && (
                                 <option key={index} value={info.id}>
                                   {info.name}
+                                </option>
+                              )
+                          )}
+                        </RHFSelect>
+                        <RHFSelect
+                          size="small"
+                          name="contactNameId"
+                          label="Contact Name"
+                          placeholder=""
+                          onChange={handleChangeContactName}
+                        >
+                          <option value="" />
+                          {usersInfo.map(
+                            (info, index) =>
+                              info.id.toString() !== localStorage.getItem('userId') &&
+                              info.customer_id.toString() === companyNameId && (
+                                <option key={index} value={info.id}>
+                                  {`${info.first_name} ${info.last_name}`}
                                 </option>
                               )
                           )}
@@ -440,7 +468,13 @@ export default function EditJobInfo() {
                     <CardHeaderStyle title="Project Test Section" />
                     <CardContent>
                       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFCheckbox size="small" name="testNewPrice" label="Test New price" onChange={handleChangeTestNewPrice} checked={false}/>
+                        <RHFCheckbox
+                          size="small"
+                          name="testNewPrice"
+                          label="Test New price"
+                          onChange={handleChangeTestNewPrice}
+                          checked={false}
+                        />
                       </Box>
                     </CardContent>
                   </Card>
@@ -457,7 +491,7 @@ export default function EditJobInfo() {
                           placeholder=""
                           onChange={handleChangeCountry}
                         >
-                          <option value=" ">Select Country</option>
+                          <option value="" />
                           {country.map((info, index) => (
                             <option key={index} value={info.value}>
                               {info.items}
@@ -471,6 +505,7 @@ export default function EditJobInfo() {
                           placeholder=""
                           onChange={handleChangeProvState}
                         >
+                          <option value="" />
                           {provStateInfo.map((info, index) => (
                             <option key={index} value={info.prov_state}>
                               {info.prov_state}
@@ -478,6 +513,7 @@ export default function EditJobInfo() {
                           ))}
                         </RHFSelect>
                         <RHFSelect size="small" name="city" label="City" placeholder="" onChange={handleChangeCity}>
+                          <option value="" />
                           {cityInfo.map((info, index) => (
                             <option key={index} value={info.id}>
                               {info.station}

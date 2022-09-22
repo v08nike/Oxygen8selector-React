@@ -41,7 +41,7 @@ const JobsSlice = createSlice({
       return state.jobList;
     },
     getJobInfoByID(state, action) {},
-    addJob(state, action) {
+    addNewJob(state, action) {
       state.jobList.push(action.payload);
     },
     updateJob(state, action) {
@@ -81,15 +81,6 @@ export default JobsSlice.reducer;
 
 // ----------------------------------------------------------------------
 
-// export const getJobList = async (state) => {
-//   const response = await axios.post((`${serverUrl}/api/auth/login`), {
-//     userId: localStorage.getItem("userId"),
-//     action: "all",
-//   });
-
-//   return response.data;
-// }
-
 export function getJobsInfo() {
   return async () => {
     dispatch(JobsSlice.actions.startLoading());
@@ -107,7 +98,11 @@ export function getJobsIntInfo() {
 };
 
 export function addNewJob(data) {
-  dispatch(JobsSlice.actions.addJob(data));
+  return async () => {
+    const response = await axios.post(`${serverUrl}/api/job/add`, data);
+    dispatch(JobsSlice.actions.addNewJob(response.data[0]));
+    return response.data[0].id;
+  };
 }
 
 export function setJobInfo(data) {
