@@ -3,10 +3,6 @@ import { createSlice } from '@reduxjs/toolkit';
 // import axios from '../../utils/axios';
 // store
 import { dispatch } from '../store';
-// mock
-import { _jobList, _unitList } from '../../_mock/_myJobs';
-// paths
-// import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../../routes/paths';
 // utils
 import axios from '../../utils/axios';
 // config
@@ -17,7 +13,8 @@ import { serverUrl } from '../../config';
 const initialState = {
   isLoading: true,
   jobList: [],
-  jobInitInfo: {}
+  unitList: [],
+  jobInitInfo: {},
 };
 
 const JobsSlice = createSlice({
@@ -36,17 +33,16 @@ const JobsSlice = createSlice({
       state.isLoading = false;
       state.jobInitInfo = action.payload;
     },
-    // GET JOB DATA
-    getJobInfo(state, action) {
-      return state.jobList;
-    },
-    getJobInfoByID(state, action) {},
     addNewJob(state, action) {
       state.jobList.push(action.payload);
     },
+    setJobsAndUnitsInfo(state, action) {
+      state.isLoading = false;
+      state.jobList = action.payload.jobList;
+      state.unitList = action.payload.unitList;
+    },
     updateJob(state, action) {
-      const { jobId, data } = action.payload;
-      state.jobList[jobId] = data;
+      state.jobList = action.payload;
     },
     deleteJob(state, action) {
       const { jobData } = action.payload;
@@ -89,7 +85,7 @@ export function getJobsInfo() {
   };
 };
 
-export function getJobsIntInfo() {
+export function getJobsInitInfo() {
   return async () => {
     dispatch(JobsSlice.actions.startLoading());
     const response = await axios.post(`${serverUrl}/api/job/get`);
@@ -105,12 +101,24 @@ export function addNewJob(data) {
   };
 }
 
-export function setJobInfo(data) {
-  dispatch(JobsSlice.actions.setJobInfo(data));
+export function updateJob(data) {
+  return async () => {
+    const response = await axios.post(`${serverUrl}/api/job/update`, data);
+    dispatch(JobsSlice.actions.updateJob(response.data));
+  };
 }
 
-export function updateJob(data) {
-  dispatch(JobsSlice.actions.updateJob(data));
+
+export function getJobsAndUnitsInfo(data) {
+  return async () => {
+    dispatch(JobsSlice.actions.startLoading());
+    const response = await axios.post(`${serverUrl}/api/job/getwithunit`, data);
+    dispatch(JobsSlice.actions.setJobsAndUnitsInfo(response.data));
+  };
+}
+
+export function setJobInfo(data) {
+  dispatch(JobsSlice.actions.setJobInfo(data));
 }
 
 export function deleteJob(data) {

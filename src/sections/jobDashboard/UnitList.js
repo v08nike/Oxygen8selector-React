@@ -75,11 +75,11 @@ export default function UnitList({ unitInfo }) {
         action={
           <>
             {isDesktop ? (
-              <Button size="small" onClick={hanndleEditUnitList} startIcon={<Iconify icon={'eva:edit-fill'} />}>
+              <Button size="small" disabled={data.length === 0} onClick={hanndleEditUnitList} startIcon={<Iconify icon={'eva:edit-fill'} />}>
                 Edit Unit List
               </Button>
             ) : (
-              <IconButton aria-label="delete">
+              <IconButton aria-label="delete" disabled={data.length === 0}>
                 <Iconify icon={'eva:edit-fill'} />
               </IconButton>
             )}
@@ -121,24 +121,18 @@ export default function UnitList({ unitInfo }) {
 // ----------------------------------------------------------------------
 
 UnitListRow.propTypes = {
-  row: PropTypes.shape({
-    tag: PropTypes.string,
-    qty: PropTypes.number,
-    type: PropTypes.string,
-    modal: PropTypes.string,
-    cfm: PropTypes.number,
-  }),
+  row: PropTypes.object,
 };
 
 function UnitListRow({ row }) {
-  const { tag, qty, type, modal, cfm } = row;
+  const { tag, qty, unit_type, unit_model, cfm } = row;
 
   return (
     <TableRow>
       <TableCell>{tag}</TableCell>
       <TableCell>{qty}</TableCell>
-      <TableCell>{type}</TableCell>
-      <TableCell>{modal}</TableCell>
+      <TableCell>{unit_type}</TableCell>
+      <TableCell>{unit_model}</TableCell>
       <TableCell>{cfm}</TableCell>
     </TableRow>
   );

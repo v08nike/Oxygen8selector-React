@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form';
 import { PATH_JOB, PATH_JOBS } from '../routes/paths';
 // redux
 import { useSelector, useDispatch } from '../redux/store';
-import { getJobsIntInfo, addNewJob } from '../redux/slices/jobsReducer';
+import { getJobsInfo, addNewJob, updateJob } from '../redux/slices/jobsReducer';
 // components
 import Page from '../components/Page';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
@@ -40,7 +40,7 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 //------------------------------------------------
 
-export default function EditJobInfo(props) {
+export default function EditJobInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { jobId } = useParams();
@@ -48,14 +48,22 @@ export default function EditJobInfo(props) {
   const { jobList, jobInitInfo, isLoading } = useSelector((state) => state.jobs);
   const isNew = window.location.href.includes('new');
 
+  useEffect(() => {
+    dispatch(getJobsInfo());
+  }, [dispatch]);
+
   const { baseOfDesign, UoM, country, applications, designCondition, companyInfo, weatherData, provState, usersInfo } =
     jobInitInfo;
 
-  const jobInfo = jobList.filter((item) => item.id.toString() === jobId);
+  const tempArray = jobList.filter((item) => item.id.toString() === jobId);
+  const jobInfo = tempArray[0];
+
   const [provStateInfo, setProvStateInfo] = useState([]);
   const [cityInfo, setCityInfo] = useState([]);
-  const [companyNameId, setCompanyNameId] = useState(state.companyNameId);
-
+  const [companyNameId, setCompanyNameId] = useState(
+    state !== null ? state.companyNameId : !isLoading && jobInfo.company_name_id
+  );
+  console.log(jobInfo);
   const jobInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Job Name'),
     basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
@@ -88,51 +96,49 @@ export default function EditJobInfo(props) {
     winter_return_rh: Yup.string(),
     testNewPrice: Yup.bool(),
   });
-
   const defaultValues = useMemo(
-    () => ({
-      jobName: jobInfo?.jobName || state.jobName,
-      basisOfDesign: jobInfo?.basisOfDesign || 1,
-      referenceNo: jobInfo?.referenceNo || state.referenceNo,
-      revision: jobInfo?.revision || 0,
-      createdDate: jobInfo?.createdDate || state.createdDate,
-      revisedDate: jobInfo?.revisedDate || state.revisedDate,
-      companyName: jobInfo?.companyName || state.companyName,
-      companyNameId: jobInfo?.companyName || state.companyNameId,
-      contactName: jobInfo?.companyName || '',
-      contactNameId: jobInfo?.companyName || 0,
-      application: jobInfo?.application || state.applicationId,
-      uom: jobInfo?.uom || 1,
-      country: jobInfo?.country || '',
-      state: jobInfo?.state || '',
-      city: jobInfo?.city || '',
-      ashareDesignConditions: jobInfo?.ashareDesignConditions || 1,
-      altitude: jobInfo?.altitude || 0,
-      summer_air_db: jobInfo?.summer_air_db || 0,
-      summer_air_wb: jobInfo?.summer_air_wb || 0,
-      summer_air_rh: jobInfo?.summer_air_rh || 0,
-      winter_air_db: jobInfo?.winter_air_db || 0,
-      winter_air_wb: jobInfo?.winter_air_wb || 0,
-      winter_air_rh: jobInfo?.winter_air_rh || 0,
-      summer_return_db: jobInfo?.summer_return_db || 75,
-      summer_return_wb: jobInfo?.summer_return_wb || 63,
-      summer_return_rh: jobInfo?.summer_return_rh || 51.17,
-      winter_return_db: jobInfo?.winter_return_db || 70,
-      winter_return_wb: jobInfo?.winter_return_wb || 52.9,
-      winter_return_rh: jobInfo?.winter_return_rh || 30,
-      testNewPrice: jobInfo?.testNewPrice || false,
-    }),
-    [jobInfo, state]
+    () =>
+      !isLoading
+        ? {
+            jobName: jobInfo ? jobInfo.job_name : state.jobName,
+            basisOfDesign: jobInfo ? jobInfo.basis_of_design_id : 1,
+            referenceNo: jobInfo ? jobInfo.reference_no : state.referenceNo,
+            revision: jobInfo ? jobInfo.revision_no : 0,
+            createdDate: jobInfo ? jobInfo.created_date : state.createdDate,
+            revisedDate: jobInfo ? jobInfo.revised_date : state.revisedDate,
+            companyName: jobInfo ? jobInfo.company_name : state.companyName,
+            companyNameId: jobInfo ? jobInfo.company_name_id : state.companyNameId,
+            contactName: jobInfo ? jobInfo.contact_name : '',
+            contactNameId: jobInfo ? jobInfo.contact_name_id : 0,
+            application: jobInfo ? jobInfo.application_id : state.applicationId,
+            uom: jobInfo ? jobInfo.uom_id : 1,
+            country: jobInfo ? jobInfo.country : '',
+            state: jobInfo ? jobInfo.prov_state : '',
+            city: jobInfo ? jobInfo.city_id : '',
+            ashareDesignConditions: jobInfo ? jobInfo.design_conditions_id : 1,
+            altitude: jobInfo ? jobInfo.altitude : 0,
+            summer_air_db: jobInfo ? jobInfo.summer_outdoor_air_db : 0,
+            summer_air_wb: jobInfo ? jobInfo.summer_outdoor_air_rh : 0,
+            summer_air_rh: jobInfo ? jobInfo.summer_outdoor_air_wb : 0,
+            winter_air_db: jobInfo ? jobInfo.winter_outdoor_air_db : 0,
+            winter_air_wb: jobInfo ? jobInfo.winter_outdoor_air_rh : 0,
+            winter_air_rh: jobInfo ? jobInfo.winter_outdoor_air_wb : 0,
+            summer_return_db: jobInfo ? jobInfo.summer_return_air_db : 75,
+            summer_return_wb: jobInfo ? jobInfo.summer_return_air_rh : 63,
+            summer_return_rh: jobInfo ? jobInfo.summer_return_air_wb : 51.17,
+            winter_return_db: jobInfo ? jobInfo.winter_return_air_db : 70,
+            winter_return_wb: jobInfo ? jobInfo.winter_return_air_rh : 52.9,
+            winter_return_rh: jobInfo ? jobInfo.winter_return_air_wb : 30,
+            testNewPrice: jobInfo && jobInfo.is_test_new_price === 1,
+          }
+        : {},
+    [jobInfo, state, isLoading]
   );
 
   const methods = useForm({
     resolver: yupResolver(jobInfoSchema),
     defaultValues,
   });
-
-  useEffect(() => {
-    dispatch(getJobsIntInfo());
-  }, [dispatch]);
 
   useEffect(() => {
     if (provState && weatherData) {
@@ -342,33 +348,44 @@ export default function EditJobInfo(props) {
   // handle submit
   const onJobInfoSubmit = async (data) => {
     try {
-      const result = await dispatch(
-        addNewJob({
-          ...data,
-          jobId: -1,
-          createdUserId: localStorage.getItem('userId'),
-          revisedUserId: localStorage.getItem('userId'),
-          applicationOther: '',
-          testNewPrice: data.testNewPrice ? 1 : 0,
-        })
-      );
 
-      navigate(PATH_JOB.dashboard(result));
+      if (isNew){
+        const result = await dispatch(
+          addNewJob({
+            ...data,
+            jobId: -1,
+            createdUserId: localStorage.getItem('userId'),
+            revisedUserId: localStorage.getItem('userId'),
+            applicationOther: '',
+            testNewPrice: data.testNewPrice ? 1 : 0,
+          })
+        );
+        navigate(PATH_JOB.dashboard(result));  
+      } else {
+        await dispatch(
+          updateJob({
+            ...data,
+            jobId,
+            createdUserId: jobInfo.created_user_id,
+            revisedUserId: localStorage.getItem('userId'),
+            applicationOther: '',
+            testNewPrice: data.testNewPrice ? 1 : 0,
+          })
+        )
+        navigate(PATH_JOB.dashboard(jobId));  
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const newProjectNavigator = [
-    { name: 'My Jobs', href: PATH_JOBS.root },
-    { name: 'Add Project'}
-  ]
+  const newProjectNavigator = [{ name: 'My Jobs', href: PATH_JOBS.root }, { name: 'Add Project' }];
 
   const editProjectNavigator = [
     { name: 'My Jobs', href: PATH_JOBS.root },
     { name: 'My Dashboard', href: PATH_JOB.dashboard(jobId) },
-    { name: 'Edit Project Information' }
-  ]
+    { name: 'Edit Project Information' },
+  ];
 
   return (
     <Page title="Job: Edit">
@@ -377,7 +394,7 @@ export default function EditJobInfo(props) {
           <FormProvider methods={methods} onSubmit={handleSubmit(onJobInfoSubmit)}>
             <HeaderBreadcrumbs
               heading="Edit Job Info"
-              links={isNew? newProjectNavigator : editProjectNavigator}
+              links={isNew ? newProjectNavigator : editProjectNavigator}
               action={
                 <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                   <LoadingButton
