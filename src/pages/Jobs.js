@@ -13,7 +13,6 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-  CircularProgress,
 } from '@mui/material';
 
 // routes
@@ -23,7 +22,7 @@ import useTabs from '../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../hooks/useTable';
 // redux
 import { useSelector, useDispatch } from '../redux/store';
-import jobsReducer, { getJobsInfo, addNewJob, setJobInfo, deleteJob } from '../redux/slices/jobsReducer';
+import { getJobsInfo, deleteJob } from '../redux/slices/jobsReducer';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -131,11 +130,9 @@ export default function MyJobs() {
   };
 
   const handleDeleteRow = () => {
-    const deleteRow = tableData.filter((row) => row.jobId !== deleteRowID);
+    dispatch(deleteJob({ action: "DELETE_ONE", jobId: deleteRowID }));
     setSelected([]);
     setDeleteRowID(-1);
-    setJobInfo(deleteRow);
-    deleteJob({ jobData: deleteRow });
     handleOneConfirmDialogClose(false);
   };
 
@@ -159,10 +156,8 @@ export default function MyJobs() {
   };
 
   const handleDeleteRows = () => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.jobId));
+    dispatch(deleteJob({ action: "DELETE_MULTIPUL", jobIdData: selected }));
     setSelected([]);
-    setJobInfo(deleteRows);
-    deleteJob({ jobData: deleteRows });
     setMultiConfirmDialogState(false);
   };
 
@@ -346,7 +341,6 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
 
   if (filterRole !== 'All') {
     if(filterRole === "My Jobs"){
-      console.log(localStorage.getItem("userId"));
       tableData = tableData.filter((item) => item.created_user_id.toString() === localStorage.getItem("userId"));
     } else {
       tableData = tableData.filter((item) => item.created_user_id.toString() !== localStorage.getItem("userId"));

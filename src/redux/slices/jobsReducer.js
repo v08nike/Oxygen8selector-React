@@ -108,6 +108,12 @@ export function updateJob(data) {
   };
 }
 
+export function deleteJob(data) {
+  return async () => {
+    const response = await axios.post(`${serverUrl}/api/job/delete`, data);
+    dispatch(JobsSlice.actions.updateJob(response.data));
+  };
+}
 
 export function getJobsAndUnitsInfo(data) {
   return async () => {
@@ -115,14 +121,6 @@ export function getJobsAndUnitsInfo(data) {
     const response = await axios.post(`${serverUrl}/api/job/getwithunit`, data);
     dispatch(JobsSlice.actions.setJobsAndUnitsInfo(response.data));
   };
-}
-
-export function setJobInfo(data) {
-  dispatch(JobsSlice.actions.setJobInfo(data));
-}
-
-export function deleteJob(data) {
-  dispatch(JobsSlice.actions.deleteJob(data));
 }
 
 export function addNewUnit(data) {

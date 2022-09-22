@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 // @mui
 import { TableRow, TableCell, Box, CircularProgress } from '@mui/material';
-//
-import EmptyContent from '../EmptyContent';
 
 // ----------------------------------------------------------------------
 
