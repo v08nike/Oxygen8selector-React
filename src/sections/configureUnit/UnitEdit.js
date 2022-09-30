@@ -45,7 +45,7 @@ export default function UnitEdit({ initInfo, unitType, productType }) {
   const navigate = useNavigate();
   const { jobId, unitId } = useParams();
   const isEdit = unitId !== undefined;
-  const {mainInitData} = initInfo;
+  const { mainInitData } = initInfo;
   const [unitModel, setUnitModel] = useState(mainInitData.modelInfo);
   const [orientation, setOrientation] = useState(mainInitData.orientationInfo);
   const [voltage, setVoltage] = useState(mainInitData.voltageInfo.data);
@@ -128,7 +128,7 @@ export default function UnitEdit({ initInfo, unitType, productType }) {
   const airFlowDataChanged = (action) => {
     const sendingData = {
       action,
-      UAL: localStorage.getItem("UAL"),
+      UAL: localStorage.getItem('UAL'),
       location: getValues('location'),
       orientation: getValues('orientation'),
       unitTypeId: getValues('unitType'),
@@ -204,100 +204,104 @@ export default function UnitEdit({ initInfo, unitType, productType }) {
         </Stack>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
-            <Card sx={{ mb: 3 }}>
-              <CardHeaderStyle title="GENTERAL UNIT INFORMATION" />
-              <CardContent sx={{ height: '600px' }}>
-                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  <RHFTextField size="small" name="tag" label="Tag" />
-                  <RHFTextField size="small" name="quantity" label="Quantity" />
-                  <RHFSelect size="small" name="location" label="Location" placeholder="">
-                    <option value="" />
-                    {initInfo.location.map((item, index) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect size="small" name="orientation" label="Orientation" placeholder="">
-                    <option value="" />
-                    {orientation.map((item, index) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect size="small" name="unitType" label="Unit Type" placeholder="" disabled>
-                    {initInfo.unitType.map((item, index) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect size="small" name="controlPreference" label="Control Preference" placeholder="">
-                    <option value="" />
-                    {initInfo.controlsPreference.map((item, index) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card sx={{ mb: 3 }}>
-              <CardHeaderStyle title="AIR FLOW DATA" />
-              <CardContent sx={{ height: '600px' }}>
-                <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
+            <Box sx={{ display: 'grid', rowGap: 0, columnGap: 1 }}>
+              <Card sx={{ mb: 3 }}>
+                <CardHeaderStyle title="GENTERAL UNIT INFORMATION" />
+                <CardContent sx={{ height: 'auto' }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField
-                      size="small"
-                      name="summerSupplyAirCFM"
-                      label="Supply Air (CFM)"
-                      onBlur={onChangeSummerSupplyAirCFM}
-                    />
-                    <RHFTextField
-                      size="small"
-                      name="summerReturnAirCFM"
-                      label="Supply Air (ASD)"
-                      onBlur={onChangeSummerReturnAirCFM}
-                    />
-                    <RHFTextField
-                      size="small"
-                      name="supplyAirESP"
-                      label="Supply Air (ERC)"
-                      onBlur={onChangeSupplyAirCFM}
-                    />
-                    <RHFTextField
-                      size="small"
-                      name="exhaustAirESP"
-                      label="Supply Air (DVG)"
-                      onBlur={onChangeReturnAirCFM}
-                    />
-                  </Box>
-                  <Divider />
-                  <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFSelect size="small" name="unitModel" label="Unit Model">
+                    <RHFTextField size="small" name="tag" label="Tag" />
+                    <RHFTextField size="small" name="quantity" label="Quantity" />
+                    <RHFSelect size="small" name="location" label="Location" placeholder="">
                       <option value="" />
-                      {unitModel.map((item, index) => (
+                      {initInfo.location.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFSelect size="small" name="unitVoltage" label="Unit Voltage">
+                    <RHFSelect size="small" name="orientation" label="Orientation" placeholder="">
                       <option value="" />
-                      {voltage.map((item, index) => (
+                      {orientation.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    <RHFSelect size="small" name="unitType" label="Unit Type" placeholder="" disabled>
+                      {initInfo.unitType.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    <RHFSelect size="small" name="controlPreference" label="Control Preference" placeholder="">
+                      <option value="" />
+                      {initInfo.controlsPreference.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
                   </Box>
-                </Box>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+              <Card sx={{ mb: 3 }}>
+                <CardHeaderStyle title="AIR FLOW DATA" />
+                <CardContent sx={{ height: 'auto' }}>
+                  <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField
+                        size="small"
+                        name="summerSupplyAirCFM"
+                        label="Supply Air (CFM)"
+                        onBlur={onChangeSummerSupplyAirCFM}
+                        autoComplete="off"
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="summerReturnAirCFM"
+                        label="Supply Air (ASD)"
+                        onBlur={onChangeSummerReturnAirCFM}
+                        autoComplete="off"
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="supplyAirESP"
+                        label="Supply Air (ERC)"
+                        onBlur={onChangeSupplyAirCFM}
+                        autoComplete="off"
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="exhaustAirESP"
+                        label="Supply Air (DVG)"
+                        onBlur={onChangeReturnAirCFM}
+                        autoComplete="off"
+                      />
+                    </Box>
+                    <Divider />
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFSelect size="small" name="unitModel" label="Unit Model">
+                        <option value="" />
+                        {unitModel.map((item, index) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect size="small" name="unitVoltage" label="Unit Voltage">
+                        <option value="" />
+                        {voltage.map((item, index) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ mb: 3 }}>
