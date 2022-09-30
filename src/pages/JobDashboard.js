@@ -94,8 +94,6 @@ export default function JobDashboard() {
 
   const { jobInfo, unitList, isLoading } = useSelector((state) => state.jobDashboard);
 
-  console.log(jobInfo, unitList, isLoading);
-
   useEffect(() => {
     dispatch(getJobsAndUnitsInfo({ jobId }));
   }, [dispatch, jobId]);

@@ -1,8 +1,12 @@
+import React, { useEffect } from 'react';
 import { capitalCase } from 'change-case';
 import { useLocation, useParams } from 'react-router';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Container, Tab, Box, Tabs } from '@mui/material';
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { getInitUnitinfo } from '../redux/slices/unitReducer';
 // routes
 import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../routes/paths';
 // hooks
@@ -29,31 +33,41 @@ const RootStyle = styled('div')(({ theme }) => ({
 export default function SetUnitInfo() {
   const { themeStretch } = useSettings();
   const { jobId } = useParams();
-
+  const { state } = useLocation();
+  const dispatch = useDispatch();
   const { currentTab, onChangeTab } = useTabs('Unit Info');
+  const { unitInitInfo } = useSelector((state) => state.unit);
 
-  const ACCOUNT_TABS = [
-    {
-      value: 'Unit Info',
-      icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
-      component: <UnitEdit />,
-    },
-    {
-      value: 'Layout',
-      icon: <Iconify icon={'ant-design:layout-outlined'} width={20} height={20} />,
-      component: <Layout />,
-    },
-    {
-      value: 'Drawing',
-      icon: <Iconify icon={'arcticons:grid-drawing-for-artist'} width={20} height={20} />,
-      component: <Drawing />,
-    },
-    {
-      value: 'Selection',
-      icon: <Iconify icon={'mdi:selection-ellipse'} width={20} height={20} />,
-      component: <Selection />,
-    },
-  ];
+  useEffect(() => {
+    dispatch(getInitUnitinfo({ jobId, productTypeId: state.productType, unitModelId: state.unitType, UAL: localStorage.getItem("UAL") }));
+  }, [dispatch, state, jobId]);
+
+  const isLoading = JSON.stringify(unitInitInfo) === '{}';
+
+  const ACCOUNT_TABS = !isLoading
+    ? [
+        {
+          value: 'Unit Info',
+          icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
+          component: <UnitEdit initInfo={unitInitInfo} unitType={state.unitType} productType={state.productType} />,
+        },
+        {
+          value: 'Layout',
+          icon: <Iconify icon={'ant-design:layout-outlined'} width={20} height={20} />,
+          component: <Layout />,
+        },
+        {
+          value: 'Drawing',
+          icon: <Iconify icon={'arcticons:grid-drawing-for-artist'} width={20} height={20} />,
+          component: <Drawing />,
+        },
+        {
+          value: 'Selection',
+          icon: <Iconify icon={'mdi:selection-ellipse'} width={20} height={20} />,
+          component: <Selection />,
+        },
+      ]
+    : [];
 
   return (
     <Page title="Unit: View">

@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Grid, Card, Step, Stepper, Container, StepLabel, StepConnector, Button } from '@mui/material';
-// _mock_
-import { _modelInfos, _productFamilyInfos } from '../_mock';
+// redux
+import { useSelector, useDispatch } from 'react-redux';
+import { getUnitTypeInfo } from '../redux/slices/unitReducer';
 // routes
 import { PATH_JOBS, PATH_JOB, PATH_UNIT } from '../routes/paths';
 // components
@@ -94,78 +95,98 @@ export default function AddNewUnit() {
   const [activeStep, setActiveStep] = useState(1);
   const [selectStep, setActiveSelectStep] = useState(0);
   const [unitData, setUnitData] = useState();
+  const [projecTypeId, setProjectTypeId] = useState(0);
+  const { productType, unitType, productTypeUnitTypeLink, isLoading } = useSelector((state) => state.unit);
+
+  console.log(productType, unitType);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // const isComplete = activeStep === STEPS.length;
 
   const onSelectProductFamilyItem = (value) => {
-    setUnitData({ ...unitData, fimily: value });
+    setProjectTypeId(value);
+    setUnitData({ ...unitData, productType: value });
     setActiveSelectStep(1);
   };
 
   const onSelectProductModelItem = (value) => {
-    setUnitData({ ...unitData, model: value });
+    setUnitData({ ...unitData, unitType: value });
   };
 
   const onClickNextStep = () => {
-    navigate(PATH_UNIT.configure(jobId), {unitData});
+    console.log(unitData);
+    navigate(PATH_UNIT.configure(jobId), { state: unitData });
   };
+
+  useEffect(() => {
+    dispatch(getUnitTypeInfo({ jobId }));
+  }, [dispatch, jobId]);
 
   return (
     <Page title="Unit: Add">
-      <RootStyle>
-        <Container>
-          <HeaderBreadcrumbs
-            heading="Add New Unit"
-            links={[
-              { name: 'My jobs', href: PATH_JOBS.root },
-              // { name: 'Selected Job', href: PATH_MY_JOBS.dashboard },
-              { name: 'Add New Unit' },
-            ]}
-            sx={{ paddingLeft: '24px', paddingTop: '24px' }}
-          />
+      {isLoading ? (
+        <h1>Loading</h1>
+      ) : (
+        <RootStyle>
+          <Container>
+            <HeaderBreadcrumbs
+              heading="Add New Unit"
+              links={[
+                { name: 'My jobs', href: PATH_JOBS.root },
+                // { name: 'Selected Job', href: PATH_MY_JOBS.dashboard },
+                { name: 'Add New Unit' },
+              ]}
+              sx={{ paddingLeft: '24px', paddingTop: '24px' }}
+            />
 
-          {selectStep === 0 ? (
-            <SelectProductFamily ProductFamilyData={_productFamilyInfos} onSelectItem={onSelectProductFamilyItem} />
-          ) : (
-            <SelectModel ModelData={_modelInfos} onSelectItem={onSelectProductModelItem} />
-          )}
-        </Container>
-        <FooterStepStyle>
-          <Grid container>
-            <Grid item xs={2} textAlign="center">
-              <Button href={PATH_JOB.dashboard(jobId)} color="primary" type="button">
-                <Iconify icon={'akar-icons:arrow-left'} />
-                Back to job dashboard
-              </Button>
+            {selectStep === 0 ? (
+              <SelectProductFamily ProductFamilyData={productType} onSelectItem={onSelectProductFamilyItem} />
+            ) : (
+              <SelectModel
+                modelData={{ unitType, productTypeUnitTypeLink }}
+                currentProductTypeId={projecTypeId}
+                onSelectItem={onSelectProductModelItem}
+              />
+            )}
+          </Container>
+          <FooterStepStyle>
+            <Grid container>
+              <Grid item xs={2} textAlign="center">
+                <Button href={PATH_JOB.dashboard(jobId)} color="primary" type="button">
+                  <Iconify icon={'akar-icons:arrow-left'} />
+                  Back to job dashboard
+                </Button>
+              </Grid>
+              <Grid item xs={8}>
+                <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
+                  {STEPS.map((label) => (
+                    <Step key={label}>
+                      <StepLabel
+                        StepIconComponent={StepIcon}
+                        sx={{
+                          '& .MuiStepLabel-label': {
+                            typography: 'subtitle2',
+                            color: 'text.disabled',
+                          },
+                        }}
+                      >
+                        {label}
+                      </StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Grid>
+              <Grid item xs={2} textAlign="center">
+                <Button color="primary" onClick={onClickNextStep} disabled={selectStep === 0 || unitType === undefined}>
+                  Next Step
+                  <Iconify icon={'akar-icons:arrow-right'} />
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={8}>
-              <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
-                {STEPS.map((label) => (
-                  <Step key={label}>
-                    <StepLabel
-                      StepIconComponent={StepIcon}
-                      sx={{
-                        '& .MuiStepLabel-label': {
-                          typography: 'subtitle2',
-                          color: 'text.disabled',
-                        },
-                      }}
-                    >
-                      {label}
-                    </StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-            </Grid>
-            <Grid item xs={2} textAlign="center">
-              <Button color="primary" onClick={onClickNextStep} disabled={selectStep === 0 || unitData.model === undefined}>
-                Next Step
-                <Iconify icon={'akar-icons:arrow-right'} />
-              </Button>
-            </Grid>
-          </Grid>
-        </FooterStepStyle>
-      </RootStyle>
+          </FooterStepStyle>
+        </RootStyle>
+      )}
     </Page>
   );
 }

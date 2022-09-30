@@ -50,13 +50,26 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 SelectModel.propTypes = {
-  ModelData: PropTypes.array,
+  modelData: PropTypes.object,
+  currentProductTypeId: PropTypes.number,
   onSelectItem: PropTypes.func,
 };
-export default function SelectModel({ ModelData, onSelectItem }) {
+export default function SelectModel({ modelData, currentProductTypeId, onSelectItem }) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [selectedId, setselctedId] = useState(-1);
+
+  const displayedModelInfo = [];
+
+  modelData.productTypeUnitTypeLink.forEach((item) => {
+    if (item.product_type_id === currentProductTypeId) {
+      modelData.unitType.forEach((unit) => {
+        if (item.unit_type === unit.dwg_code) {
+          displayedModelInfo.push({ id: unit.id, items: unit.items });
+        }
+      });
+    }
+  });
 
   const handleDrawerOpen = (id) => {
     setselctedId(id);
@@ -80,17 +93,21 @@ export default function SelectModel({ ModelData, onSelectItem }) {
                   display: 'grid',
                   rowGap: 3,
                   columnGap: 2,
-                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                  gridTemplateColumns: {
+                    xs: 'repeat(1, 1fr)',
+                    sm: `repeat(${displayedModelInfo.length % 2}, 1fr)`,
+                    md: `repeat(${displayedModelInfo.length % 3}, 1fr)`,
+                  },
                 }}
               >
-                {ModelData.map((item, index) => (
+                {displayedModelInfo.map((item, index) => (
                   <UnitItem
                     key={index}
                     id={index}
                     info={item}
                     onSelectItem={() => {
                       handleDrawerOpen(index);
-                      onSelectItem(item);
+                      onSelectItem(item.id);
                     }}
                     active={selectedId === index}
                   />
@@ -133,17 +150,17 @@ export default function SelectModel({ ModelData, onSelectItem }) {
                 }}
               >
                 <ImageBorderStyle>
-                  <img src={ModelData[selectedId].image} alt={ModelData[selectedId].description} width="100%" />
+                  <img src='/assets/Images/img_nova_2.png' alt="welcome" width="100%" />
                 </ImageBorderStyle>
 
                 <Box>
                   <Typography variant="body2" component="p">
-                    {ModelData[selectedId].description}
+                    Loren ipsum dolor sit amet, consecteturadipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusceultrics tortor pretium vulputate viverrra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.
                   </Typography>
                 </Box>
                 <Box>
                   <Typography variant="body2" component="p">
-                    {ModelData[selectedId].description}
+                    Loren ipsum dolor sit amet, consecteturadipiscing elit. Duis fringilla porta diam, eu egestas nibh pellentesque vel. Fusceultrics tortor pretium vulputate viverrra. Vestibulum purus sem, mattis in dolor vel, egestas tincidunt libero. Aliquam suscipit purus accumsan lectus ultrices, id bibendum diam malesuada. Nulla facilisi.
                   </Typography>
                 </Box>
                 <Divider />

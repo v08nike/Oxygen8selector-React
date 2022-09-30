@@ -85,7 +85,7 @@ function AuthProvider({ children }) {
             title : localStorage.getItem("title"),
             cutomerId : localStorage.getItem("cutomerId"),
             access : localStorage.getItem("access"),
-            AUL : localStorage.getItem("AUL"),
+            UAL : localStorage.getItem("UAL"),
             accessPricing : localStorage.getItem("accessPricing"),
             createdDate : localStorage.getItem("created_date")
           }
@@ -144,7 +144,7 @@ function AuthProvider({ children }) {
       localStorage.setItem('title', data[0].title);
       localStorage.setItem('customerId', data[0].customer_id);
       localStorage.setItem('access', data[0].access);
-      localStorage.setItem('AUL', data[0].access_level);
+      localStorage.setItem('UAL', data[0].access_level);
       localStorage.setItem('accessPricing', data[0].access_pricing);
       localStorage.setItem('createdDate', data[0].created_date);
 

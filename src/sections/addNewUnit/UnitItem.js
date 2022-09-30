@@ -22,7 +22,8 @@ UnitItem.propTypes = {
   active: PropTypes.bool,
 };
 export default function UnitItem({ info, onSelectItem, id, active }) {
-  const { title, image } = info;
+  const { items } = info;
+
   return (
     <Box textAlign={'center'}>
       <BoxStyle
@@ -32,11 +33,11 @@ export default function UnitItem({ info, onSelectItem, id, active }) {
           borderColor: active ? 'primary.main' : '#a3a3a3',
         }}
       >
-        <img src={image} width="100%" height="100%" alt={title} />
+        <img src="/assets/Images/img_nova_2.png" width="100%" height="100%" alt={items} />
       </BoxStyle>
       <Box sx={{ textAlign: 'center', fontSize: '14px' }}>
         <Typography variant="p">
-          {title}{' '}
+          {items}{' '}
           <span>
             <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
               <Iconify icon={'ant-design:exclamation-circle-outlined'} />

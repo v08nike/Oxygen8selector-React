@@ -1,5 +1,7 @@
+import React, { useState } from 'react';
 import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 // import PropTypes from 'prop-types';
 
 // @mui
@@ -15,7 +17,10 @@ import { addNewUnit, updateUnit } from '../../redux/slices/jobsReducer';
 import Iconify from '../../components/Iconify';
 import { FormProvider, RHFTextField, RHFSelect } from '../../components/hook-form';
 import { PATH_JOB, PATH_JOBS, PATH_UNIT } from '../../routes/paths';
-
+// utils
+import axios from '../../utils/axios';
+// config
+import { serverUrl } from '../../config';
 //------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -31,34 +36,44 @@ const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
 
 // -----------------------------------------------
 
-export default function UnitEdit() {
+UnitEdit.propTypes = {
+  initInfo: PropTypes.object,
+  unitType: PropTypes.number,
+  productType: PropTypes.number,
+};
+export default function UnitEdit({ initInfo, unitType, productType }) {
   const navigate = useNavigate();
   const { jobId, unitId } = useParams();
   const isEdit = unitId !== undefined;
+  const {mainInitData} = initInfo;
+  const [unitModel, setUnitModel] = useState(mainInitData.modelInfo);
+  const [orientation, setOrientation] = useState(mainInitData.orientationInfo);
+  const [voltage, setVoltage] = useState(mainInitData.voltageInfo.data);
 
-  const unitInfo = useSelector(
-    (state) =>
-      state.jobs.unitList
-        .filter((item) => item.jobId.toString() === jobId)[0]
-        .data.filter((item) => item.unitId.toString() === unitId)[0]
-  );
+  console.log(initInfo);
+
+  // const unitInfo = useSelector(
+  //   (state) =>
+  //     state.jobs.unitList
+  //       .filter((item) => item.jobId.toString() === jobId)[0]
+  //       .data.filter((item) => item.unitId.toString() === unitId)[0]
+  // );
 
   const UnitSchema = Yup.object().shape({
     tag: Yup.string().required('Please enter a Tag'),
     quantity: Yup.string().required('Please enter a Quantity'),
     location: Yup.string().required('Please enter a Location'),
     orientation: Yup.string().required('Please enter a Orientation'),
-    handling: Yup.string().required('Please select a Handling'),
     unitType: Yup.string().required('Please enter a UnitType'),
     controlPreference: Yup.string().required('Please enter a Control Preference'),
-    CFM: Yup.string().required('Please enter a CFM'),
-    ASD: Yup.string().required('Please enter a ASD'),
-    ERC: Yup.string().required('Please enter a ERC'),
-    DVG: Yup.string().required('Please enter a DVG'),
+    summerSupplyAirCFM: Yup.string().required('Please enter a Supply Air (CFM)'),
+    summerReturnAirCFM: Yup.string().required('Please enter a Exhaust Air (CFM)'),
+    supplyAirESP: Yup.string().required('Please enter a Supply Air ESP'),
+    exhaustAirESP: Yup.string().required('Please enter a Exhaust Air ESP'),
     unitModel: Yup.string().required('Please select a UnitModel'),
     unitVoltage: Yup.string().required('Please select a UnitVoltage'),
-    qa_filter1: Yup.string().required('Please select a QA Filter'),
-    ra_filter1: Yup.string().required('Please enter a RA Filter'),
+    qa_filter: Yup.string().required('Please select a QA Filter'),
+    ra_filter: Yup.string().required('Please enter a RA Filter'),
     preheat: Yup.string().required('Please enter a Preheat'),
     cooling: Yup.string().required('Please enter a Cooling'),
     heating: Yup.string().required('Please enter a Heating'),
@@ -70,20 +85,19 @@ export default function UnitEdit() {
 
   const defaultValues = {
     tag: '',
-    quantity: '',
-    location: '',
-    orientation: '',
-    handling: '',
-    unitType: '',
-    controlPreference: '',
-    CFM: '',
-    ASD: '',
-    ERC: '',
-    DVG: '',
-    unitModel: '',
-    unitVoltage: '',
-    qa_filter1: '',
-    ra_filter1: '',
+    quantity: 1,
+    location: initInfo.locationId,
+    orientation: initInfo.orientationId,
+    unitType,
+    controlPreference: initInfo.controlsPreferenceId,
+    summerSupplyAirCFM: 325,
+    summerReturnAirCFM: 325,
+    supplyAirESP: 0.75,
+    exhaustAirESP: 0.75,
+    unitModel: mainInitData.modelId,
+    unitVoltage: mainInitData.voltageInfo.selectedVoltageId,
+    qa_filter: '',
+    ra_filter: '',
     preheat: '',
     cooling: '',
     heating: '',
@@ -93,10 +107,10 @@ export default function UnitEdit() {
     ra_filter3: '',
   };
 
-  if (isEdit)
-    Object.entries(unitInfo).forEach(([key, value]) => {
-      defaultValues[key] = value;
-    });
+  // if (isEdit)
+  //   Object.entries(unitInfo).forEach(([key, value]) => {
+  //     defaultValues[key] = value;
+  //   });
 
   const methods = useForm({
     resolver: yupResolver(UnitSchema),
@@ -106,8 +120,71 @@ export default function UnitEdit() {
   const {
     // setValue,
     handleSubmit,
+    getValues,
+    setValue,
     formState: { isSubmitting },
   } = methods;
+
+  const airFlowDataChanged = (action) => {
+    const sendingData = {
+      action,
+      UAL: localStorage.getItem("UAL"),
+      location: getValues('location'),
+      orientation: getValues('orientation'),
+      unitTypeId: getValues('unitType'),
+      productTypeId: productType,
+      unitModelId: getValues('unitModel'),
+      summerSupplyAirCFM: getValues('summerSupplyAirCFM'),
+      summerReturnAirCFM: getValues('summerReturnAirCFM'),
+      supplyAirESP: getValues('supplyAirESP'),
+      exhaustAirESP: getValues('exhaustAirESP'),
+      voltageId: getValues('unitVoltage'),
+      byPass: 0,
+    };
+    console.log(sendingData);
+    axios.post(`${serverUrl}/api/units/airflowdatachanged`, sendingData).then((response) => {
+      const { data } = response;
+      console.log(data);
+      if (data === 0) {
+        return;
+      }
+      if (action === 'SummerSupplyAirCFM_Changed') {
+        setUnitModel(data.modelInfo);
+        setOrientation(data.orientationInfo);
+        setVoltage(data.voltageInfo.data);
+        setValue('unitVoltage', data.voltageInfo.selectedVoltageId);
+        setValue('unitModel', data.modelId);
+        setValue('orientation', data.orientationId);
+        setValue('summerSupplyAirCFM', data.summerSupplyAirCFM);
+        setValue('summerReturnAirCFM', data.summerReturnAirCFM);
+      }
+      if (action === 'SummerReturnAirCFM_Changed') {
+        setValue('summerReturnAirCFM', data.summerReturnAirCFM);
+      }
+      if (action === 'SupplyAirESP') {
+        setValue('supplyAirESP', data.supplyAirESP);
+      }
+      if (action === 'ExhaustAirESP') {
+        setValue('exhaustAirESP', data.exhaustAirESP);
+      }
+    });
+  };
+
+  const onChangeSummerSupplyAirCFM = (e) => {
+    airFlowDataChanged('SummerSupplyAirCFM_Changed');
+  };
+
+  const onChangeSummerReturnAirCFM = (e) => {
+    airFlowDataChanged('SummerReturnAirCFM_Changed');
+  };
+
+  const onChangeSupplyAirCFM = (e) => {
+    airFlowDataChanged('SupplyAirESP');
+  };
+
+  const onChangeReturnAirCFM = (e) => {
+    airFlowDataChanged('ExhaustAirESP');
+  };
 
   const onSubmit = (data) => {
     if (!isEdit) {
@@ -121,11 +198,7 @@ export default function UnitEdit() {
     <Container>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3, mb: 3 }}>
-          <Button
-            type="submit"
-            variant="text"
-            startIcon={<Iconify icon={isEdit ? 'bx:save' : 'carbon:add'} />}
-          >
+          <Button type="submit" variant="text" startIcon={<Iconify icon={isEdit ? 'bx:save' : 'carbon:add'} />}>
             {isEdit ? 'Save Changes' : 'Add Unit to Project'}
           </Button>
         </Stack>
@@ -139,28 +212,34 @@ export default function UnitEdit() {
                   <RHFTextField size="small" name="quantity" label="Quantity" />
                   <RHFSelect size="small" name="location" label="Location" placeholder="">
                     <option value="" />
-                    <option value="ca">CAN</option>
-                    <option value="us">USA</option>
-                    <option value="indi">Indoor</option>
+                    {initInfo.location.map((item, index) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
                   </RHFSelect>
                   <RHFSelect size="small" name="orientation" label="Orientation" placeholder="">
                     <option value="" />
-                    <option value="hor">Horizontal</option>
-                    <option value="vir">Virtical</option>
+                    {orientation.map((item, index) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
                   </RHFSelect>
-                  <RHFSelect size="small" name="handling" label="Handling" placeholder="">
-                    <option value="" />
-                    <option value="left">left</option>
-                    <option value="right">right</option>
-                  </RHFSelect>
-                  <RHFSelect size="small" name="unitType" label="Unit Type" placeholder="">
-                    <option value="" />
-                    <option value="ERV">Energy Recovery Ventilator (ERV) </option>
-                    <option value="vir">Energy Recovery Ventilator (DEG) </option>
+                  <RHFSelect size="small" name="unitType" label="Unit Type" placeholder="" disabled>
+                    {initInfo.unitType.map((item, index) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
                   </RHFSelect>
                   <RHFSelect size="small" name="controlPreference" label="Control Preference" placeholder="">
                     <option value="" />
-                    <option value="cv">Constant Volume </option>
+                    {initInfo.controlsPreference.map((item, index) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
                   </RHFSelect>
                 </Box>
               </CardContent>
@@ -172,15 +251,49 @@ export default function UnitEdit() {
               <CardContent sx={{ height: '600px' }}>
                 <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField size="small" name="CFM" label="Supply Air (CFM)" />
-                    <RHFTextField size="small" name="ASD" label="Supply Air (ASD)" />
-                    <RHFTextField size="small" name="ERC" label="Supply Air (ERC)" />
-                    <RHFTextField size="small" name="DVG" label="Supply Air (DVG)" />
+                    <RHFTextField
+                      size="small"
+                      name="summerSupplyAirCFM"
+                      label="Supply Air (CFM)"
+                      onBlur={onChangeSummerSupplyAirCFM}
+                    />
+                    <RHFTextField
+                      size="small"
+                      name="summerReturnAirCFM"
+                      label="Supply Air (ASD)"
+                      onBlur={onChangeSummerReturnAirCFM}
+                    />
+                    <RHFTextField
+                      size="small"
+                      name="supplyAirESP"
+                      label="Supply Air (ERC)"
+                      onBlur={onChangeSupplyAirCFM}
+                    />
+                    <RHFTextField
+                      size="small"
+                      name="exhaustAirESP"
+                      label="Supply Air (DVG)"
+                      onBlur={onChangeReturnAirCFM}
+                    />
                   </Box>
                   <Divider />
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField size="small" name="unitModel" label="Unit Model" />
-                    <RHFTextField size="small" name="unitVoltage" label="Unit Voltage" />
+                    <RHFSelect size="small" name="unitModel" label="Unit Model">
+                      <option value="" />
+                      {unitModel.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    <RHFSelect size="small" name="unitVoltage" label="Unit Voltage">
+                      <option value="" />
+                      {voltage.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
                   </Box>
                 </Box>
               </CardContent>
@@ -192,11 +305,29 @@ export default function UnitEdit() {
               <CardContent sx={{ height: '600px' }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1 }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField size="small" name="qa_filter1" label="QA Filter" />
-                    <RHFTextField size="small" name="ra_filter1" label="RA Filter" />
-                    <RHFSelect size="small" name="preheat" label="Preheat" placeholder="">
+                    <RHFSelect size="small" name="qa_filter" label="QA Filter">
                       <option value="" />
-                      <option value="auto">Auto</option>
+                      {initInfo.qaFilter.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    <RHFSelect size="small" name="ra_filter" label="RA Filter">
+                      <option value="" />
+                      {initInfo.raFilter.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    <RHFSelect size="small" name="preheat" label="Preheat">
+                      <option value="" />
+                      {initInfo.preheatComp.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
                     </RHFSelect>
                     <RHFSelect size="small" name="cooling" label="Cooling" placeholder="">
                       <option value="" />
