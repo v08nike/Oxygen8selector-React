@@ -25,6 +25,9 @@ const JobDashboardSlice = createSlice({
       state.isLoading = false;
       state.jobInfo = action.payload.jobInfo[0];
       state.unitList = action.payload.unitList;
+    },
+    setUnitInfo(state, action){
+      state.unitList = action.payload;
     }
   },
 });
@@ -43,4 +46,11 @@ export function getJobsAndUnitsInfo(data) {
     dispatch(setJobAndUnitInfo(response.data));
   };
 }
+
+export const deleteUnits = async (data) => {
+  const response = await axios.post(`${serverUrl}/api/units/Delete`, data);
+  dispatch(JobDashboardSlice.actions.setUnitInfo(response.data));
+  return response.data;
+}
+
 // ----------------------------------------------------------------------

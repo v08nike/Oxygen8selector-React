@@ -10,7 +10,10 @@ import { LoadingButton } from '@mui/lab';
 import { PATH_AUTH } from '../../../routes/paths';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
-
+// utils
+import axios from '../../../utils/axios';
+// config
+import { serverUrl } from '../../../config';
 // ----------------------------------------------------------------------
 
 export default function ResetPasswordForm() {
@@ -32,11 +35,10 @@ export default function ResetPasswordForm() {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      sessionStorage.setItem('email-recovery', data.email);
-
-      navigate(PATH_AUTH.verify);
+      const response = await axios.post(`${serverUrl}/api/auth/sendrequest`, data);
+      if (response.data === true) {
+        navigate(PATH_AUTH.verify);
+      }
     } catch (error) {
       console.error(error);
     }

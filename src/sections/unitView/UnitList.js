@@ -16,8 +16,8 @@ import {
 } from '@mui/material';
 
 // redux
-import { useSelector } from 'react-redux';
-import { deleteUnit } from '../../redux/slices/jobsReducer';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteUnits } from '../../redux/slices/jobDashboardReducer';
 // hooks
 import useTabs from '../../hooks/useTabs';
 import useTable, { getComparator, emptyRows } from '../../hooks/useTable';
@@ -47,6 +47,10 @@ const TABLE_HEAD = [
 
 export default function UnitList() {
   const { jobId } = useParams();
+  const { unitList } = useSelector((state) => state.jobDashboard);
+  const dispatch = useDispatch();
+
+  console.log(unitList);
 
   const {
     page,
@@ -68,9 +72,8 @@ export default function UnitList() {
   const dense = true;
 
   const navigate = useNavigate();
-  const unitList = useSelector((state) => state.jobs.unitList.filter((item) => item.jobId.toString() === jobId)[0]);
 
-  const [tableData, setTableData] = useState(unitList.data);
+  const [tableData, setTableData] = useState(unitList);
 
   const [filterName, setFilterName] = useState('');
 
@@ -91,12 +94,10 @@ export default function UnitList() {
     setOneConfirmDialogState(false);
   };
 
-  const handleDeleteRow = () => {
-    const deleteRow = tableData.filter((row) => row.unitId !== deleteRowID);
-    setSelected([]);
+  const handleDeleteRow = async () => {
+    const data = await deleteUnits({ action:"DELETE_ONE", jobId, unitId: deleteRowID });
+    setTableData(data);
     setDeleteRowID(-1);
-    deleteUnit({ jobId, data: deleteRow });
-    setTableData(deleteRow);
     handleOneConfirmDialogClose(false);
   };
 
@@ -118,16 +119,15 @@ export default function UnitList() {
     setFilterRole(value);
   };
 
-  const handleDeleteRows = () => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.unitId));
+  const handleDeleteRows = async () => {
+    const data = await deleteUnits({ action:"DELETE_MULTI", jobId, unitIds: selected });
+    setTableData(data);
     setSelected([]);
-    deleteUnit({ jobId, data: deleteRows });
-    setTableData(deleteRows);
     setMultiConfirmDialogState(false);
   };
 
-  const handleEditRow = (unitId) => {
-    navigate(PATH_UNIT.edit(jobId, unitId));
+  const handleEditRow = (unit_no) => {
+    navigate(PATH_UNIT.edit(jobId, unit_no));
   };
 
   const handleClickNewUnit = () => {
@@ -171,7 +171,7 @@ export default function UnitList() {
                 onSelectAllRows={(checked) =>
                   onSelectAllRows(
                     checked,
-                    tableData.map((row) => row.unitId)
+                    tableData.map((row) => row.unit_no)
                   )
                 }
                 actions={
@@ -195,7 +195,7 @@ export default function UnitList() {
                 onSelectAllRows={(checked) =>
                   onSelectAllRows(
                     checked,
-                    tableData.map((row) => row.unitId)
+                    tableData.map((row) => row.unit_no)
                   )
                 }
               />
@@ -205,10 +205,10 @@ export default function UnitList() {
                   <UnitTableRow
                     key={index}
                     row={row}
-                    selected={selected.includes(row.unitId)}
-                    onSelectRow={() => onSelectRow(row.unitId)}
-                    onDeleteRow={() => handleOneConfirmDialogOpen(row.unitId)}
-                    onEditRow={() => handleEditRow(row.unitId)}
+                    selected={selected.includes(row.unit_no)}
+                    onSelectRow={() => onSelectRow(row.unit_no)}
+                    onDeleteRow={() => handleOneConfirmDialogOpen(row.unit_no)}
+                    onEditRow={() => handleEditRow(row.unit_no)}
                   />
                 ))}
 
@@ -266,8 +266,8 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
       (item) =>
         item.tag.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.qty.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.modal.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.unit_type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.unit_model.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.cfm.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }

@@ -62,4 +62,10 @@ export function getInitUnitinfo(data) {
   };
 }
 
+export function saveUnitInfo(data) {
+  return async () => {
+    const response = await axios.post(`${serverUrl}/api/units/Save`, data);
+    console.log(response);
+  };
+}
 // ----------------------------------------------------------------------

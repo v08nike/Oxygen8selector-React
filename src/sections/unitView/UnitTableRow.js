@@ -20,9 +20,8 @@ UserTableRow.propTypes = {
 
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   // const theme = useTheme();
-  console.log(row);
 
-  const { tag, qty, type, modal, cfm } = row;
+  const { tag, qty, unit_type, unit_model, cfm } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -42,9 +41,9 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
 
       <TableCell align="left">{tag}</TableCell>
       <TableCell align="left">{qty}</TableCell>
-      <TableCell align="left">{type}</TableCell>
+      <TableCell align="left">{unit_type}</TableCell>
 
-      <TableCell align="left">{modal}</TableCell>
+      <TableCell align="left">{unit_model}</TableCell>
       <TableCell align="left">{cfm}</TableCell>
       <TableCell align="right">
         <TableMoreMenu
