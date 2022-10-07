@@ -111,7 +111,7 @@ export default function NewPassword({email}) {
             }}
           />
           <RHFTextField
-            name="confirm_password"
+            name="confirmPassword"
             label="Confirm Password"
             type={showConfirmPassword ? 'text' : 'password'}
             InputProps={{
@@ -126,7 +126,7 @@ export default function NewPassword({email}) {
           />
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" sx={{ mt: 1 }} loading={isSubmitting}>
           Set New Password
         </LoadingButton>
       </FormProvider>
