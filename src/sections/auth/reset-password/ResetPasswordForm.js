@@ -8,7 +8,7 @@ import jwtDecode from 'jwt-decode';
 import sign from 'jwt-encode';
 // @mui
 import { Stack } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton, Alert } from '@mui/lab';
 // routes
 import { PATH_AUTH } from '../../../routes/paths';
 // components
@@ -33,31 +33,37 @@ export default function ResetPasswordForm() {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    setError,
+    formState: { errors, isSubmitting },
   } = methods;
 
   const onSubmit = async (data) => {
     try {
       const today = new Date();
-      const jwt = sign({email: data.email, expireTime: today.getMilliseconds() + 3000000 }, "secret");
-      const emailBody =  `https://https://oxygen8selector.netlify.app/auth/reset-password?token=${jwt}`;
-      const response = await axios.post(`https://rocket-at.net/email/sendMailOverHTTPA`, {
-        email: data.email,
-        subject: "Oxygent8Selctor Reset Password",
-        emailBody,
-      });
-      console.log(response.data);
-      if (response.data === true) {
+      const jwt = sign({ email: data.email, expireTime: today.getMilliseconds() + 3000000 }, 'secret');
+      const emailBody = `https://oxygen8selector.netlify.app/auth/reset-password?token=${jwt}`;
+      const response = await axios.post(`${serverUrl}/api/auth/saveresetpassword`, data);
+      if (response.data) {
+        axios.post(`https://rocket-at.net/email/sendMailOverHTTPA`, {
+          email: data.email,
+          subject: 'Oxygent8Selctor Reset Password',
+          emailBody,
+        });
+
         navigate(PATH_AUTH.verify);
+      } else {
+        setError('afterSubmit', { ...errors, message: 'Your eamil is not correct!' });
       }
     } catch (error) {
-      console.error(error);
+      setError('afterSubmit', { ...error, message: "Can't connect server!" });
     }
   };
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
+        {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
+
         <RHFTextField name="email" label="Email address" />
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>

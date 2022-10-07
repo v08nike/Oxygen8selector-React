@@ -28,10 +28,8 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function ResetPassword() {
   const params = new URLSearchParams(window.location.pathname);
-  console.log("welcome");
   const [searchParams] = useSearchParams();
-  console.log(params.get("token"));
-
+  
   if (searchParams.token !== undefined){
     const tokenData = jwtDecode(searchParams.token)
     console.log(tokenData);
