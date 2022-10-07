@@ -62,7 +62,7 @@ export default function ResetPasswordForm() {
         const now = new Date();
         const jwt = sign({ email: data.email, expireTime: now.getTime() + 900000 }, 'secret');
         const emailBody = `https://oxygen8selector.netlify.app/auth/reset-password/${jwt}`;
-        axios.post(`https://rocket-at.net/email/sendMailOverHTTPA`, {
+        axios.post(`${serverUrl}/api/auth/sendrequest`, {
           email: data.email,
           subject: 'Oxygent8Selctor Reset Password',
           emailBody,

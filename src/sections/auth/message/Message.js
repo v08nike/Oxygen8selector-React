@@ -1,12 +1,8 @@
-// React
-import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Container, Typography, Button } from '@mui/material';
 // PropTypes
 import PropTypes from 'prop-types';
-// routes
-import { PATH_AUTH } from '../../../routes/paths';
 // layouts
 import LogoOnlyLayout from '../../../layouts/LogoOnlyLayout';
 
@@ -35,7 +31,7 @@ export default function Message({text, initStates}) {
       <LogoOnlyLayout />
       <Container>
         <ContentStyle sx={{ textAlign: 'center' }}>
-          <Typography variant="h3" paragraph>
+          <Typography variant="h4" paragraph>
             {text}
           </Typography>
           <Button fullWidth size="large" onClick={initStates} sx={{ mt: 1 }}>

@@ -1,8 +1,9 @@
+import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Link, Container, Typography } from '@mui/material';
-// PropTypes
-import PropTypes from 'prop-types';
+import { Button, Container, Typography } from '@mui/material';
+// routes
+import { PATH_AUTH } from '../../routes/paths';
 // layouts
 import LogoOnlyLayout from '../../layouts/LogoOnlyLayout';
 // components
@@ -22,12 +23,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-
-VerifyCode.propTypes = {
-  text: PropTypes.string,
-};
-
-export default function VerifyCode({text}) {
+export default function VerifyCode() {
   return (
     <Page title="Verify Code">
       <LogoOnlyLayout />
@@ -37,6 +33,9 @@ export default function VerifyCode({text}) {
           <Typography variant="h3" paragraph>
             Please check your email!
           </Typography>
+          <Button fullWidth size="large"  component={RouterLink} to={PATH_AUTH.resetPassword} sx={{ mt: 1 }}>
+            Back
+          </Button>
         </ContentStyle>
       </Container>
     </Page>
