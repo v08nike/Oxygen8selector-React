@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
+// jwt
+import jwtDecode from 'jwt-decode';
+import sign from 'jwt-encode';
 // @mui
 import { Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -35,7 +38,15 @@ export default function ResetPasswordForm() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`${serverUrl}/api/auth/sendrequest`, data);
+      const today = new Date();
+      const jwt = sign({email: data.email, expireTime: today.getMilliseconds() + 3000000 }, "secret");
+      const emailBody =  `https://https://oxygen8selector.netlify.app/auth/reset-password?token=${jwt}`;
+      const response = await axios.post(`https://rocket-at.net/email/sendMailOverHTTPA`, {
+        email: data.email,
+        subject: "Oxygent8Selctor Reset Password",
+        emailBody,
+      });
+      console.log(response.data);
       if (response.data === true) {
         navigate(PATH_AUTH.verify);
       }

@@ -1,7 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Button, Container, Typography } from '@mui/material';
+// jwt
+import jwtDecode from 'jwt-decode';
 // layouts
 import LogoOnlyLayout from '../../layouts/LogoOnlyLayout';
 // routes
@@ -10,7 +12,6 @@ import { PATH_AUTH } from '../../routes/paths';
 import Page from '../../components/Page';
 // sections
 import { ResetPasswordForm } from '../../sections/auth/reset-password';
-
 // ----------------------------------------------------------------------
 
 const ContentStyle = styled('div')(({ theme }) => ({
@@ -26,6 +27,16 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function ResetPassword() {
+  const params = new URLSearchParams(window.location.pathname);
+  console.log("welcome");
+  const [searchParams] = useSearchParams();
+  console.log(params.get("token"));
+
+  if (searchParams.token !== undefined){
+    const tokenData = jwtDecode(searchParams.token)
+    console.log(tokenData);
+  }
+
   return (
     <Page title="Reset Password">
       <Container>
