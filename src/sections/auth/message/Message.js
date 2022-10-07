@@ -1,8 +1,12 @@
+// React
+import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Button } from '@mui/material';
 // PropTypes
 import PropTypes from 'prop-types';
+// routes
+import { PATH_AUTH } from '../../../routes/paths';
 // layouts
 import LogoOnlyLayout from '../../../layouts/LogoOnlyLayout';
 
@@ -34,6 +38,9 @@ export default function Message({text}) {
           <Typography variant="h3" paragraph>
             {text}
           </Typography>
+          <Button fullWidth size="large" component={RouterLink} to={PATH_AUTH.resetPassword} sx={{ mt: 1 }}>
+            Back
+          </Button>
         </ContentStyle>
       </Container>
     </div>

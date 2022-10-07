@@ -18,7 +18,8 @@ import { serverUrl } from '../../config';
 
 export default function ResetPassword() {
   const { token } = useParams();
-  const tokenData = jwtDecode(token);
+
+  console.log(token);
 
   const [error, setError] = useState('');
   const [currentTokenState, setCurrentTokenState] = useState(false);
@@ -26,6 +27,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (token !== undefined) {
+      const tokenData = jwtDecode(token);
       axios.post(`${serverUrl}/api/user/completeresetpassword`, { email: tokenData.email }).then((response) => {
         if (response.data) {
           const now = new Date();
@@ -40,8 +42,10 @@ export default function ResetPassword() {
           setError('Token has expired!');
         }
       });
+    } else {
+      setIsConfirming(false);
     }
-  }, [tokenData, token]);
+  }, [token]);
 
   let renderTag; 
   if (error === '') {
