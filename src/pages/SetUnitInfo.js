@@ -40,7 +40,7 @@ export default function SetUnitInfo() {
   const { unitInitInfo } = useSelector((state) => state.unit);
 
   useEffect(() => {
-    dispatch(getInitUnitinfo({ jobId, productTypeId: state.productType, unitModelId: state.unitType.toString(), UAL: localStorage.getItem("UAL") }));
+    dispatch(getInitUnitinfo({ jobId, productTypeId: state.productType, unitModelId: state.unitType, UAL: localStorage.getItem("UAL") }));
   }, [dispatch, state, jobId]);
 
   const isLoading = JSON.stringify(unitInitInfo) === '{}';
@@ -50,7 +50,7 @@ export default function SetUnitInfo() {
         {
           value: 'Unit Info',
           icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
-          component: <UnitEdit initInfo={unitInitInfo} unitType={state.unitType} productType={state.productType} />,
+          component: <UnitEdit initInfo={unitInitInfo} unitType={state.unitType.toString()} productType={state.productType} />,
         },
         {
           value: 'Layout',

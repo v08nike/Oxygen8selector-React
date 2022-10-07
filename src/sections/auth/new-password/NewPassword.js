@@ -72,7 +72,7 @@ export default function NewPassword({ email }) {
   const onSubmit = async (data) => {
     try {
       if (data.newPassword !== data.confirmPassword) {
-        setError('afterSubmit', { ...errors, message: "Can't connect Server!" });
+        setError('afterSubmit', { ...errors, message: "Passwords do not match!" });
       } else {
         await axios.post(`${serverUrl}/api/user/newpassword`, {
           ...data,
