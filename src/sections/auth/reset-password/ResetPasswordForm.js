@@ -70,7 +70,7 @@ export default function ResetPasswordForm() {
 
         navigate(PATH_AUTH.verify);
       } else {
-        setError('afterSubmit', { ...errors, message: 'Your eamil is not correct!' });
+        setError('afterSubmit', { ...errors, message: 'Your email does not exist!' });
       }
     } catch (error) {
       setError('afterSubmit', { ...error, message: "Can't connect server!" });
