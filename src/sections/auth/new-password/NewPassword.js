@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 // form
 import { useForm } from 'react-hook-form';
@@ -19,6 +19,10 @@ import { PATH_AUTH } from '../../../routes/paths';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
+// utils
+import axios from '../../../utils/axios';
+// config
+import { serverUrl } from '../../../config';
 // ----------------------------------------------------------------------
 
 const ContentStyle = styled('div')(({ theme }) => ({
@@ -38,6 +42,7 @@ NewPassword.propTypes = {
 
 export default function NewPassword({email}) {
   const isMountedRef = useIsMountedRef();
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -67,9 +72,11 @@ export default function NewPassword({email}) {
   const onSubmit = async (data) => {
     try {
       if(data.newPassword !== data.confirmPassword) setError('afterSubmit', { ...errors, message: "Can't connect Server!" });
-
-      console.log(data);
-      
+      await axios.post(`${serverUrl}/api/user/newpassword`, {
+        ...data,
+        email,
+      });
+      navigate(PATH_AUTH.login);
     } catch (error) {
       console.error(error);
       reset();

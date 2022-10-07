@@ -45,11 +45,17 @@ export default function ResetPassword() {
     }
   }, [token]);
 
+  const initStates = () => {
+    setError('');
+    setCurrentTokenState(false);
+    setIsConfirming(false);
+  }
+
   let renderTag; 
   if (error === '') {
     renderTag = currentTokenState ? <NewPassword /> : <ResetPasswordForm />;
   } else {
-    renderTag = <Message text={error} />;
+    renderTag = <Message text={error} initStates={initStates}/>;
   }
 
   return isConfirming ? (
