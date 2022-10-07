@@ -5,6 +5,8 @@ import { Link as RouterLink } from 'react-router-dom';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+// proptypes
+import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Stack, Alert, IconButton, InputAdornment, Typography, Button } from '@mui/material';
@@ -30,7 +32,11 @@ const ContentStyle = styled('div')(({ theme }) => ({
 }));
 
 // -----------------------------------------------------------------------
-export default function NewPassword() {
+NewPassword.propTypes = {
+  email: PropTypes.string,
+}
+
+export default function NewPassword({email}) {
   const isMountedRef = useIsMountedRef();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -60,7 +66,10 @@ export default function NewPassword() {
 
   const onSubmit = async (data) => {
     try {
+      if(data.newPassword !== data.confirmPassword) setError('afterSubmit', { ...errors, message: "Can't connect Server!" });
+
       console.log(data);
+      
     } catch (error) {
       console.error(error);
       reset();
@@ -74,11 +83,7 @@ export default function NewPassword() {
     <ContentStyle sx={{ textAlign: 'center' }}>
       <LogoOnlyLayout />
       <Typography variant="h3" paragraph>
-        Forgot your password?
-      </Typography>
-
-      <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-        Please enter the email address associated with your account and We will email you a link to reset your password.
+        Please enter your New Password!
       </Typography>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>

@@ -19,8 +19,6 @@ import { serverUrl } from '../../config';
 export default function ResetPassword() {
   const { token } = useParams();
 
-  console.log(token);
-
   const [error, setError] = useState('');
   const [currentTokenState, setCurrentTokenState] = useState(false);
   const [isConfirming, setIsConfirming] = useState(true);
@@ -31,16 +29,16 @@ export default function ResetPassword() {
       axios.post(`${serverUrl}/api/user/completeresetpassword`, { email: tokenData.email }).then((response) => {
         if (response.data) {
           const now = new Date();
-          if (tokenData.expireTime < now.getTime()) {
+          if (tokenData.expireTime > now.getTime()) {
             setCurrentTokenState(true);
-            setIsConfirming(false);
             setError('');
           } else {
-            setError('You aleady used this TokenYou have already changed your password!');
+            setError('Token has expired!');
           }
         } else {
-          setError('Token has expired!');
+          setError('You have already changed your password!');
         }
+        setIsConfirming(false);
       });
     } else {
       setIsConfirming(false);
