@@ -33,6 +33,7 @@ const FooterStepStyle = styled(Card)(() => ({
   padding: '30px',
   zIndex: 1250,
   width: '100%',
+  bottom: 0
 }));
 
 // ----------------------------------------------------------------------

@@ -34,6 +34,7 @@ export default function SetUnitInfo() {
   const { themeStretch } = useSettings();
   const { jobId } = useParams();
   const { state } = useLocation();
+  console.log(state);
   const dispatch = useDispatch();
   const { currentTab, onChangeTab } = useTabs('Unit Info');
   const { unitInitInfo } = useSelector((state) => state.unit);

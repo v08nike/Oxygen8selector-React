@@ -95,7 +95,7 @@ export default function UnitList() {
   };
 
   const handleDeleteRow = async () => {
-    const data = await deleteUnits({ action:"DELETE_ONE", jobId, unitId: deleteRowID });
+    const data = await deleteUnits({ action: 'DELETE_ONE', jobId, unitId: deleteRowID });
     setTableData(data);
     setDeleteRowID(-1);
     handleOneConfirmDialogClose(false);
@@ -120,14 +120,14 @@ export default function UnitList() {
   };
 
   const handleDeleteRows = async () => {
-    const data = await deleteUnits({ action:"DELETE_MULTI", jobId, unitIds: selected });
+    const data = await deleteUnits({ action: 'DELETE_MULTI', jobId, unitIds: selected });
     setTableData(data);
     setSelected([]);
     setMultiConfirmDialogState(false);
   };
 
-  const handleEditRow = (unit_no) => {
-    navigate(PATH_UNIT.edit(jobId, unit_no));
+  const handleEditRow = (row) => {
+    navigate(PATH_UNIT.edit(jobId, row.unit_no), { state: {...row, unitType: row.unit_no, productType: row.product_type_id} });
   };
 
   const handleClickNewUnit = () => {
@@ -208,7 +208,7 @@ export default function UnitList() {
                     selected={selected.includes(row.unit_no)}
                     onSelectRow={() => onSelectRow(row.unit_no)}
                     onDeleteRow={() => handleOneConfirmDialogOpen(row.unit_no)}
-                    onEditRow={() => handleEditRow(row.unit_no)}
+                    onEditRow={() => handleEditRow(row)}
                   />
                 ))}
 
