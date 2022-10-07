@@ -24,7 +24,12 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Message({text}) {
+Message.propTypes = {
+  text: PropTypes.string,
+  initStates: PropTypes.func
+}
+
+export default function Message({text, initStates}) {
   return (
     <div>
       <LogoOnlyLayout />
@@ -33,7 +38,7 @@ export default function Message({text}) {
           <Typography variant="h3" paragraph>
             {text}
           </Typography>
-          <Button fullWidth size="large" component={RouterLink} to={PATH_AUTH.resetPassword} sx={{ mt: 1 }}>
+          <Button fullWidth size="large" onClick={initStates} sx={{ mt: 1 }}>
             Back
           </Button>
         </ContentStyle>

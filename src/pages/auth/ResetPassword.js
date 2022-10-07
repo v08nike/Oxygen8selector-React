@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 // @mui
 import { Container } from '@mui/material';
 // jwt
@@ -14,10 +14,13 @@ import { ResetPasswordForm } from '../../sections/auth/reset-password';
 import axios from '../../utils/axios';
 // config
 import { serverUrl } from '../../config';
+// Path
+import { PATH_AUTH } from '../../routes/paths';
 // ----------------------------------------------------------------------
 
 export default function ResetPassword() {
   const { token } = useParams();
+  const navigate = useNavigate(); 
 
   const [error, setError] = useState('');
   const [currentTokenState, setCurrentTokenState] = useState(false);
@@ -49,6 +52,7 @@ export default function ResetPassword() {
     setError('');
     setCurrentTokenState(false);
     setIsConfirming(false);
+    navigate(PATH_AUTH.resetPassword);
   }
 
   let renderTag; 
