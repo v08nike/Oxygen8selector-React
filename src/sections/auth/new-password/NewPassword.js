@@ -38,9 +38,9 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // -----------------------------------------------------------------------
 NewPassword.propTypes = {
   email: PropTypes.string,
-}
+};
 
-export default function NewPassword({email}) {
+export default function NewPassword({ email }) {
   const isMountedRef = useIsMountedRef();
   const navigate = useNavigate();
 
@@ -71,12 +71,15 @@ export default function NewPassword({email}) {
 
   const onSubmit = async (data) => {
     try {
-      if(data.newPassword !== data.confirmPassword) setError('afterSubmit', { ...errors, message: "Can't connect Server!" });
-      await axios.post(`${serverUrl}/api/user/newpassword`, {
-        ...data,
-        email,
-      });
-      navigate(PATH_AUTH.login);
+      if (data.newPassword !== data.confirmPassword) {
+        setError('afterSubmit', { ...errors, message: "Can't connect Server!" });
+      } else {
+        await axios.post(`${serverUrl}/api/user/newpassword`, {
+          ...data,
+          email,
+        });
+        navigate(PATH_AUTH.login);
+      }
     } catch (error) {
       console.error(error);
       reset();

@@ -25,6 +25,7 @@ export default function ResetPassword() {
   const [error, setError] = useState('');
   const [currentTokenState, setCurrentTokenState] = useState(false);
   const [isConfirming, setIsConfirming] = useState(true);
+  const [tokenEmail, setTokenEmail] = useState("");
 
   useEffect(() => {
     if (token !== undefined) {
@@ -41,6 +42,7 @@ export default function ResetPassword() {
         } else {
           setError('You have already changed your password!');
         }
+        setTokenEmail(tokenData.email);
         setIsConfirming(false);
       });
     } else {
@@ -57,7 +59,7 @@ export default function ResetPassword() {
 
   let renderTag; 
   if (error === '') {
-    renderTag = currentTokenState ? <NewPassword /> : <ResetPasswordForm />;
+    renderTag = currentTokenState ? <NewPassword email={tokenEmail}/> : <ResetPasswordForm />;
   } else {
     renderTag = <Message text={error} initStates={initStates}/>;
   }

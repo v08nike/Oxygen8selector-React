@@ -38,7 +38,7 @@ const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
 
 UnitEdit.propTypes = {
   initInfo: PropTypes.object,
-  unitType: PropTypes.number,
+  unitType: PropTypes.string,
   productType: PropTypes.number,
 };
 export default function UnitEdit({ initInfo, unitType, productType }) {
@@ -135,7 +135,7 @@ export default function UnitEdit({ initInfo, unitType, productType }) {
   });
 
   const defaultValues = {
-    tag: '',
+    tag: initInfo.tag,
     qty: 1,
     location: initInfo.locationId,
     orientation: initInfo.orientationId,
