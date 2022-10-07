@@ -1,12 +1,10 @@
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Link, Container, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 // PropTypes
 import PropTypes from 'prop-types';
 // layouts
-import LogoOnlyLayout from '../../layouts/LogoOnlyLayout';
-// components
-import Page from '../../components/Page';
+import LogoOnlyLayout from '../../../layouts/LogoOnlyLayout';
 
 // ----------------------------------------------------------------------
 
@@ -23,22 +21,21 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 
-VerifyCode.propTypes = {
+Message.propTypes = {
   text: PropTypes.string,
 };
 
-export default function VerifyCode({text}) {
+export default function Message({text}) {
   return (
-    <Page title="Verify Code">
+    <div>
       <LogoOnlyLayout />
-
       <Container>
         <ContentStyle sx={{ textAlign: 'center' }}>
           <Typography variant="h3" paragraph>
-            Please check your email!
+            {text}
           </Typography>
         </ContentStyle>
       </Container>
-    </Page>
+    </div>
   );
 }

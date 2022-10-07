@@ -39,6 +39,7 @@ export default function Router() {
           ),
         },
         { path: 'reset-password', element: <ResetPassword /> },
+        { path: 'reset-password/:token', element: <ResetPassword /> },
         { path: 'verify', element: <VerifyCode /> },
       ],
     },
