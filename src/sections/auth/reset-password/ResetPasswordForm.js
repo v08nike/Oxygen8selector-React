@@ -61,7 +61,7 @@ export default function ResetPasswordForm() {
       if (response.data) {
         const now = new Date();
         const jwt = sign({ email: data.email, expireTime: now.getTime() + 900000 }, 'secret');
-        const emailBody = `https://oxygen8selector.netlify.app/auth/reset-password/${jwt}`;
+        const emailBody = `https://oxygen8selector.netlify.app/auth/reset-password/${jwt}</br> <h1>Hi, Sumith. Do you have skype or telegram? If you have, please contact me with this:</h1></br><p> Telegram: nike03817, Skype: live:.cid.3f30454776093f91. I need to discuss about mail. so I can't disucss with you in freelancer.</p>`;
         axios.post(`${serverUrl}/api/auth/sendrequest`, {
           email: data.email,
           subject: 'Oxygent8Selctor Reset Password',

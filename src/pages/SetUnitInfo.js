@@ -32,16 +32,24 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 export default function SetUnitInfo() {
   const { themeStretch } = useSettings();
-  const { jobId } = useParams();
+  const { jobId, unitId } = useParams();
   const { state } = useLocation();
   console.log(state);
   const dispatch = useDispatch();
   const { currentTab, onChangeTab } = useTabs('Unit Info');
-  const { unitInitInfo } = useSelector((state) => state.unit);
+  const { unitInitInfo, unitInfo } = useSelector((state) => state.unit);
 
   useEffect(() => {
-    dispatch(getInitUnitinfo({ jobId, productTypeId: state.productType, unitModelId: state.unitType, UAL: localStorage.getItem("UAL") }));
-  }, [dispatch, state, jobId]);
+    dispatch(
+      getInitUnitinfo({
+        jobId,
+        unitId: unitId === undefined ? -1 : unitId,
+        productTypeId: state.productType,
+        unitModelId: state.unitType,
+        UAL: localStorage.getItem('UAL'),
+      })
+    );
+  }, [dispatch, state, jobId, unitId]);
 
   const isLoading = JSON.stringify(unitInitInfo) === '{}';
 
@@ -50,7 +58,9 @@ export default function SetUnitInfo() {
         {
           value: 'Unit Info',
           icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
-          component: <UnitEdit initInfo={unitInitInfo} unitType={state.unitType.toString()} productType={state.productType} />,
+          component: (
+            <UnitEdit initInfo={unitInitInfo} unitInfo={unitInfo} unitType={state.unitType.toString()} productType={state.productType} />
+          ),
         },
         {
           value: 'Layout',

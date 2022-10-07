@@ -96,7 +96,7 @@ export default function NewJobFormDialog({ newJobDialogOpen, handleNewJobDialogC
                 {companyInfo !== undefined &&
                   companyInfo.map(
                     (option) =>
-                      option.id.toString() === localStorage.getItem('cutomerId') && (
+                      option.id.toString() === localStorage.getItem('customerId') && (
                         <option key={option.id} value={option.id}>
                           {option.name}
                         </option>

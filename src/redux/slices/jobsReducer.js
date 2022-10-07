@@ -81,6 +81,7 @@ export function getJobsInfo() {
   return async () => {
     dispatch(JobsSlice.actions.startLoading());
     const response = await axios.post(`${serverUrl}/api/jobs/get`);
+    console.log(response.data);
     dispatch(JobsSlice.actions.setJobInfo(response.data));
   };
 };

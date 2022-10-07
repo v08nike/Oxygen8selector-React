@@ -38,10 +38,12 @@ const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
 
 UnitEdit.propTypes = {
   initInfo: PropTypes.object,
+  unitInfo: PropTypes.object,
   unitType: PropTypes.string,
   productType: PropTypes.number,
 };
-export default function UnitEdit({ initInfo, unitType, productType }) {
+export default function UnitEdit({ initInfo, unitInfo, unitType, productType }) {
+  console.log(initInfo, unitInfo);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { jobId, unitId } = useParams();
@@ -131,7 +133,12 @@ export default function UnitEdit({ initInfo, unitType, productType }) {
     dehumidification: Yup.number(),
     valveAndActuator: Yup.number(),
     valveTypeId: Yup.number(),
-    drainPan: Yup.number(),    
+    drainPan: Yup.number(),
+    handing: Yup.number(),
+    preheatCoilHandingId: Yup.number(),
+    coolingCoilHandingId: Yup.number(),
+    heatingCoilHandingId: Yup.number(),
+
   });
 
   const defaultValues = {
@@ -235,6 +242,10 @@ export default function UnitEdit({ initInfo, unitType, productType }) {
     valveAndActuator: 0,
     valveTypeId: 0,
     drainPan: 0, 
+    handing: 0,
+    preheatCoilHandingId: 0,
+    coolingCoilHandingId: 0,
+    heatingCoilHandingId: 0,
   };
 
   // if (isEdit)

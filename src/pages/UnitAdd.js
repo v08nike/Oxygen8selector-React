@@ -179,7 +179,7 @@ export default function AddNewUnit() {
                 </Stepper>
               </Grid>
               <Grid item xs={2} textAlign="center">
-                <Button color="primary" onClick={onClickNextStep} disabled={selectStep === 0 || unitType === undefined}>
+                <Button color="primary" onClick={onClickNextStep} disabled={selectStep === 0 || unitData.unitType === undefined || unitType === undefined}>
                   Next Step
                   <Iconify icon={'akar-icons:arrow-right'} />
                 </Button>

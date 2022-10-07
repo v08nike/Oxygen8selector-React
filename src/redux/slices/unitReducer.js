@@ -16,6 +16,7 @@ const initialState = {
   unitType: [],
   productTypeUnitTypeLink: [],
   unitInitInfo: {},
+  unitInfo: {}
 };
 
 const UnitSlice = createSlice({
@@ -32,7 +33,8 @@ const UnitSlice = createSlice({
       state.isLoading = false;
     },
     setInitInfo(state, action) {
-      state.unitInitInfo = action.payload;
+      state.unitInitInfo = action.payload.unitSourceInfo;
+      state.unitInfo = action.payload.unitInfo;
       state.isLoading = false;
     },
   },
