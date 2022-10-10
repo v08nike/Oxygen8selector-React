@@ -100,7 +100,7 @@ export default function ResetPasswordForm() {
       </FormProvider>
       <Button fullWidth size="large" component={RouterLink} to={PATH_AUTH.login} sx={{ mt: 1 }}>
           Back
-        </Button>
+      </Button>
 
     </ContentStyle>
   );

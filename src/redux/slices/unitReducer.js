@@ -15,8 +15,9 @@ const initialState = {
   productType: [],
   unitType: [],
   productTypeUnitTypeLink: [],
-  unitInitInfo: {},
-  unitInfo: {}
+  controlInfo: {},
+  unitInfo: {},
+  visibleInfo: {},
 };
 
 const UnitSlice = createSlice({
@@ -33,8 +34,10 @@ const UnitSlice = createSlice({
       state.isLoading = false;
     },
     setInitInfo(state, action) {
-      state.unitInitInfo = action.payload.unitSourceInfo;
+      console.log(action.payload);
+      state.controlInfo = action.payload.controlInfo;
       state.unitInfo = action.payload.unitInfo;
+      state.visibleInfo = action.payload.visibleInfo;
       state.isLoading = false;
     },
   },
@@ -58,8 +61,7 @@ export function getUnitTypeInfo() {
 export function getInitUnitinfo(data) {
   return async () => {
     dispatch(UnitSlice.actions.startLoading());
-    const response = await axios.post(`${serverUrl}/api/units/getinitunitinfo`, data);
-    console.log(response.data);
+    const response = await axios.post(`${serverUrl}/api/units/getunitinfo`, data);
     dispatch(UnitSlice.actions.setInitInfo(response.data));
   };
 }

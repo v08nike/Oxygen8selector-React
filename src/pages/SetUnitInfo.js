@@ -37,21 +37,22 @@ export default function SetUnitInfo() {
   console.log(state);
   const dispatch = useDispatch();
   const { currentTab, onChangeTab } = useTabs('Unit Info');
-  const { unitInitInfo, unitInfo } = useSelector((state) => state.unit);
+  const { unitInfo } = useSelector((state) => state.unit);
 
   useEffect(() => {
     dispatch(
       getInitUnitinfo({
-        jobId,
-        unitId: unitId === undefined ? -1 : unitId,
-        productTypeId: state.productType,
-        unitModelId: state.unitType,
+        userId: localStorage.getItem("userId"),
         UAL: localStorage.getItem('UAL'),
+        jobId,
+        productTypeId: state.productType,
+        unitTypeId: state.unitType,
+        unitNo: unitId === undefined ? -1 : unitId,
       })
     );
   }, [dispatch, state, jobId, unitId]);
 
-  const isLoading = JSON.stringify(unitInitInfo) === '{}';
+  const isLoading = JSON.stringify(unitInfo) === '{}';
 
   const ACCOUNT_TABS = !isLoading
     ? [
@@ -59,7 +60,7 @@ export default function SetUnitInfo() {
           value: 'Unit Info',
           icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
           component: (
-            <UnitEdit initInfo={unitInitInfo} unitInfo={unitInfo} unitType={state.unitType.toString()} productType={state.productType} />
+            <UnitEdit unitType={state.unitType.toString()} productType={state.productType} />
           ),
         },
         {
