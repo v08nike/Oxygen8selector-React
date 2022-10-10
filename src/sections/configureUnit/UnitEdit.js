@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Container, Box, Grid, CardHeader, CardContent, Card, Stack, Divider, Button, Typography } from '@mui/material';
+import { Container, Box, Grid, CardHeader, CardContent, Card, Stack, Divider, Snackbar, Alert, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -41,6 +41,7 @@ export default function UnitEdit({ unitType, productType }) {
   const { jobId, unitId } = useParams();
   const isEdit = unitId !== undefined;
   const { controlInfo, unitInfo, visibleInfo } = useSelector((state) => state.unit);
+  console.log(controlInfo, unitInfo, visibleInfo);
 
   const { ddlOrientation, ddlOrientationValue, ddlUnitModel, ddlUnitModelValue, others } = controlInfo.mainControlData;
 
@@ -176,7 +177,7 @@ export default function UnitEdit({ unitType, productType }) {
     txbOA_FilterPD: isEdit ? unitInfo.txbOA_FilterPDText : 0.5,
     txbRA_FilterPD: isEdit ? unitInfo.txbRA_FilterPDText : 0.5,
     ckbHeatPump: isEdit ? unitInfo.ckbHeatPump : cooling.ckbHeatPumpChecked,
-    ckbDehumidification: dehumidification.ckbDehumidification,
+    ckbDehumidification: isEdit ? unitInfo.ckbDehumidification : dehumidification.ckbDehumidification,
     ddlReheatComp: isEdit ? unitInfo.ReheatCompID : reheat.ddlReheatCompValue,
     ddlDamperAndActuator: isEdit ? unitInfo.DamperActuatorID : ddlDamperAndActuatorValue,
     ddlElecHeaterVoltage: isEdit ? unitInfo.ElecHeaterVoltageID : electricHeaterVoltage.ddlElecHeaterVoltageValue,
@@ -230,8 +231,6 @@ export default function UnitEdit({ unitType, productType }) {
     txbPercentCondensingLoad: 0,
   };
 
-  console.log(defaultValues);
-
   const methods = useForm({
     resolver: yupResolver(useUnitEditFormSchema),
     defaultValues,
@@ -244,6 +243,23 @@ export default function UnitEdit({ unitType, productType }) {
     setValue,
     formState: { isSubmitting },
   } = methods;
+
+
+  const [successNotification, setOpenSuccessNotification] = React.useState(false);
+  const handleSuccessNotificationClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccessNotification(false);
+  };
+
+  const [errorNotification, setOpenErrorNotification] = React.useState(false);
+  const handleErrorNotificationClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErrorNotification(false)
+  }
 
   const airFlowDataChanged = (action) => {
     const sendingData = {
@@ -416,8 +432,11 @@ export default function UnitEdit({ unitType, productType }) {
     get_WB_By_DBRH(getValues('winter_return_db'), getValues('winter_return_rh'), 'winter_return_wb');
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    console.log({...data, intJobID: jobId, intUnitID: unitId, intProductTypeID: productType});
+    const result = await dispatch(saveUnitInfo({...data, jobId, unitId}))
+
+    console.log(result);
   };
 
   const getDisplay = (key) => ({ display: key ? 'block' : 'block' });
@@ -426,17 +445,17 @@ export default function UnitEdit({ unitType, productType }) {
     <Container>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3, mb: 3 }}>
-          {/* <LoadingButton
+          <LoadingButton
             type="submit"
             startIcon={<Iconify icon={isEdit ? 'bx:save' : 'carbon:add'} />}
             variant="contained"
             loading={isSubmitting}
           >
             {isEdit ? 'Save Changes' : 'Add Unit to Project'}
-          </LoadingButton> */}
-          <Button type="submit" variant="text" startIcon={<Iconify icon={isEdit ? 'bx:save' : 'carbon:add'} />}>
+          </LoadingButton>
+          {/* <Button type="submit" variant="text" startIcon={<Iconify icon={isEdit ? 'bx:save' : 'carbon:add'} />}>
             {isEdit ? 'Save Changes' : 'Add Unit to Project'}
-          </Button>
+          </Button> */}
         </Stack>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
@@ -1153,6 +1172,16 @@ export default function UnitEdit({ unitType, productType }) {
           </Grid>
         </Grid>
       </FormProvider>
+      <Snackbar open={successNotification} autoHideDuration={6000} onClose={handleSuccessNotificationClose}>
+        <Alert onClose={handleSuccessNotificationClose} severity="success" sx={{ width: '100%' }}>
+          {isEdit? 'Unit update successful!!!' : 'Unit was successfully added!!!'}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={errorNotification} autoHideDuration={6000} onClose={handleErrorNotificationClose}>
+        <Alert onClose={handleErrorNotificationClose} severity="error" sx={{ width: '100%' }}>
+          {isEdit? 'Unit update failed!' : 'Failed to add Unit!'}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
