@@ -98,4 +98,13 @@ export const useUnitEditFormSchema = Yup.object().shape({
     txbUnitWidthText: Yup.number(),
     txbWinterSupplyAirCFM: Yup.number(),
     txbWinterReturnAirCFM: Yup.number(),
+    ddlHandingID: Yup.number(),
+    ddlSupplyAirOpeningID: Yup.number(),
+    ddlSupplyAirOpeningText: Yup.string(),
+    ddlExhaustAirOpeningID: Yup.number(),
+    ddlExhaustAirOpeningText: Yup.string(),
+    ddlOutdoorAirOpeningID: Yup.number(),
+    ddlOutdoorAirOpeningText: Yup.string(),
+    ddlReturnAirOpeningID: Yup.number(),
+    ddlReturnAirOpeningText: Yup.string(),
   });

@@ -97,6 +97,7 @@ export function getInitUnitinfo(data) {
 }
 
 export function saveUnitInfo(data) {
+  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/Save`, data);
     return response;
@@ -106,7 +107,7 @@ export function saveUnitInfo(data) {
 export function saveLayout(data){
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SaveLayout`, data);
-    console.log(response.data);
+    return response.data;
   };
 }
 

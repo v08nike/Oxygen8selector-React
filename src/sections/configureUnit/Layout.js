@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 // @mui
-import { Box, Card, CardContent, CardActions, Container, Grid, Button, Stack } from '@mui/material';
+import { Box, Card, CardContent, CardActions, Container, Grid, Button, Stack, Snackbar, Alert } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // redux
-import { useSelector } from '../../redux/store';
+import { useSelector, useDispatch } from '../../redux/store';
+import * as unitReducer from '../../redux/slices/unitReducer';
 // components
 import Iconify from '../../components/Iconify';
 import Image from '../../components/Image';
@@ -16,7 +19,12 @@ import { FormProvider, RHFSelect } from '../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function Layout() {
+Layout.propTypes = {
+  unitType: PropTypes.string,
+  productType: PropTypes.number,
+};
+export default function Layout({ productType, unitType }) {
+  const dispatch = useDispatch();
   const { jobId, unitId } = useParams();
   const isEdit = unitId !== undefined;
   const { controlInfo, unitInfo, visibleInfo } = useSelector((state) => state.unit);
@@ -25,7 +33,7 @@ export default function Layout() {
   const [ddlOutdoorAirOpening, setddlOutdoorAirOpening] = useState(['4', '4A']);
   const [ddlReturnAirOpening, setddlReturnAirOpening] = useState(['3', '3A']);
 
-  console.log(ddlExhaustAirOpening, ddlOutdoorAirOpening, ddlReturnAirOpening);
+  const { ddlCoolingCoilHandingValue, ddlHeatingCoilHandingValue, ddlPreheatCoilHandingValue } = controlInfo;
 
   const layoutSchema = Yup.object().shape({
     ddlHandingID: Yup.number().required('This field is required!'),
@@ -37,14 +45,24 @@ export default function Layout() {
     ddlOutdoorAirOpeningText: Yup.string(),
     ddlReturnAirOpeningID: Yup.number().required('This field is required!'),
     ddlReturnAirOpeningText: Yup.string(),
+    ddlPreheatCoilHanding: Yup.number(),
+    ddlCoolingCoilHanding: Yup.number(),
+    ddlHeatingCoilHanding: Yup.number(),
   });
 
   const defaultValues = {
     ddlHandingID: isEdit ? unitInfo.ddlHandingValue : 1,
     ddlSupplyAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlSupplyAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '1',
     ddlExhaustAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlExhaustAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '2',
     ddlOutdoorAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlOutdoorAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '4',
     ddlReturnAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlReturnAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '3',
+    ddlPreheatCoilHanding: isEdit ? unitInfo.PreheatCoilHandingID : ddlPreheatCoilHandingValue,
+    ddlCoolingCoilHanding: isEdit ? unitInfo.CoolingCoilHandingID : ddlCoolingCoilHandingValue,
+    ddlHeatingCoilHanding: isEdit ? unitInfo.HeatingCoilHandingID : ddlHeatingCoilHandingValue,
   };
 
   const methods = useForm({
@@ -55,14 +73,45 @@ export default function Layout() {
   const {
     reset,
     setValue,
-    getValues,
     handleSubmit,
-    // formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = methods;
+
+  const [successNotification, setOpenSuccessNotification] = React.useState(false);
+
+  const handleSuccessNotificationClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccessNotification(false);
+  };
+
+  const [errorNotification, setOpenErrorNotification] = React.useState(false);
+  const handleErrorNotificationClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErrorNotification(false);
+  };
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
+      const result = await dispatch(
+        unitReducer.saveLayout({
+          ...data,
+          intJobID: jobId,
+          intUnitID: unitId,
+          intProductTypeID: productType,
+          intUnitTypeID: unitType,
+          intUAL: localStorage.getItem('UAL'),
+        })
+      );
+
+      if (result) {
+        setOpenSuccessNotification(true);
+      } else {
+        setOpenErrorNotification(true);
+      }
     } catch (error) {
       console.error(error);
       reset();
@@ -196,9 +245,9 @@ export default function Layout() {
                 </CardContent>
                 <CardActions sx={{ textAlign: 'right' }}>
                   <Box sx={{ pl: '15px', pb: '15px' }}>
-                    <Button type="submit" variant="text" startIcon={<Iconify icon={'bx:save'} />}>
+                    <LoadingButton type="submit" startIcon={<Iconify icon={'bx:save'} />} loading={isSubmitting}>
                       Save
-                    </Button>
+                    </LoadingButton>
                   </Box>
                 </CardActions>
               </Card>
@@ -209,6 +258,17 @@ export default function Layout() {
           </Grid>
         </Grid>
       </Card>
+      .
+      <Snackbar open={successNotification} autoHideDuration={6000} onClose={handleSuccessNotificationClose}>
+        <Alert onClose={handleSuccessNotificationClose} severity="success" sx={{ width: '100%' }}>
+          {isEdit ? 'Unit update successful!!!' : 'Unit was successfully added!!!'}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={errorNotification} autoHideDuration={6000} onClose={handleErrorNotificationClose}>
+        <Alert onClose={handleErrorNotificationClose} severity="error" sx={{ width: '100%' }}>
+          {isEdit ? 'Unit update failed!' : 'Failed to add Unit!'}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

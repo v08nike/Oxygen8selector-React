@@ -8,7 +8,7 @@ import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
 RHFCheckbox.propTypes = {
   name: PropTypes.string.isRequired,
-  checked: PropTypes.string,
+  checked: PropTypes.bool
 };
 
 export function RHFCheckbox({ name, checked, ...other }) {

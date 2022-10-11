@@ -246,6 +246,15 @@ export default function UnitEdit({ unitType, productType }) {
     txbUnitWidthText: isEdit ? unitInfo.txbUnitWidthText : 0,
     txbWinterSupplyAirCFM: isEdit ? unitInfo.txbWinterSupplyAirCFM : 0,
     txbWinterReturnAirCFM: isEdit ? unitInfo.txbWinterReturnAirCFM : 0,
+    ddlHandingID: isEdit ? unitInfo.ddlHandingValue : 1,
+    ddlSupplyAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlSupplyAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '1',
+    ddlExhaustAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlExhaustAirOpeningText:  isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '2',
+    ddlOutdoorAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlOutdoorAirOpeningText:   isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '4',
+    ddlReturnAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlReturnAirOpeningText:   isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '3',
   };
 
   const methods = useForm({
@@ -262,9 +271,7 @@ export default function UnitEdit({ unitType, productType }) {
   } = methods;
 
   const [successNotification, setOpenSuccessNotification] = React.useState(false);
-  const [errorNotification, setOpenErrorNotification] = React.useState(false);
-  const [ckbBypassState, setCkbBypassState] = React.useState(isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1);
-
+  
   const handleSuccessNotificationClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -272,6 +279,7 @@ export default function UnitEdit({ unitType, productType }) {
     setOpenSuccessNotification(false);
   };
 
+  const [errorNotification, setOpenErrorNotification] = React.useState(false);
   const handleErrorNotificationClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -292,11 +300,13 @@ export default function UnitEdit({ unitType, productType }) {
     const result = await dispatch(
       unitReducer.saveUnitInfo({
         ...data,
+        intJobID: jobId,
         intUnitID: unitId,
         intProductTypeID: productType,
-        intUAL: localStorage.getItems('UAL'),
+        intUAL: localStorage.getItem('UAL'),
       })
     );
+    setOpenSuccessNotification(true);
     console.log(result);
   };
 
@@ -305,10 +315,10 @@ export default function UnitEdit({ unitType, productType }) {
     dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
   };
 
-  const ddlOrientationChanged = (e) => {
-    setValue('ddlOrientation', e.target.value);
-    dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
-  };
+  // const ddlOrientationChanged = (e) => {
+  //   setValue('ddlOrientation', e.target.value);
+  //   dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
+  // };
 
   return (
     <Container>
@@ -358,7 +368,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlOrientation"
                       label="Orientation"
                       placeholder=""
-                      onChange={ddlOrientationChanged}
+                      // onChange={ddlOrientationChanged}
                     >
                       <option value="" />
                       {ddlOrientation.map((item, index) => (
@@ -419,7 +429,7 @@ export default function UnitEdit({ unitType, productType }) {
                         name="ckbBypass"
                         label="Bypass for Economizer"
                         sx={getDisplay(divUnitBypassVisible)}
-                        checked={ckbBypassState}
+                        checked={isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1}
                       />
                       <RHFSelect size="small" name="ddlUnitModel" label="Unit Model">
                         <option value="" />

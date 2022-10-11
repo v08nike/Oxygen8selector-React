@@ -66,7 +66,7 @@ export default function SetUnitInfo() {
         {
           value: 'Layout',
           icon: <Iconify icon={'ant-design:layout-outlined'} width={20} height={20} />,
-          component: <Layout />,
+          component: <Layout unitType={state.unitType.toString()} productType={state.productType} />,
         },
         {
           value: 'Drawing',
