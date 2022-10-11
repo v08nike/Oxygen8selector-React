@@ -92,4 +92,10 @@ export const useUnitEditFormSchema = Yup.object().shape({
     txbRefrigVaporTemp: Yup.number().required('This field is required!'),
     txbRefrigSubcoolingTemp: Yup.number().required('This field is required!'),
     txbPercentCondensingLoad: Yup.number().required('This field is required!'),
+    txbUnitHeightText: Yup.number(),
+    txbUnitLengthText: Yup.number(),
+    txbUnitWeightText: Yup.number(),
+    txbUnitWidthText: Yup.number(),
+    txbWinterSupplyAirCFM: Yup.number(),
+    txbWinterReturnAirCFM: Yup.number(),
   });

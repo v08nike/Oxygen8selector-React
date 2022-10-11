@@ -6,7 +6,19 @@ import PropTypes from 'prop-types';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Container, Box, Grid, CardHeader, CardContent, Card, Stack, Divider, Snackbar, Alert, Typography } from '@mui/material';
+import {
+  Container,
+  Box,
+  Grid,
+  CardHeader,
+  CardContent,
+  Card,
+  Stack,
+  Divider,
+  Snackbar,
+  Alert,
+  Typography,
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -14,7 +26,7 @@ import { useForm } from 'react-hook-form';
 import { useUnitEditFormSchema } from '../../hooks/useUnitEditForm';
 // redux
 import { useSelector, useDispatch } from '../../redux/store';
-import { saveUnitInfo } from '../../redux/slices/unitReducer';
+import * as unitReducer from '../../redux/slices/unitReducer';
 // components
 import Iconify from '../../components/Iconify';
 import { FormProvider, RHFTextField, RHFSelect, RHFCheckbox } from '../../components/hook-form';
@@ -64,6 +76,7 @@ export default function UnitEdit({ unitType, productType }) {
     ddlControlsPreferenceValue,
     ddlDamperAndActuator,
     ddlDamperAndActuatorValue,
+    ddlDamperAndActuatorVisible,
     ddlCoolingCoilHanding,
     ddlCoolingCoilHandingValue,
     ddlHeatingCoilHanding,
@@ -123,16 +136,14 @@ export default function UnitEdit({ unitType, productType }) {
     dehumidification,
     valveAndActuator,
     divDXC_MsgVisible,
-    heatElectricHeader,
-    preheatElectricHeader,
+    heatElectricHeater,
+    preheatElectricHeater,
     electricHeaterVoltage,
     divPreheatSetpointVisible,
     divCoolingSetpointVisible,
     divHeatingSetpointVisible,
     divHeatingFluidDesignConditionsVisible,
   } = componentOptions;
-
-  // console.log(controlInfo, unitInfo, visibleInfo);
 
   const defaultValues = {
     txtTag: isEdit ? unitInfo.txbTagText : '',
@@ -146,7 +157,7 @@ export default function UnitEdit({ unitType, productType }) {
     txbSummerReturnAirCFM: isEdit ? unitInfo.txbSummerReturnAirCFMText : 325,
     txbSupplyAirESP: isEdit ? unitInfo.txbSupplyAirESPText : 0.75,
     txbExhaustAirESP: isEdit ? unitInfo.txbExhaustAirESPText : 0.75,
-    ckbBypass: isEdit ? unitInfo.ckbBypass : ckbBypass,
+    ckbBypass: isEdit ? unitInfo.ckbBypass : ckbBypass.ckbBypassChecked,
     ddlUnitModel: isEdit ? unitInfo.unitModelID : ddlUnitModelValue,
     ddlUnitVoltage: isEdit ? unitInfo.unitVoltageID : ddlUnitVoltageValue,
     ckbVoltageSPP: isEdit ? unitInfo.ckbVoltageSPP : ckbVoltageSPP,
@@ -171,8 +182,8 @@ export default function UnitEdit({ unitType, productType }) {
     ddlOA_FilterModel: isEdit ? unitInfo.OA_FilterModelID : ddlOA_FilterModelValue,
     ddlRA_FilterModel: isEdit ? unitInfo.RA_FilterModelID : ddlRA_FilterModelValue,
     ddlPreheatComp: isEdit ? unitInfo.PreheatCompID : ddlPreheatCompValue,
-    ddlHeatExchComp: isEdit ? unitInfo.HeatExchCompID : ddlHeatExchCompValue,
-    ddlCoolingComp: isEdit ? unitInfo.CoolingCompID : ddlCoolingCompValue,
+    ddlHeatExchComp: isEdit ? unitInfo.HeatExchCompID : ddlHeatExchCompValue, //
+    ddlCoolingComp: isEdit ? unitInfo.CoolingCompID : ddlCoolingCompValue, //
     ddlHeatingComp: isEdit ? unitInfo.HeatingCompID : ddlHeatingCompValue,
     txbOA_FilterPD: isEdit ? unitInfo.txbOA_FilterPDText : 0.5,
     txbRA_FilterPD: isEdit ? unitInfo.txbRA_FilterPDText : 0.5,
@@ -183,10 +194,10 @@ export default function UnitEdit({ unitType, productType }) {
     ddlElecHeaterVoltage: isEdit ? unitInfo.ElecHeaterVoltageID : electricHeaterVoltage.ddlElecHeaterVoltageValue,
     ddlPreheatElecHeaterInstallation: isEdit
       ? unitInfo.PreheatElecHeaterInstallationID
-      : preheatElectricHeader.ddlPreheatElecHeaterInstallationValue,
+      : preheatElectricHeater.ddlPreheatElecHeaterInstallationValue,
     ddlHeatElecHeaterInstallation: isEdit
       ? unitInfo.HeatElecHeaterInstallationID
-      : heatElectricHeader.ddlHeatElecHeaterInstallationValue,
+      : heatElectricHeater.ddlHeatElecHeaterInstallationValue,
     ckbValveAndActuator: isEdit ? unitInfo.ckbValveAndActuator : valveAndActuator.ckbValveAndActuatorChecked,
     ckbDrainPan: isEdit ? unitInfo.ckbDrainPan : drainPan.ckbDrainPanChecked,
     ddlPreheatCoilHanding: isEdit ? unitInfo.PreheatCoilHandingID : ddlPreheatCoilHandingValue,
@@ -229,6 +240,12 @@ export default function UnitEdit({ unitType, productType }) {
     txbRefrigVaporTemp: isEdit ? unitInfo.txbRefrigVaporTempText : 140,
     txbRefrigSubcoolingTemp: isEdit ? unitInfo.txbRefrigSubcoolingTempText : 5.4,
     txbPercentCondensingLoad: 0,
+    txbUnitHeightText: isEdit ? unitInfo.txbUnitHeightText : 0,
+    txbUnitLengthText: isEdit ? unitInfo.txbUnitLengthText : 0,
+    txbUnitWeightText: isEdit ? unitInfo.txbUnitWeightText : 0,
+    txbUnitWidthText: isEdit ? unitInfo.txbUnitWidthText : 0,
+    txbWinterSupplyAirCFM: isEdit ? unitInfo.txbWinterSupplyAirCFM : 0,
+    txbWinterReturnAirCFM: isEdit ? unitInfo.txbWinterReturnAirCFM : 0,
   };
 
   const methods = useForm({
@@ -244,8 +261,10 @@ export default function UnitEdit({ unitType, productType }) {
     formState: { isSubmitting },
   } = methods;
 
-
   const [successNotification, setOpenSuccessNotification] = React.useState(false);
+  const [errorNotification, setOpenErrorNotification] = React.useState(false);
+  const [ckbBypassState, setCkbBypassState] = React.useState(isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1);
+
   const handleSuccessNotificationClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -253,193 +272,43 @@ export default function UnitEdit({ unitType, productType }) {
     setOpenSuccessNotification(false);
   };
 
-  const [errorNotification, setOpenErrorNotification] = React.useState(false);
   const handleErrorNotificationClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setOpenErrorNotification(false)
-  }
-
-  const airFlowDataChanged = (action) => {
-    const sendingData = {
-      action,
-      UAL: localStorage.getItem('UAL'),
-      location: getValues('location'),
-      orientation: getValues('orientation'),
-      unitTypeId: getValues('unitTypeId'),
-      productTypeId: productType,
-      unitModelId: getValues('unitModelId'),
-      summerSupplyAirCFM: getValues('summerSupplyAirCFM'),
-      summerReturnAirCFM: getValues('summerReturnAirCFM'),
-      supplyAirESP: getValues('supplyAirESP'),
-      exhaustAirESP: getValues('exhaustAirESP'),
-      voltageId: getValues('unitVoltage'),
-      byPass: 0,
-    };
-    console.log(sendingData);
-    axios.post(`${serverUrl}/api/units/airflowdatachanged`, sendingData).then((response) => {
-      const { data } = response;
-      console.log(data);
-      if (data === 0) {
-        return;
-      }
-      if (action === 'SummerSupplyAirCFM_Changed') {
-        // setUnitModel(data.modelInfo);
-        // setOrientation(data.orientationInfo);
-        // setVoltage(data.voltageInfo.data);
-        setValue('unitVoltage', data.voltageInfo.selectedVoltageId);
-        setValue('unitModelId', data.modelId);
-        setValue('orientation', data.orientationId);
-        setValue('summerSupplyAirCFM', data.summerSupplyAirCFM);
-        setValue('summerReturnAirCFM', data.summerReturnAirCFM);
-      }
-      if (action === 'SummerReturnAirCFM_Changed') {
-        setValue('summerReturnAirCFM', data.summerReturnAirCFM);
-      }
-      if (action === 'SupplyAirESP') {
-        setValue('supplyAirESP', data.supplyAirESP);
-      }
-      if (action === 'ExhaustAirESP') {
-        setValue('exhaustAirESP', data.exhaustAirESP);
-      }
-    });
+    setOpenErrorNotification(false);
   };
 
-  const onChangeSummerSupplyAirCFM = (e) => {
-    airFlowDataChanged('SummerSupplyAirCFM_Changed');
-  };
-
-  const onChangeSummerReturnAirCFM = (e) => {
-    airFlowDataChanged('SummerReturnAirCFM_Changed');
-  };
-
-  const onChangeSupplyAirCFM = (e) => {
-    airFlowDataChanged('SupplyAirESP');
-  };
-
-  const onChangeReturnAirCFM = (e) => {
-    airFlowDataChanged('ExhaustAirESP');
-  };
-
-  const onChangePreheat = (e) => {
-    setValue('preheat', e.target.value);
-  };
-
-  const onChangeCooling = (e) => {
-    setValue('cooling', e.target.value);
-  };
-
-  const onChangeHeating = (e) => {
-    setValue('heating', e.target.value);
-  };
-
-  // get WB value from server
-  const get_WB_By_DBRH = (first, second, setValueId) => {
-    if (first === '' || second === '') return;
-    axios
-      .post(`${serverUrl}/api/job/getoutdoorinfo`, {
-        action: 'GET_WB_BY_DB_HR',
-        first,
-        second,
-        altitude: getValues('altitude'),
-      })
-      .then((response) => {
-        setValue(setValueId, response.data);
-      });
-  };
-
-  // get HR value from server
-  const get_RH_By_DBWB = (first, second, setValueId) => {
-    if (first === '' || second === '') return;
-    axios
-      .post(`${serverUrl}/api/job/getoutdoorinfo`, {
-        action: 'GET_RH_BY_DB_WB',
-        first,
-        second,
-        altitude: getValues('altitude'),
-      })
-      .then((response) => {
-        setValue(setValueId, response.data);
-      });
-  };
-
-  // Summer Outdoor Air DB
-  const handleChangeSummerOutdoorAirDBChanged = (e) => {
-    setValue('summer_air_db', e.target.value);
-    get_RH_By_DBWB(getValues('summer_air_db'), getValues('summer_air_wb'), 'summer_air_rh');
-  };
-  // Summer Outdoor Air WB
-  const handleChangeSummerOutdoorAirWBChanged = (e) => {
-    setValue('summer_air_wb', e.target.value);
-    get_RH_By_DBWB(getValues('summer_air_db'), getValues('summer_air_wb'), 'summer_air_rh');
-  };
-  // Summer Outdoor Air RH
-  const handleChangeSummerOutdoorAirRHChanged = (e) => {
-    setValue('summer_air_rh', e.target.value);
-    get_WB_By_DBRH(getValues('summer_air_db'), getValues('summer_air_rh'), 'summer_air_wb');
-  };
-
-  // Winter Outdoor Air DB
-  const handleChangeWinterOutdoorAirDBChanged = (e) => {
-    setValue('winter_air_db', e.target.value);
-    get_RH_By_DBWB(getValues('winter_air_db'), getValues('winter_air_wb'), 'winter_air_rh');
-  };
-
-  // Winter Outdoor Air WB
-  const handleChangeWinterOutdoorAirWBChanged = (e) => {
-    setValue('winter_air_wb', e.target.value);
-    get_RH_By_DBWB(getValues('winter_air_db'), getValues('winter_air_wb'), 'winter_air_rh');
-  };
-
-  // Winter Outdoor Air RH
-  const handleChangeWinterOutdoorAirRHChanged = (e) => {
-    setValue('winter_air_rh', e.target.value);
-    get_WB_By_DBRH(getValues('winter_air_db'), getValues('winter_air_rh'), 'winter_air_wb');
-  };
-
-  // Summer Return Air DB
-  const handleChangeSummerReturnAirDBChanged = (e) => {
-    setValue('summer_return_db', e.target.value);
-    get_RH_By_DBWB(getValues('summer_return_db'), getValues('summer_return_wb'), 'summer_return_rh');
-  };
-  // Summer Return Air WB
-  const handleChangeSummerReturnAirWBChanged = (e) => {
-    setValue('summer_return_wb', e.target.value);
-    get_RH_By_DBWB(getValues('summer_return_db'), getValues('summer_return_wb'), 'summer_return_rh');
-  };
-  // Summer Return Air RH
-  const handleChangeSummerReturnAirRHChanged = (e) => {
-    setValue('summer_return_rh', e.target.value);
-    get_WB_By_DBRH(getValues('summer_return_db'), getValues('summer_return_rh'), 'summer_return_wb');
-  };
-
-  // Winter Return Air DB
-  const handleChangeWinterReturnAirDBChanged = (e) => {
-    setValue('winter_return_db', e.target.value);
-    get_RH_By_DBWB(getValues('winter_return_db'), getValues('winter_return_wb'), 'winter_return_rh');
-  };
-
-  // Winter Return Air WB
-  const handleChangeWinterReturnAirWBChanged = (e) => {
-    setValue('winter_return_wb', e.target.value);
-    get_RH_By_DBWB(getValues('winter_return_db'), getValues('winter_return_wb'), 'winter_return_rh');
-  };
-
-  // Winter Return Air RH
-  const handleChangeWinterReturnAirRHChanged = (e) => {
-    setValue('winter_return_rh', e.target.value);
-    get_WB_By_DBRH(getValues('winter_return_db'), getValues('winter_return_rh'), 'winter_return_wb');
-  };
+  const getDisplay = (key) => ({ display: key ? 'block' : 'none' });
+  const getAllFormData = () => ({
+    ...getValues(),
+    intUnitNo: unitId,
+    intProductTypeID: productType,
+    intUAL: localStorage.getItem('UAL'),
+    intUserID: localStorage.getItem('userId'),
+  });
 
   const onSubmit = async (data) => {
-    console.log({...data, intJobID: jobId, intUnitID: unitId, intProductTypeID: productType});
-    const result = await dispatch(saveUnitInfo({...data, jobId, unitId}))
-
+    const result = await dispatch(
+      unitReducer.saveUnitInfo({
+        ...data,
+        intUnitID: unitId,
+        intProductTypeID: productType,
+        intUAL: localStorage.getItems('UAL'),
+      })
+    );
     console.log(result);
   };
 
-  const getDisplay = (key) => ({ display: key ? 'block' : 'block' });
+  const ddlLocationChanged = (e) => {
+    setValue('ddlLocation',e.target.value);
+    dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
+  };
+
+  const ddlOrientationChanged = (e) => {
+    setValue('ddlOrientation', e.target.value);
+    dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
+  };
 
   return (
     <Container>
@@ -453,9 +322,6 @@ export default function UnitEdit({ unitType, productType }) {
           >
             {isEdit ? 'Save Changes' : 'Add Unit to Project'}
           </LoadingButton>
-          {/* <Button type="submit" variant="text" startIcon={<Iconify icon={isEdit ? 'bx:save' : 'carbon:add'} />}>
-            {isEdit ? 'Save Changes' : 'Add Unit to Project'}
-          </Button> */}
         </Stack>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
@@ -466,7 +332,13 @@ export default function UnitEdit({ unitType, productType }) {
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                     <RHFTextField size="small" name="txtTag" label="Tag" />
                     <RHFTextField size="small" name="txbQty" label="Quantity" />
-                    <RHFSelect size="small" name="ddlLocation" label="Location" placeholder="">
+                    <RHFSelect
+                      size="small"
+                      name="ddlLocation"
+                      label="Location"
+                      placeholder=""
+                      onChange={ddlLocationChanged}
+                    >
                       <option value="" />
                       {ddlLocation.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -478,9 +350,16 @@ export default function UnitEdit({ unitType, productType }) {
                       size="small"
                       name="ckbDownshot"
                       label="Downshot"
+                      sx={getDisplay(ckbDownshot === 1)}
                       checked={isEdit ? unitInfo.ckbDownshot === 1 : ckbDownshot === 1}
                     />
-                    <RHFSelect size="small" name="ddlOrientation" label="Orientation" placeholder="">
+                    <RHFSelect
+                      size="small"
+                      name="ddlOrientation"
+                      label="Orientation"
+                      placeholder=""
+                      onChange={ddlOrientationChanged}
+                    >
                       <option value="" />
                       {ddlOrientation.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -515,7 +394,6 @@ export default function UnitEdit({ unitType, productType }) {
                         size="small"
                         name="txbSummerSupplyAirCFM"
                         label="Supply Air (CFM)"
-                        onBlur={onChangeSummerSupplyAirCFM}
                         autoComplete="off"
                       />
                       <RHFTextField
@@ -523,22 +401,14 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbSummerReturnAirCFM"
                         label="Supply Air (ASD)"
                         sx={getDisplay(divSummerReturnAirCFMVisible)}
-                        onBlur={onChangeSummerReturnAirCFM}
                         autoComplete="off"
                       />
-                      <RHFTextField
-                        size="small"
-                        name="txbSupplyAirESP"
-                        label="Supply Air (ERC)"
-                        onBlur={onChangeSupplyAirCFM}
-                        autoComplete="off"
-                      />
+                      <RHFTextField size="small" name="txbSupplyAirESP" label="Supply Air (ERC)" autoComplete="off" />
                       <RHFTextField
                         size="small"
                         name="txbExhaustAirESP"
                         label="Supply Air (DVG)"
                         sx={getDisplay(divExhaustAirESPVisible)}
-                        onBlur={onChangeReturnAirCFM}
                         autoComplete="off"
                       />
                     </Box>
@@ -549,7 +419,7 @@ export default function UnitEdit({ unitType, productType }) {
                         name="ckbBypass"
                         label="Bypass for Economizer"
                         sx={getDisplay(divUnitBypassVisible)}
-                        checked={isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1}
+                        checked={ckbBypassState}
                       />
                       <RHFSelect size="small" name="ddlUnitModel" label="Unit Model">
                         <option value="" />
@@ -584,42 +454,12 @@ export default function UnitEdit({ unitType, productType }) {
                   <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                       <RHFTextField size="small" name="txbAltitude" label="Altitude (ft):" autoComplete="off" />
-                      <RHFTextField
-                        size="small"
-                        name="txbSummerOutdoorAirDB"
-                        label="Summer Outdoor Air DB (F)"
-                        onBlur={handleChangeSummerOutdoorAirDBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbSummerOutdoorAirWB"
-                        label="Summer Outdoor Air WB (F)"
-                        onBlur={handleChangeSummerOutdoorAirWBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbSummerOutdoorAirRH"
-                        label="Summer Outdoor Air RH (%)"
-                        onBlur={handleChangeSummerOutdoorAirRHChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbWinterOutdoorAirDB"
-                        label="Winter Outdoor Air DB"
-                        onBlur={handleChangeWinterOutdoorAirDBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbWinterOutdoorAirWB"
-                        label="Winter Outdoor Air WB"
-                        onBlur={handleChangeWinterOutdoorAirWBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbWinterOutdoorAirRH"
-                        label="Winter Outdoor Air RH"
-                        onBlur={handleChangeWinterOutdoorAirRHChanged}
-                      />
+                      <RHFTextField size="small" name="txbSummerOutdoorAirDB" label="Summer Outdoor Air DB (F)" />
+                      <RHFTextField size="small" name="txbSummerOutdoorAirWB" label="Summer Outdoor Air WB (F)" />
+                      <RHFTextField size="small" name="txbSummerOutdoorAirRH" label="Summer Outdoor Air RH (%)" />
+                      <RHFTextField size="small" name="txbWinterOutdoorAirDB" label="Winter Outdoor Air DB" />
+                      <RHFTextField size="small" name="txbWinterOutdoorAirWB" label="Winter Outdoor Air WB" />
+                      <RHFTextField size="small" name="txbWinterOutdoorAirRH" label="Winter Outdoor Air RH" />
                     </Box>
                   </Box>
                 </CardContent>
@@ -629,42 +469,12 @@ export default function UnitEdit({ unitType, productType }) {
                 <CardContent sx={{ height: 'auto' }}>
                   <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField
-                        size="small"
-                        name="txbSummerReturnAirDB"
-                        label="Summer Return Air DB (F)"
-                        onBlur={handleChangeSummerReturnAirDBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbSummerReturnAirWB"
-                        label="Summer Return Air WB (F)"
-                        onBlur={handleChangeSummerReturnAirWBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbSummerReturnAirRH"
-                        label="Summer Return Air RH (%)"
-                        onBlur={handleChangeSummerReturnAirRHChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbWinterReturnAirDB"
-                        label="Winter Return Air DB"
-                        onBlur={handleChangeWinterReturnAirDBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbWinterReturnAirWB"
-                        label="Winter Return Air WB"
-                        onBlur={handleChangeWinterReturnAirWBChanged}
-                      />
-                      <RHFTextField
-                        size="small"
-                        name="txbWinterReturnAirRH"
-                        label="Winter Return Air RH"
-                        onBlur={handleChangeWinterReturnAirRHChanged}
-                      />
+                      <RHFTextField size="small" name="txbSummerReturnAirDB" label="Summer Return Air DB (F)" />
+                      <RHFTextField size="small" name="txbSummerReturnAirWB" label="Summer Return Air WB (F)" />
+                      <RHFTextField size="small" name="txbSummerReturnAirRH" label="Summer Return Air RH (%)" />
+                      <RHFTextField size="small" name="txbWinterReturnAirDB" label="Winter Return Air DB" />
+                      <RHFTextField size="small" name="txbWinterReturnAirWB" label="Winter Return Air WB" />
+                      <RHFTextField size="small" name="txbWinterReturnAirRH" label="Winter Return Air RH" />
                     </Box>
                   </Box>
                 </CardContent>
@@ -755,7 +565,6 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlPreheatComp"
                       label="Preheat"
                       sx={getDisplay(divPreheatCompVisible)}
-                      onChange={onChangePreheat}
                     >
                       {ddlPreheatComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -768,7 +577,6 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlHeatExchComp"
                       label="Heat Exchanger"
                       sx={getDisplay(divHeatExchCompVisible)}
-                      onChange={onChangeCooling}
                     >
                       {ddlHeatExchComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -781,7 +589,6 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlCoolingComp"
                       label="Cooling"
                       sx={getDisplay(divCoolingCompVisible)}
-                      onChange={onChangeCooling}
                     >
                       {ddlCoolingComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -794,7 +601,6 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlHeatingComp"
                       label="Heating"
                       sx={getDisplay(divHeatingCompVisible)}
-                      onChange={onChangeHeating}
                     >
                       {ddlHeatingComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -839,7 +645,7 @@ export default function UnitEdit({ unitType, productType }) {
                   </Box>
                   <Divider />
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFSelect size="small" name="ddlDamperAndActuator" label="Dampers & Actuator" placeholder="">
+                    <RHFSelect size="small" name="ddlDamperAndActuator" label="Dampers & Actuator" sx={getDisplay(ddlDamperAndActuatorVisible)} placeholder="">
                       {ddlDamperAndActuator.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -865,7 +671,7 @@ export default function UnitEdit({ unitType, productType }) {
                       label="Preheat Elec. Heater Installation"
                       placeholder=""
                     >
-                      {preheatElectricHeader.ddlPreheatElecHeaterInstallation.map((item, index) => (
+                      {preheatElectricHeater.ddlPreheatElecHeaterInstallation.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
@@ -875,10 +681,10 @@ export default function UnitEdit({ unitType, productType }) {
                       size="small"
                       name="ddlHeatElecHeaterInstallation"
                       label="Heating Elec. Heater Installation"
-                      sx={getDisplay(heatElectricHeader.divHeatElecHeaterInstallationVisible)}
+                      sx={getDisplay(heatElectricHeater.divHeatElecHeaterInstallationVisible)}
                       placeholder=""
                     >
-                      {heatElectricHeader.ddlHeatElecHeaterInstallation.map((item, index) => (
+                      {heatElectricHeater.ddlHeatElecHeaterInstallation.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
@@ -1174,12 +980,12 @@ export default function UnitEdit({ unitType, productType }) {
       </FormProvider>
       <Snackbar open={successNotification} autoHideDuration={6000} onClose={handleSuccessNotificationClose}>
         <Alert onClose={handleSuccessNotificationClose} severity="success" sx={{ width: '100%' }}>
-          {isEdit? 'Unit update successful!!!' : 'Unit was successfully added!!!'}
+          {isEdit ? 'Unit update successful!!!' : 'Unit was successfully added!!!'}
         </Alert>
       </Snackbar>
       <Snackbar open={errorNotification} autoHideDuration={6000} onClose={handleErrorNotificationClose}>
         <Alert onClose={handleErrorNotificationClose} severity="error" sx={{ width: '100%' }}>
-          {isEdit? 'Unit update failed!' : 'Failed to add Unit!'}
+          {isEdit ? 'Unit update failed!' : 'Failed to add Unit!'}
         </Alert>
       </Snackbar>
     </Container>
