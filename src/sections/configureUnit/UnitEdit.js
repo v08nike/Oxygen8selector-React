@@ -276,6 +276,7 @@ export default function UnitEdit({ unitType, productType }) {
   const getDisplay = (key) => ({ display: key ? 'block' : 'none' });
   const getAllFormData = () => ({
     ...getValues(),
+    intJobID: jobId,
     intUnitNo: unitId,
     intProductTypeID: productType,
     intUAL: localStorage.getItem('UAL'),
@@ -301,10 +302,110 @@ export default function UnitEdit({ unitType, productType }) {
     dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
   };
 
-  // const ddlOrientationChanged = (e) => {
-  //   setValue('ddlOrientation', e.target.value);
-  //   dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
-  // };
+  const ddlOrientationChanged = (e) => {
+    setValue('ddlOrientation', e.target.value);
+    dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
+  };
+
+  const txbSummerSupplyAirCFMChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerReturnAirCFMChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSupplyAirESPChanged = (e) => {    
+    console.log(e.target.value)
+  };
+
+  const txbExhaustAirESPChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const ddlUnitModelChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const ddlUnitVoltageChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerOutdoorAirDBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerOutdoorAirWBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerOutdoorAirRHChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbWinterOutdoorAirDBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbWinterOutdoorAirWBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbWinterOutdoorAirRHChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerReturnAirDBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerReturnAirWBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbSummerReturnAirRHChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbWinterReturnAirDBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbWinterReturnAirWBChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbWinterReturnAirRHChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const ddlPreheatCompChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const ddlHeatExchCompChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const ddlCoolingCompChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const ddlHeatingCompChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbOA_FilterPDChanged = (e) => {
+    console.log(e.target.value)
+  };
+
+  const txbRA_FilterPDChanged = (e) => {    
+    console.log(e.target.value)
+  };
+
+  const ddlElecHeaterVoltageChanged = (e) => {    
+    console.log(e.target.value)
+  };
 
   return (
     <Container>
@@ -354,7 +455,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlOrientation"
                       label="Orientation"
                       placeholder=""
-                      // onChange={ddlOrientationChanged}
+                      onChange={ddlOrientationChanged}
                     >
                       <option value="" />
                       {ddlOrientation.map((item, index) => (
@@ -391,6 +492,7 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbSummerSupplyAirCFM"
                         label="Supply Air (CFM)"
                         autoComplete="off"
+                        onBlur={txbSummerSupplyAirCFMChanged}
                       />
                       <RHFTextField
                         size="small"
@@ -398,14 +500,22 @@ export default function UnitEdit({ unitType, productType }) {
                         label="Supply Air (ASD)"
                         sx={getDisplay(divSummerReturnAirCFMVisible)}
                         autoComplete="off"
+                        onBlur={txbSummerReturnAirCFMChanged}
                       />
-                      <RHFTextField size="small" name="txbSupplyAirESP" label="Supply Air (ERC)" autoComplete="off" />
+                      <RHFTextField
+                        size="small"
+                        name="txbSupplyAirESP"
+                        label="Supply Air (ERC)"
+                        autoComplete="off"
+                        onBlur={txbSupplyAirESPChanged}
+                      />
                       <RHFTextField
                         size="small"
                         name="txbExhaustAirESP"
                         label="Supply Air (DVG)"
                         sx={getDisplay(divExhaustAirESPVisible)}
                         autoComplete="off"
+                        onBlur={txbExhaustAirESPChanged}
                       />
                     </Box>
                     <Divider />
@@ -417,7 +527,7 @@ export default function UnitEdit({ unitType, productType }) {
                         sx={getDisplay(divUnitBypassVisible)}
                         checked={isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1}
                       />
-                      <RHFSelect size="small" name="ddlUnitModel" label="Unit Model">
+                      <RHFSelect size="small" name="ddlUnitModel" label="Unit Model" onChnage={ddlUnitModelChanged}>
                         <option value="" />
                         {ddlUnitModel.map((item, index) => (
                           <option key={index} value={item.id}>
@@ -425,7 +535,12 @@ export default function UnitEdit({ unitType, productType }) {
                           </option>
                         ))}
                       </RHFSelect>
-                      <RHFSelect size="small" name="ddlUnitVoltage" label="Unit Voltage">
+                      <RHFSelect
+                        size="small"
+                        name="ddlUnitVoltage"
+                        label="Unit Voltage"
+                        onChange={ddlUnitVoltageChanged}
+                      >
                         <option value="" />
                         {ddlUnitVoltage.map((item, index) => (
                           <option key={index} value={item.id}>
@@ -450,12 +565,42 @@ export default function UnitEdit({ unitType, productType }) {
                   <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                       <RHFTextField size="small" name="txbAltitude" label="Altitude (ft):" autoComplete="off" />
-                      <RHFTextField size="small" name="txbSummerOutdoorAirDB" label="Summer Outdoor Air DB (F)" />
-                      <RHFTextField size="small" name="txbSummerOutdoorAirWB" label="Summer Outdoor Air WB (F)" />
-                      <RHFTextField size="small" name="txbSummerOutdoorAirRH" label="Summer Outdoor Air RH (%)" />
-                      <RHFTextField size="small" name="txbWinterOutdoorAirDB" label="Winter Outdoor Air DB" />
-                      <RHFTextField size="small" name="txbWinterOutdoorAirWB" label="Winter Outdoor Air WB" />
-                      <RHFTextField size="small" name="txbWinterOutdoorAirRH" label="Winter Outdoor Air RH" />
+                      <RHFTextField
+                        size="small"
+                        name="txbSummerOutdoorAirDB"
+                        label="Summer Outdoor Air DB (F)"
+                        onBlur={txbSummerOutdoorAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbSummerOutdoorAirWB"
+                        label="Summer Outdoor Air WB (F)"
+                        onBlur={txbSummerOutdoorAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbSummerOutdoorAirRH"
+                        label="Summer Outdoor Air RH (%)"
+                        onBlur={txbSummerOutdoorAirRHChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbWinterOutdoorAirDB"
+                        label="Winter Outdoor Air DB"
+                        onBlur={txbWinterOutdoorAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbWinterOutdoorAirWB"
+                        label="Winter Outdoor Air WB"
+                        onBlur={txbWinterOutdoorAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbWinterOutdoorAirRH"
+                        label="Winter Outdoor Air RH"
+                        onBlur={txbWinterOutdoorAirRHChanged}
+                      />
                     </Box>
                   </Box>
                 </CardContent>
@@ -465,12 +610,42 @@ export default function UnitEdit({ unitType, productType }) {
                 <CardContent sx={{ height: 'auto' }}>
                   <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="txbSummerReturnAirDB" label="Summer Return Air DB (F)" />
-                      <RHFTextField size="small" name="txbSummerReturnAirWB" label="Summer Return Air WB (F)" />
-                      <RHFTextField size="small" name="txbSummerReturnAirRH" label="Summer Return Air RH (%)" />
-                      <RHFTextField size="small" name="txbWinterReturnAirDB" label="Winter Return Air DB" />
-                      <RHFTextField size="small" name="txbWinterReturnAirWB" label="Winter Return Air WB" />
-                      <RHFTextField size="small" name="txbWinterReturnAirRH" label="Winter Return Air RH" />
+                      <RHFTextField
+                        size="small"
+                        name="txbSummerReturnAirDB"
+                        label="Summer Return Air DB (F)"
+                        onBlur={txbSummerReturnAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbSummerReturnAirWB"
+                        label="Summer Return Air WB (F)"
+                        onBlur={txbSummerReturnAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbSummerReturnAirRH"
+                        label="Summer Return Air RH (%)"
+                        onBlur={txbSummerReturnAirRHChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbWinterReturnAirDB"
+                        label="Winter Return Air DB"
+                        onBlur={txbWinterReturnAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbWinterReturnAirWB"
+                        label="Winter Return Air WB"
+                        onBlur={txbWinterReturnAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="txbWinterReturnAirRH"
+                        label="Winter Return Air RH"
+                        onBlur={txbWinterReturnAirRHChanged}
+                      />
                     </Box>
                   </Box>
                 </CardContent>
@@ -561,6 +736,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlPreheatComp"
                       label="Preheat"
                       sx={getDisplay(divPreheatCompVisible)}
+                      onChange={ddlPreheatCompChanged}
                     >
                       {ddlPreheatComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -573,6 +749,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlHeatExchComp"
                       label="Heat Exchanger"
                       sx={getDisplay(divHeatExchCompVisible)}
+                      onChange={ddlHeatExchCompChanged}
                     >
                       {ddlHeatExchComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -585,6 +762,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlCoolingComp"
                       label="Cooling"
                       sx={getDisplay(divCoolingCompVisible)}
+                      onChange={ddlCoolingCompChanged}
                     >
                       {ddlCoolingComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -597,6 +775,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlHeatingComp"
                       label="Heating"
                       sx={getDisplay(divHeatingCompVisible)}
+                      onChange={ddlHeatingCompChanged}
                     >
                       {ddlHeatingComp.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -610,12 +789,18 @@ export default function UnitEdit({ unitType, productType }) {
                   </Box>
                   <Divider />
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField size="small" name="txbOA_FilterPD" label="QA Filter PD (in w.g.)" />
+                    <RHFTextField
+                      size="small"
+                      name="txbOA_FilterPD"
+                      label="QA Filter PD (in w.g.)"
+                      onBlur={txbOA_FilterPDChanged}
+                    />
                     <RHFTextField
                       size="small"
                       name="txbRA_FilterPD"
                       label="RA Filter PD (in w.g.)"
                       sx={getDisplay(divRA_FilterPDVisible)}
+                      onBlur={txbRA_FilterPDChanged}
                     />
                     <RHFCheckbox
                       size="small"
@@ -660,6 +845,7 @@ export default function UnitEdit({ unitType, productType }) {
                       label="Elec. Heater Voltage"
                       placeholder=""
                       sx={getDisplay(elecHeaterVoltage.divElecHeaterVoltageVisible)}
+                      onChange={ddlElecHeaterVoltageChanged}
                     >
                       {electricHeaterVoltage.ddlElecHeaterVoltage.map((item, index) => (
                         <option key={index} value={item.id}>
