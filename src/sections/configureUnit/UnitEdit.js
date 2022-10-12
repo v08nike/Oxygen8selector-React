@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 // import PropTypes from 'prop-types';
@@ -30,10 +29,6 @@ import * as unitReducer from '../../redux/slices/unitReducer';
 // components
 import Iconify from '../../components/Iconify';
 import { FormProvider, RHFTextField, RHFSelect, RHFCheckbox } from '../../components/hook-form';
-// utils
-import axios from '../../utils/axios';
-// config
-import { serverUrl } from '../../config';
 //------------------------------------------------
 
 const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
@@ -52,24 +47,20 @@ export default function UnitEdit({ unitType, productType }) {
   const dispatch = useDispatch();
   const { jobId, unitId } = useParams();
   const isEdit = unitId !== undefined;
-  const { controlInfo, unitInfo, visibleInfo } = useSelector((state) => state.unit);
-  console.log(controlInfo, unitInfo, visibleInfo);
-
-  const { ddlOrientation, ddlOrientationValue, ddlUnitModel, ddlUnitModelValue, others } = controlInfo.mainControlData;
+  const { controlInfo, unitInfo } = useSelector((state) => state.unit);
+  console.log(controlInfo, unitInfo);
 
   const {
+    ddlOrientation,
+    ddlOrientationValue,
+    ddlUnitModel,
+    ddlUnitModelValue,
     divCustomVisible,
     divHeatExchCompVisible,
-    // divNotesVisible,
     divOutdoorAirDesignConditionsVisible,
     divReturnAirDesignConditionsVisible,
     divSetpoint_1Visible,
     divSubmittalItemsVisible,
-    // divUnitOpeningsMsgVisible,
-    // div_hx_fp_hiddenVisible,
-  } = visibleInfo;
-
-  const {
     ddlUnitType,
     ddlUnitTypeValue,
     ddlControlsPreference,
@@ -88,9 +79,6 @@ export default function UnitEdit({ unitType, productType }) {
     ckbVoltageSPP,
     divUnitBypassVisible,
     divVoltageSPPVisible,
-  } = controlInfo;
-
-  const {
     ddlLocation,
     ddlLocationValue,
     ckbDownshot,
@@ -106,7 +94,6 @@ export default function UnitEdit({ unitType, productType }) {
     ddlCoolingCompValue,
     ddlHeatingComp,
     ddlHeatingCompValue,
-    componentOptions,
     ddlCoolingFluidType,
     ddlCoolingFluidTypeValue,
     ddlCoolingFluidConcentration,
@@ -122,11 +109,10 @@ export default function UnitEdit({ unitType, productType }) {
     divRA_FilterModelVisible,
     divRA_FilterPDVisible,
     divSummerReturnAirCFMVisible,
-  } = controlInfo.unitTypes;
-
-  const { ddlUnitVoltage, ddlUnitVoltageValue, elecHeaterVoltage, ckbBypass } = others;
-
-  const {
+    ddlUnitVoltage,
+    ddlUnitVoltageValue,
+    elecHeaterVoltage,
+    ckbBypass,
     reheat,
     cooling,
     drainPan,
@@ -143,7 +129,7 @@ export default function UnitEdit({ unitType, productType }) {
     divCoolingSetpointVisible,
     divHeatingSetpointVisible,
     divHeatingFluidDesignConditionsVisible,
-  } = componentOptions;
+  } = controlInfo;
 
   const defaultValues = {
     txtTag: isEdit ? unitInfo.txbTagText : '',
@@ -250,11 +236,11 @@ export default function UnitEdit({ unitType, productType }) {
     ddlSupplyAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
     ddlSupplyAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '1',
     ddlExhaustAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlExhaustAirOpeningText:  isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '2',
+    ddlExhaustAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '2',
     ddlOutdoorAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlOutdoorAirOpeningText:   isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '4',
+    ddlOutdoorAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '4',
     ddlReturnAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlReturnAirOpeningText:   isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '3',
+    ddlReturnAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '3',
   };
 
   const methods = useForm({
@@ -271,7 +257,7 @@ export default function UnitEdit({ unitType, productType }) {
   } = methods;
 
   const [successNotification, setOpenSuccessNotification] = React.useState(false);
-  
+
   const handleSuccessNotificationClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -311,7 +297,7 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const ddlLocationChanged = (e) => {
-    setValue('ddlLocation',e.target.value);
+    setValue('ddlLocation', e.target.value);
     dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
   };
 
@@ -655,7 +641,13 @@ export default function UnitEdit({ unitType, productType }) {
                   </Box>
                   <Divider />
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFSelect size="small" name="ddlDamperAndActuator" label="Dampers & Actuator" sx={getDisplay(ddlDamperAndActuatorVisible)} placeholder="">
+                    <RHFSelect
+                      size="small"
+                      name="ddlDamperAndActuator"
+                      label="Dampers & Actuator"
+                      sx={getDisplay(ddlDamperAndActuatorVisible)}
+                      placeholder=""
+                    >
                       {ddlDamperAndActuator.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
