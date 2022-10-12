@@ -8,12 +8,13 @@ import EmptyContent from '../EmptyContent';
 
 TableNoData.propTypes = {
   isNotFound: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };
 
-export default function TableNoData({ isNotFound }) {
+export default function TableNoData({ isNotFound, isLoading }) {
   return (
     <TableRow>
-      {isNotFound ? (
+      {isNotFound && !isLoading ? (
         <TableCell colSpan={12}>
           <EmptyContent
             title="No Data"

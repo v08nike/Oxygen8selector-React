@@ -14,8 +14,7 @@ import useAuth from '../../../hooks/useAuth';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 // components
 import Iconify from '../../../components/Iconify';
-import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
-
+import { FormProvider, RHFTextField } from '../../../components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -50,14 +49,19 @@ export default function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
+      const returnValue = await login(data.email, data.password);
+      if (returnValue === 'no_user_exist') {
+        setError('afterSubmit', { message: 'This email is not registered!' });
+      } else if (returnValue === 'incorrect_password') {
+        setError('afterSubmit', { message: 'Incorrect password!.' });
+      }
     } catch (error) {
       console.error(error);
 
       reset();
 
       if (isMountedRef.current) {
-        setError('afterSubmit', { ...error, message: error.message });
+        setError('afterSubmit', { ...error, message: "Can't connect Server!" });
       }
     }
   };
@@ -91,7 +95,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton href="/my-jobs" fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
         Login
       </LoadingButton>
     </FormProvider>

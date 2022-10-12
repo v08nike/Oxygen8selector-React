@@ -1,52 +1,74 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 // @mui
-import { styled } from '@mui/material/styles';
-import { Button, Container, Typography } from '@mui/material';
-// layouts
-import LogoOnlyLayout from '../../layouts/LogoOnlyLayout';
-// routes
-import { PATH_AUTH } from '../../routes/paths';
+import { Container } from '@mui/material';
+// jwt
+import jwtDecode from 'jwt-decode';
 // components
 import Page from '../../components/Page';
 // sections
+import { Message } from '../../sections/auth/message';
+import { NewPassword } from '../../sections/auth/new-password';
 import { ResetPasswordForm } from '../../sections/auth/reset-password';
-
-// ----------------------------------------------------------------------
-
-const ContentStyle = styled('div')(({ theme }) => ({
-  maxWidth: 480,
-  margin: 'auto',
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  padding: theme.spacing(12, 0),
-}));
-
+// utils
+import axios from '../../utils/axios';
+// config
+import { serverUrl } from '../../config';
+// Path
+import { PATH_AUTH } from '../../routes/paths';
 // ----------------------------------------------------------------------
 
 export default function ResetPassword() {
-  return (
+  const { token } = useParams();
+  const navigate = useNavigate(); 
+
+  const [error, setError] = useState('');
+  const [currentTokenState, setCurrentTokenState] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(true);
+  const [tokenEmail, setTokenEmail] = useState("");
+
+  useEffect(() => {
+    if (token !== undefined) {
+      const tokenData = jwtDecode(token);
+      axios.post(`${serverUrl}/api/user/completeresetpassword`, { email: tokenData.email }).then((response) => {
+        if (response.data) {
+          const now = new Date();
+          if (tokenData.expireTime > now.getTime()) {
+            setCurrentTokenState(true);
+            setError('');
+          } else {
+            setError('Token has expired!');
+          }
+        } else {
+          setError('You have already changed your password!');
+        }
+        setTokenEmail(tokenData.email);
+        setIsConfirming(false);
+      });
+    } else {
+      setIsConfirming(false);
+    }
+  }, [token]);
+
+  const initStates = () => {
+    setError('');
+    setCurrentTokenState(false);
+    setIsConfirming(false);
+    navigate(PATH_AUTH.resetPassword);
+  }
+
+  let renderTag; 
+  if (error === '') {
+    renderTag = currentTokenState ? <NewPassword email={tokenEmail}/> : <ResetPasswordForm />;
+  } else {
+    renderTag = <Message text={error} initStates={initStates}/>;
+  }
+
+  return isConfirming ? (
+    <h1>Checking token...</h1>
+  ) : (
     <Page title="Reset Password">
-      <Container>
-        <ContentStyle sx={{ textAlign: 'center' }}>
-          <LogoOnlyLayout />
-          <Typography variant="h3" paragraph>
-            Forgot your password?
-          </Typography>
-
-          <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-            Please enter the email address associated with your account and We will email you a link to reset your
-            password.
-          </Typography>
-
-          <ResetPasswordForm />
-
-          <Button fullWidth size="large" component={RouterLink} to={PATH_AUTH.login} sx={{ mt: 1 }}>
-            Back
-          </Button>
-        </ContentStyle>
-      </Container>
+      <Container>{renderTag}</Container>
     </Page>
   );
 }

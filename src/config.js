@@ -1,7 +1,7 @@
 // @mui
 import { enUS, frFR, zhCN, viVN, arSD } from '@mui/material/locale';
 // routes
-import { PATH_DASHBOARD } from './routes/paths';
+import { PATH_JOBS } from './routes/paths';
 
 // API
 // ----------------------------------------------------------------------
@@ -32,7 +32,7 @@ export const AUTH0_API = {
 export const MAPBOX_API = process.env.REACT_APP_MAPBOX_API;
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL
-export const PATH_AFTER_LOGIN = PATH_DASHBOARD.general.app; // as '/dashboard/app'
+export const PATH_AFTER_LOGIN = PATH_JOBS.root; // as '/dashboard/app'
 
 // LAYOUT
 // ----------------------------------------------------------------------
@@ -110,3 +110,8 @@ export const allLangs = [
 ];
 
 export const defaultLang = allLangs[0]; // English
+
+// export const serverUrl = "http://localhost:51045";
+
+
+export const serverUrl = "https://173.248.135.23:5003";

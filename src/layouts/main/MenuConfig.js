@@ -1,8 +1,4 @@
-// routes
-import { PATH_DASHBOARD } from '../../routes/paths';
 // components
-import Label from '../../components/Label';
-import Iconify from '../../components/Iconify';
 import SvgIconStyle from '../../components/SvgIconStyle';
 
 // ----------------------------------------------------------------------
@@ -21,9 +17,9 @@ const navConfig = [
   {
     subheader: 'general',
     items: [
-      { title: 'My Jobs', path: 'my-jobs', icon: ICONS.dashboard },
-      { title: 'My Account', path: 'my-account', icon: ICONS.user },
-      { title: 'Resources', path: 'resources', icon: ICONS.download },
+      { title: 'My Jobs', path: '/jobs', icon: ICONS.dashboard },
+      { title: 'My Account', path: '/account', icon: ICONS.user },
+      { title: 'Resources', path: '/resources', icon: ICONS.download },
     ],
   }
 ];

@@ -30,20 +30,6 @@ MenuDesktop.propTypes = {
 };
 
 export default function MenuDesktop({ navConfig }) {
-  const { pathname } = useLocation();
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      handleClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   return (
     <Stack direction="row">
       <NavSectionHorizontal navConfig={navConfig} />

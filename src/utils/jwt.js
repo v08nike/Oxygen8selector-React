@@ -14,28 +14,29 @@ const isValidToken = (accessToken) => {
 
   const currentTime = Date.now() / 1000;
 
-  return decoded.exp > currentTime;
+  // return decoded.exp > currentTime;
+  return true;
 };
 
 const handleTokenExpired = (exp) => {
-  let expiredTimer;
+  // let expiredTimer;
 
-  const currentTime = Date.now();
+  // const currentTime = Date.now();
 
   // Test token expires after 10s
   // const timeLeft = currentTime + 10000 - currentTime; // ~10s
-  const timeLeft = exp * 1000 - currentTime;
+  // const timeLeft = exp * 1000 - currentTime;
 
-  clearTimeout(expiredTimer);
+  // clearTimeout(expiredTimer);
 
-  expiredTimer = setTimeout(() => {
-    // eslint-disable-next-line no-alert
-    alert('Token expired');
+  // expiredTimer = setTimeout(() => {
+  //   // eslint-disable-next-line no-alert
+  //   alert('Token expired');
 
-    localStorage.removeItem('accessToken');
+  //   localStorage.removeItem('accessToken');
 
-    window.location.href = PATH_AUTH.login;
-  }, timeLeft);
+  //   window.location.href = PATH_AUTH.login;
+  // }, timeLeft);
 };
 
 const setSession = (accessToken) => {

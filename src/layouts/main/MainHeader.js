@@ -1,17 +1,21 @@
+import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
-import { AppBar, Toolbar, Container, Stack } from '@mui/material';
+import { Box, Button, AppBar, Toolbar, Container, Stack } from '@mui/material';
 // hooks
 import useOffSetTop from '../../hooks/useOffSetTop';
+import useResponsive from '../../hooks/useResponsive';
 // utils
 import cssStyles from '../../utils/cssStyles';
 // config
 import { HEADER } from '../../config';
 // components
 import Logo from '../../components/Logo';
+import Label from '../../components/Label';
 import AccountPopover from './AccountPopover';
 //
 import MenuDesktop from './MenuDesktop';
+import MenuMobile from './MenuMobile';
 import navConfig from './MenuConfig';
 
 // ----------------------------------------------------------------------
@@ -47,9 +51,10 @@ export default function MainHeader() {
   const isOffset = useOffSetTop(HEADER.MAIN_DESKTOP_HEIGHT);
 
   const theme = useTheme();
+  const isDesktop = useResponsive('up', 'md');
 
   return (
-    <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent', position: 'relative' }}>
+    <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent', zIndex: 5000, background: '#ffff' }}>
       <ToolbarStyle
         disableGutters
         sx={{
@@ -66,14 +71,17 @@ export default function MainHeader() {
             justifyContent: 'space-between',
           }}
         >
-          <Logo sx={{width: "300px", height: "40px"}}/>
+          <Logo sx={{width: {xs:"138px", md: "300px"}, height:  {xs:"30px", md: "40px"}}}/>
 
 
-          <MenuDesktop navConfig={navConfig} />
+          {isDesktop && <MenuDesktop isOffset={isOffset} navConfig={navConfig} />}
 
           <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
             <AccountPopover />
           </Stack>
+
+
+          {!isDesktop && <MenuMobile isOffset={isOffset} navConfig={navConfig} />}
         </Container>
       </ToolbarStyle>
 

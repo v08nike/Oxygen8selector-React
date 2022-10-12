@@ -26,7 +26,7 @@ export default function AccountGeneral() {
     eMail: Yup.string().required('Please enter a eMail'),
     repName: Yup.string().required('Please enter an Rep.Name'),
   });
-  
+
   const defaultValues = {
     username: 'John',
     firstName: 'John',
@@ -72,33 +72,33 @@ export default function AccountGeneral() {
   // );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <Card sx={{ p: 3, ml: 'auto', mr: 'auto', maxWidth: '400px' }}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
-          <Card sx={{ p: 3 }}>
+          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Box
               sx={{
                 display: 'grid',
                 rowGap: 3,
                 columnGap: 2,
-                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
               }}
             >
-              <RHFTextField name="username" label="Username" />
-              <RHFTextField name="firstName" label="First Name" />
-              <RHFTextField name="lastName" label="Last Name" />
-              <RHFTextField name="eMail" label="E-Mail" />
-              <RHFTextField name="repName" label="Rep.Name" />
+              <RHFTextField name="username" label="Username" disabled/>
+              <RHFTextField name="firstName" label="First Name" disabled/>
+              <RHFTextField name="lastName" label="Last Name" disabled/>
+              <RHFTextField name="eMail" label="E-Mail" disabled/>
+              <RHFTextField name="repName" label="Rep.Name" disabled/>
             </Box>
 
-            <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
+            {/* <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save Changes
               </LoadingButton>
-            </Stack>
-          </Card>
+            </Stack> */}
+          </FormProvider>
         </Grid>
       </Grid>
-    </FormProvider>
+    </Card>
   );
 }
