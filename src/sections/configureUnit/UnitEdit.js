@@ -36,6 +36,8 @@ const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
+const dblTempErrorValue = 0.000;
+
 // -----------------------------------------------
 
 UnitEdit.propTypes = {
@@ -177,7 +179,7 @@ export default function UnitEdit({ unitType, productType }) {
     ckbDehumidification: isEdit ? unitInfo.ckbDehumidification : dehumidification.ckbDehumidification,
     ddlReheatComp: isEdit ? unitInfo.ReheatCompID : reheat.ddlReheatCompValue,
     ddlDamperAndActuator: isEdit ? unitInfo.DamperActuatorID : ddlDamperAndActuatorValue,
-    ddlElecHeaterVoltage: isEdit ? unitInfo.ElecHeaterVoltageID : electricHeaterVoltage.ddlElecHeaterVoltageValue,
+    ddlElecHeaterVoltage: isEdit ? unitInfo.ElecHeaterVoltageID : elecHeaterVoltage.ddlElecHeaterVoltageValue,
     ddlPreheatElecHeaterInstallation: isEdit
       ? unitInfo.PreheatElecHeaterInstallationID
       : preheatElectricHeater.ddlPreheatElecHeaterInstallationValue,
@@ -232,14 +234,14 @@ export default function UnitEdit({ unitType, productType }) {
     txbUnitWidthText: isEdit ? unitInfo.txbUnitWidthText : 0,
     txbWinterSupplyAirCFM: isEdit ? unitInfo.txbWinterSupplyAirCFM : 0,
     txbWinterReturnAirCFM: isEdit ? unitInfo.txbWinterReturnAirCFM : 0,
-    ddlHandingID: isEdit ? unitInfo.ddlHandingValue : 1,
-    ddlSupplyAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlHandingValue: isEdit ? unitInfo.ddlHandingValue : 1,
+    ddlSupplyAirOpeningValue: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
     ddlSupplyAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '1',
-    ddlExhaustAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlExhaustAirOpeningValue: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
     ddlExhaustAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '2',
-    ddlOutdoorAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlOutdoorAirOpeningValue: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
     ddlOutdoorAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '4',
-    ddlReturnAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
+    ddlReturnAirOpeningValue: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
     ddlReturnAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '3',
   };
 
@@ -297,114 +299,203 @@ export default function UnitEdit({ unitType, productType }) {
     console.log(result);
   };
 
-  const ddlLocationChanged = (e) => {
+  const ddlLocationChanged = async (e) => {
     setValue('ddlLocation', e.target.value);
-    dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
+    const result = await dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
+    setValue("ddlOrientation", result.ddlOrientationValue);
+    setValue("ddlDamperAndActuator", result.ddlDamperAndActuatorValue);
+    setValue("ddlUnitModel", result.ddlUnitModelValue);
+    setValue("ddlUnitVoltage", result.ddlUnitVoltageValue);
+    setValue("ckbBypass", result.others.ckbBypass);
+    setValue("ddlElecHeaterVoltage", result.others.elecHeaterVoltage.ddlElecHeaterVoltageValue);
+    setValue("ckbBypass", result.downshot);
+    setValue("ddlPreheatElecHeaterInstallation", result.preheatElectricHeater.ddlPreheatElecHeaterInstallationValue);
+    setValue("txbSupplyAirESP", result.txbSupplyAirESP);
+    setValue("txbExhaustAirESP", result.txbExhaustAirESP);
   };
 
-  const ddlOrientationChanged = (e) => {
+  const ddlOrientationChanged = async (e) => {
     setValue('ddlOrientation', e.target.value);
-    dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
+    const result = await dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
+    setValue("ddlUnitModel", result.ddlUnitModelValue);
+    setValue("ddlUnitVoltage", result.ddlUnitVoltageValue);
+    setValue("ckbBypass", result.others.ckbBypass.ckbBypassCheckeds);
+    setValue("ddlElecHeaterVoltage", result.others.elecHeaterVoltage.ddlElecHeaterVoltageValue);
+    setValue("ddlSupplyAirOpeningValue", result.ddlSupplyAirOpeningValue);
+    setValue("ddlSupplyAirOpeningText", result.ddlSupplyAirOpeningText);
   };
 
-  const txbSummerSupplyAirCFMChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerSupplyAirCFMChanged = async () => {
+    const result = await dispatch(unitReducer.txbSummerSupplyAirCFMChanged(getAllFormData()));
+    setValue("ddlOrientation", result.ddlOrientationValue);
+    setValue("ddlUnitModel", result.ddlUnitModelValue);
+    setValue("ddlUnitVoltage", result.ddlUnitVoltageValue);
+    setValue("ckbBypass", result.others.ckbBypass.ckbBypassCheckeds);
+    setValue("ddlElecHeaterVoltage", result.others.elecHeaterVoltage.ddlElecHeaterVoltageValue);
+    setValue("ddlSupplyAirOpeningValue", result.ddlSupplyAirOpeningValue);
+    setValue("ddlSupplyAirOpeningText", result.ddlSupplyAirOpeningText);
+    setValue("txbSummerSupplyAirCFM", result.txbSummerSupplyAirCFM);
+    setValue("txbSummerReturnAirCFM", result.txbSummerReturnAirCFM);
   };
 
-  const txbSummerReturnAirCFMChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerReturnAirCFMChanged = async () => {
+    const result = await dispatch(unitReducer.txbSummerReturnAirCFMChanged(getAllFormData()));
+    setValue("txbSummerReturnAirCFM", result);
   };
 
-  const txbSupplyAirESPChanged = (e) => {    
-    console.log(e.target.value)
+  const txbSupplyAirESPChanged = async () => {
+    const result = await dispatch(unitReducer.txbSupplyAirESPChanged(getAllFormData()));
+    setValue("txbSupplyAirESP", result);
   };
 
-  const txbExhaustAirESPChanged = (e) => {
-    console.log(e.target.value)
+  const txbExhaustAirESPChanged = async () => {
+    const result = await dispatch(unitReducer.txbExhaustAirESPChanged(getAllFormData()));
+    setValue("txbExhaustAirESP", result);
   };
 
-  const ddlUnitModelChanged = (e) => {
-    console.log(e.target.value)
+  const ddlUnitModelChanged = async (e) => {
+    setValue("ddlUnitModel", e.target.value);
+    const result = await dispatch(unitReducer.ddlUnitModelChanged(getAllFormData()));
+    setValue("ddlUnitVoltageValue", result.ddlUnitVoltageValue);
+    setValue("ddlElecHeaterVoltage", result.elecHeaterVoltage.ddlElecHeaterVoltageValue);
+    setValue("txbSupplyAirESP", result.txbSupplyAirESP);
   };
 
-  const ddlUnitVoltageChanged = (e) => {
-    console.log(e.target.value)
+  const ddlUnitVoltageChanged = async (e) => {
+    setValue("ddlUnitVoltage", e.target.value);
+    const result = await dispatch(unitReducer.ddlUnitVoltageChanged(getAllFormData()));
+    setValue("ddlElecHeaterVoltage", result.ddlElecHeaterVoltageValue);
   };
 
-  const txbSummerOutdoorAirDBChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerOutdoorAirDBChanged = async (e) => {
+    setValue("txbSummerOutdoorAirDB", e.target.value);
+    if ( e.target.value === 0)
+    {
+      setValue("txbSummerOutdoorAirWB", 0);
+      setValue("txbSummerOutdoorAirRH", 100);
+    }
+    else
+    {
+      setValue("txbSummerOutdoorAirWB", dblTempErrorValue);
+      setValue("txbSummerOutdoorAirRH", dblTempErrorValue);
+    }
   };
 
-  const txbSummerOutdoorAirWBChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerOutdoorAirWBChanged = async (e) => {
+    setValue("txbSummerOutdoorAirWB", e.target.value);
+    const result = await dispatch(unitReducer.txbSummerOutdoorAirWBChanged(getAllFormData()));
+    setValue('txbSummerOutdoorAirRH', result);
   };
 
-  const txbSummerOutdoorAirRHChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerOutdoorAirRHChanged = async (e) => {
+    setValue("txbSummerOutdoorAirRH", e.target.value);
+    const result = await dispatch(unitReducer.txbSummerOutdoorAirRHChanged(getAllFormData()));
+    setValue('txbSummerOutdoorAirWB', result);
   };
 
-  const txbWinterOutdoorAirDBChanged = (e) => {
-    console.log(e.target.value)
+  const txbWinterOutdoorAirDBChanged = async (e) => {
+    setValue('txbWinterOutdoorAirDB', e.target.value);
+    if (e.target.value === 0){
+      setValue('txbWinterOutdoorAirWB', 0);
+      setValue('txbWinterOutdoorAirRH', 100);
+    } else {
+      setValue('txbWinterOutdoorAirWB', dblTempErrorValue);
+      setValue('txbWinterOutdoorAirRH', dblTempErrorValue);
+    }
+  };
+                                                                                                                                                                                                                                                         
+  const txbWinterOutdoorAirWBChanged = async (e) => {
+    setValue("txbWinterOutdoorAirWB", e.target.value);
+    const result = await dispatch(unitReducer.txbWinterOutdoorAirWBChanged(getAllFormData()));
+    setValue('txbWinterOutdoorAirRH', result);
   };
 
-  const txbWinterOutdoorAirWBChanged = (e) => {
-    console.log(e.target.value)
-  };
-
-  const txbWinterOutdoorAirRHChanged = (e) => {
-    console.log(e.target.value)
+  const txbWinterOutdoorAirRHChanged = async (e) => {
+    setValue("txbWinterOutdoorAirRH", e.target.value);
+    const result = await dispatch(unitReducer.txbWinterOutdoorAirRHChanged(getAllFormData()));
+    setValue('txbWinterOutdoorAirWB', result);
   };
 
   const txbSummerReturnAirDBChanged = (e) => {
-    console.log(e.target.value)
+    setValue('txbSummerReturnAirDB', e.target.value);
+    if (e.target.value === 0)
+    {
+        setValue('txbSummerReturnAirWB', 0);
+        setValue('txbSummerReturnAirRH', 100);
+    }
+    else
+    {
+      setValue('txbSummerReturnAirWB', dblTempErrorValue);
+      setValue('txbSummerReturnAirRH', dblTempErrorValue);
+    }
   };
 
-  const txbSummerReturnAirWBChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerReturnAirWBChanged = async (e) => {
+    setValue("txbSummerReturnAirWB", e.target.value);
+    const result = await dispatch(unitReducer.txbSummerReturnAirWBChanged(getAllFormData()));
+    setValue('txbSummerReturnAirRH', result);
   };
 
-  const txbSummerReturnAirRHChanged = (e) => {
-    console.log(e.target.value)
+  const txbSummerReturnAirRHChanged = async (e) => {
+    setValue("txbSummerReturnAirRH", e.target.value);
+    const result = await dispatch(unitReducer.txbSummerReturnAirRHChanged(getAllFormData()));
+    setValue('txbSummerReturnAirWB', result);
   };
 
   const txbWinterReturnAirDBChanged = (e) => {
-    console.log(e.target.value)
+    setValue("txbWinterReturnAirDB", e.target.value);
+
+    if (e.target === 0)
+    {
+      setValue('txbWinterReturnAirWB', 0);
+      setValue('txbWinterReturnAirRH', 100);
+    }
+    else
+    {
+      setValue('txbWinterReturnAirWB', dblTempErrorValue);
+      setValue('txbWinterReturnAirRH', dblTempErrorValue);
+    }
   };
 
-  const txbWinterReturnAirWBChanged = (e) => {
-    console.log(e.target.value)
+  const txbWinterReturnAirWBChanged = async (e) => {
+    setValue("txbWinterReturnAirWB", e.target.value);
+    const result = await dispatch(unitReducer.txbWinterReturnAirWBChanged(getAllFormData()));
+    setValue('txbWinterReturnAirRH', result);
   };
 
-  const txbWinterReturnAirRHChanged = (e) => {
-    console.log(e.target.value)
+  const txbWinterReturnAirRHChanged = async(e) => {
+    setValue("txbWinterReturnAirRH", e.target.value);
+    const result = await dispatch(unitReducer.txbWinterReturnAirRHChanged(getAllFormData()));
+    setValue('txbWinterReturnAirWB', result);
   };
 
-  const ddlPreheatCompChanged = (e) => {
-    console.log(e.target.value)
+  const ddlPreheatCompChanged = async (e) => {
+    setValue("ddlPreheatComp", e.target.value);
+    const result = await dispatch(unitReducer.ddlPreheatCompChanged(getAllFormData()));
   };
 
   const ddlHeatExchCompChanged = (e) => {
-    console.log(e.target.value)
+    console.log(e.target.value);
   };
 
   const ddlCoolingCompChanged = (e) => {
-    console.log(e.target.value)
+    console.log(e.target.value);
   };
 
   const ddlHeatingCompChanged = (e) => {
-    console.log(e.target.value)
+    console.log(e.target.value);
   };
 
   const txbOA_FilterPDChanged = (e) => {
-    console.log(e.target.value)
+    console.log(e.target.value);
   };
 
-  const txbRA_FilterPDChanged = (e) => {    
-    console.log(e.target.value)
+  const txbRA_FilterPDChanged = (e) => {
+    console.log(e.target.value);
   };
 
-  const ddlElecHeaterVoltageChanged = (e) => {    
-    console.log(e.target.value)
+  const ddlElecHeaterVoltageChanged = (e) => {
+    console.log(e.target.value);
   };
 
   return (
@@ -436,7 +527,6 @@ export default function UnitEdit({ unitType, productType }) {
                       placeholder=""
                       onChange={ddlLocationChanged}
                     >
-                      <option value="" />
                       {ddlLocation.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -457,7 +547,6 @@ export default function UnitEdit({ unitType, productType }) {
                       placeholder=""
                       onChange={ddlOrientationChanged}
                     >
-                      <option value="" />
                       {ddlOrientation.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -472,7 +561,6 @@ export default function UnitEdit({ unitType, productType }) {
                       ))}
                     </RHFSelect>
                     <RHFSelect size="small" name="ddlControlsPreference" label="Control Preference" placeholder="">
-                      <option value="" />
                       {ddlControlsPreference.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -491,7 +579,6 @@ export default function UnitEdit({ unitType, productType }) {
                         size="small"
                         name="txbSummerSupplyAirCFM"
                         label="Supply Air (CFM)"
-                        autoComplete="off"
                         onBlur={txbSummerSupplyAirCFMChanged}
                       />
                       <RHFTextField
@@ -499,14 +586,12 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbSummerReturnAirCFM"
                         label="Supply Air (ASD)"
                         sx={getDisplay(divSummerReturnAirCFMVisible)}
-                        autoComplete="off"
                         onBlur={txbSummerReturnAirCFMChanged}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSupplyAirESP"
                         label="Supply Air (ERC)"
-                        autoComplete="off"
                         onBlur={txbSupplyAirESPChanged}
                       />
                       <RHFTextField
@@ -514,7 +599,6 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbExhaustAirESP"
                         label="Supply Air (DVG)"
                         sx={getDisplay(divExhaustAirESPVisible)}
-                        autoComplete="off"
                         onBlur={txbExhaustAirESPChanged}
                       />
                     </Box>
@@ -527,8 +611,7 @@ export default function UnitEdit({ unitType, productType }) {
                         sx={getDisplay(divUnitBypassVisible)}
                         checked={isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1}
                       />
-                      <RHFSelect size="small" name="ddlUnitModel" label="Unit Model" onChnage={ddlUnitModelChanged}>
-                        <option value="" />
+                      <RHFSelect size="small" name="ddlUnitModel" label="Unit Model" onChange={ddlUnitModelChanged}>
                         {ddlUnitModel.map((item, index) => (
                           <option key={index} value={item.id}>
                             {item.items}
@@ -541,7 +624,7 @@ export default function UnitEdit({ unitType, productType }) {
                         label="Unit Voltage"
                         onChange={ddlUnitVoltageChanged}
                       >
-                        <option value="" />
+
                         {ddlUnitVoltage.map((item, index) => (
                           <option key={index} value={item.id}>
                             {item.items}
@@ -564,7 +647,7 @@ export default function UnitEdit({ unitType, productType }) {
                 <CardContent sx={{ height: 'auto' }}>
                   <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1 }}>
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="txbAltitude" label="Altitude (ft):" autoComplete="off" />
+                      <RHFTextField size="small" name="txbAltitude" label="Altitude (ft):" autoComplete="off" disabled />
                       <RHFTextField
                         size="small"
                         name="txbSummerOutdoorAirDB"
@@ -813,16 +896,16 @@ export default function UnitEdit({ unitType, productType }) {
                       size="small"
                       name="ckbDehumidification"
                       label="Dehumidification"
-                      sx={getDisplay(dehumidification.divDehumidificationVisible)}
+                      sx={getDisplay()}
                       checked={isEdit ? unitInfo.ckbDehumidification === 1 : dehumidification.ckbDehumidification === 1}
                     />
-                    <RHFSelect size="small" name="ddlReheatComp" label="Reheat" placeholder="">
+                    {/* <RHFSelect size="small" name="ddlReheatComp" label="Reheat" placeholder="">
                       {reheat.ddlReheatComp.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
-                    </RHFSelect>
+                    </RHFSelect> */}
                   </Box>
                   <Divider />
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
@@ -847,24 +930,27 @@ export default function UnitEdit({ unitType, productType }) {
                       sx={getDisplay(elecHeaterVoltage.divElecHeaterVoltageVisible)}
                       onChange={ddlElecHeaterVoltageChanged}
                     >
-                      {electricHeaterVoltage.ddlElecHeaterVoltage.map((item, index) => (
+                      {elecHeaterVoltage.ddlElecHeaterVoltage.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFSelect
-                      size="small"
-                      name="ddlPreheatElecHeaterInstallation"
-                      label="Preheat Elec. Heater Installation"
-                      placeholder=""
-                    >
-                      {preheatElectricHeater.ddlPreheatElecHeaterInstallation.map((item, index) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                    {preheatElectricHeater.divPreheatElecHeaterInstallationVisible && (
+                      <RHFSelect
+                        size="small"
+                        name="ddlPreheatElecHeaterInstallation"
+                        label="Preheat Elec. Heater Installation"
+                        placeholder=""
+                      >
+                        {preheatElectricHeater.ddlPreheatElecHeaterInstallation.map((item, index) => (
+                            <option key={index} value={item.id}>
+                              {item.items}
+                            </option>
+                          ))}
+                      </RHFSelect>
+                    )}
+
                     <RHFSelect
                       size="small"
                       name="ddlHeatElecHeaterInstallation"
