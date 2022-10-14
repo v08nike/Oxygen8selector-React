@@ -51,18 +51,18 @@ export default function Layout({ productType, unitType }) {
   });
 
   const defaultValues = {
-    ddlHandingID: isEdit ? unitInfo.ddlHandingValue : 1,
-    ddlSupplyAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlSupplyAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '1',
-    ddlExhaustAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlExhaustAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '2',
-    ddlOutdoorAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlOutdoorAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '4',
-    ddlReturnAirOpeningID: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
-    ddlReturnAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '3',
-    ddlPreheatCoilHanding: isEdit ? unitInfo.PreheatCoilHandingID : ddlPreheatCoilHandingValue,
-    ddlCoolingCoilHanding: isEdit ? unitInfo.CoolingCoilHandingID : ddlCoolingCoilHandingValue,
-    ddlHeatingCoilHanding: isEdit ? unitInfo.HeatingCoilHandingID : ddlHeatingCoilHandingValue,
+    ddlHandingID: 1,
+    ddlSupplyAirOpeningID: 1,
+    ddlSupplyAirOpeningText: '1',
+    ddlExhaustAirOpeningID: 1,
+    ddlExhaustAirOpeningText: '2',
+    ddlOutdoorAirOpeningID: 1,
+    ddlOutdoorAirOpeningText:'4',
+    ddlReturnAirOpeningID: 1,
+    ddlReturnAirOpeningText: '3',
+    ddlPreheatCoilHanding: ddlPreheatCoilHandingValue,
+    ddlCoolingCoilHanding: ddlCoolingCoilHandingValue,
+    ddlHeatingCoilHanding: ddlHeatingCoilHandingValue,
   };
 
   const methods = useForm({
@@ -95,12 +95,13 @@ export default function Layout({ productType, unitType }) {
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     try {
       const result = await dispatch(
         unitReducer.saveLayout({
           ...data,
           intJobID: jobId,
-          intUnitID: unitId,
+          intUnitNo: unitId,
           intProductTypeID: productType,
           intUnitTypeID: unitType,
           intUAL: localStorage.getItem('UAL'),
@@ -230,7 +231,7 @@ export default function Layout({ productType, unitType }) {
                     </RHFSelect>
                     <RHFSelect
                       size="small"
-                      name="ddlReturnAirOpening"
+                      name="ddlReturnAirOpeningID"
                       label="Return Air Opening"
                       placeholder=""
                       onChange={ddlReturnAirOpeningChanged}

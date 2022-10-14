@@ -18,6 +18,7 @@ const initialState = {
   controlInfo: {},
   unitInfo: {},
   visibleInfo: {},
+  viewSelectionInfo: {}
 };
 
 const UnitSlice = createSlice({
@@ -109,6 +110,7 @@ const UnitSlice = createSlice({
         divPreheatSetpointVisible: controlInfo.unitTypes.componentOptions.divPreheatSetpointVisible,
         divCoolingSetpointVisible: controlInfo.unitTypes.componentOptions.divCoolingSetpointVisible,
         divHeatingSetpointVisible: controlInfo.unitTypes.componentOptions.divHeatingSetpointVisible,
+        divSetpointsVisible: controlInfo.unitTypes.componentOptions.divSetpointsVisible,
         divHeatingFluidDesignConditionsVisible:
           controlInfo.unitTypes.componentOptions.divHeatingFluidDesignConditionsVisible,
         ddlUnitVoltage: controlInfo.mainControlData.others.ddlUnitVoltage,
@@ -232,7 +234,6 @@ const UnitSlice = createSlice({
       state.controlInfo = {
         ...state.controlInfo,
         customInputs: data.customInputs,
-        divPreheatCoilHandingVisible: data.divHeatingFluidDesignConditionsVisible,
         divHeatingFluidDesignConditionsVisible: data.divHeatingFluidDesignConditionsVisible,
         preheatElectricHeater: data.preheatElectricHeater,
         elecHeaterVoltage: data.preheatElectricHeater.electricHeaterVoltageInfo,
@@ -241,6 +242,36 @@ const UnitSlice = createSlice({
         valveAndActuator: data.valveAndActuator,
         divPreheatSetpointVisible: data.isAUHID? data.divPreheatSetpointVisible: false,
         divSetpointsVisible: data.isAUHID? data.divSetpointsVisible: false,
+      }
+    },
+    ddlCoolingCompChanged(state, actions) {
+      const data = actions.payload;
+      state.controlInfo = {
+        ...state.controlInfo,
+        reheat: data.reheat,
+        cooling: data.cooling,
+        dehumidification: data.dehumidification,
+        valveAndActuator: data.valveAndActuator,
+        heatElectricHeater: data.heatElectricHeater,
+        divHeatingFluidDesignConditionsVisible: data.divHeatingFluidDesignConditionsVisible,
+        refrigerantInfo: data.refrigerantInfo,
+        divCoolingSetpointVisible: data.divCoolingSetpointVisible,
+        divHeatingSetpointVisible: data.divHeatingSetpointVisible,
+        reheatSetpoints: data.reheatSetpoints,
+        divSetpointsVisible: data.divSetpointsVisible,
+        customInputs: data.customInputs,
+      }
+    },
+    ddlHeatingCompChanged(state, actions) {
+      const data = actions.payload;
+      state.controlInfo = {
+        ...state.controlInfo,
+        heatElectricHeater: data.heatElectricHeater,
+        divHeatingFluidDesignConditionsVisible: data.divHeatingFluidDesignConditionsVisible,
+        valveAndActuator: data.valveAndActuator,
+        divHeatingSetpointVisible: data.divHeatingSetpointVisible,
+        divSetpointsVisible: data.divSetpointsVisible,
+        customInputs: data.customInputs,
       }
     },
     ddlUnitVoltageChanged(state, actions) {
@@ -297,6 +328,36 @@ const UnitSlice = createSlice({
         txbWinterReturnAirWB: actions.payload
       }
     },
+    getViewSelectionInfo(state, actions) {
+      state.isLoading = false;
+      const data = actions.payload;
+      state.viewSelectionInfo = {
+        pricingDetail: data.outputPricing.gvPricingDataSource,
+        performanceVisible: data.outputPricing.divPricingVisible,
+        unitDetails: data.outputUnitDetails.gvOutUnitDetails_1DataSource.concat(data.outputUnitDetails.gvOutUnitDetails_2DataSource),
+        unitDetailsVisible: data.outputUnitDetails.divOutUnitDetailsVisible,
+        electricalRequirements: {
+          unitData: data.outputElecReq.gvOutElecReqUnitDataDataSource,
+          unitDataVisible: data.outputElecReq.divOutElecReqUnitDataVisible,
+          preheatData: data.outputElecReq.gvOutElecReqPreheatElecHeaterDataSource,
+          preheatDataVisible: data.outputElecReq.divOutElecReqPreheatElecHeaterVisible,
+          heatingData: data.outputElecReq.gvOutElecReqHeatingElecHeaterDataSource,
+          heatingDataVisible: data.outputElecReq.divOutElecReqHeatingElecHeaterVisible,
+        },
+        electricPreheat: data.outputPreheatElecHeater.gvOutPreheatElecHeaterDataSource,
+        electricPreheatVisible: data.outputPreheatElecHeater.divOutPreheatElecHeaterVisible,
+        heatExchanger: {
+          designConditions: data.outputFixedPlateCORE.gvOutHX_FP_EntAirDataSource,
+          designConditionsVisible: data.outputFixedPlateCORE.gvOutHX_FP_EntAirVisible,
+          performanceLeavingAir: data.outputFixedPlateCORE.gvOutHX_FP_LvgAirDataSource,
+          performanceLeavingAirVisible: data.outputFixedPlateCORE.gvOutHX_FP_LvgAirVisible,
+          performance: data.outputFixedPlateCORE.gvOutHX_FP_PerfDataSource,
+          performanceVisible: data.outputFixedPlateCORE.gvOutHX_FP_PerfVisible,
+        },
+        heatingElectricHeater: data.outputHeatingElecHeater.gvOutHeatingElecHeaterDataDataSource,
+        heatingElectricHeaterVisible: data.outputHeatingElecHeater.divOutHeatingElecHeaterVisible,
+      }
+    }
   },
 });
 
@@ -327,8 +388,8 @@ export function getInitUnitinfo(data) {
 export function saveUnitInfo(data) {
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/Save`, data);
-    dispatch(UnitSlice.actions.setInitInfo(response.data));
-    return true;
+    dispatch(UnitSlice.actions.setInitInfo(response.data.unitData));
+    return response.data.intUnitNo;
   };
 }
 
@@ -340,7 +401,6 @@ export function saveLayout(data) {
 }
 
 export function ddlLocationChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/locationchanged`, data);
     console.log(response.data);
@@ -359,43 +419,42 @@ export function ddlOrientationChanged(data) {
 }
 
 export function txbSummerSupplyAirCFMChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SummerSupplyAirCFMChanged`, data);
+    console.log(response.data);
     dispatch(UnitSlice.actions.txbSummerSupplyAirCFMChanged(response.data));
     return response.data;
   };
 }
 
 export function txbSummerReturnAirCFMChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SummerReturnAirCFMChanged`, data);
+    console.log(response.data);
     dispatch(UnitSlice.actions.txbSummerReturnAirCFMChanged(response.data));
     return response.data;
   };
 }
 
 export function txbSupplyAirESPChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SupplyAirESPChanged`, data);
+    console.log(response.data);
     dispatch(UnitSlice.actions.txbSupplyAirESPChanged(response.data));
     return response.data;
   };
 }
 
 export function txbExhaustAirESPChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/ExhaustAirESPChanged`, data);
+    console.log(response.data);
     dispatch(UnitSlice.actions.txbSupplyAirESPChanged(response.data));
     return response.data;
   };
 }
 
 export function ddlUnitModelChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/UnitModelChanged`, data);
     console.log(response.data);
@@ -405,7 +464,6 @@ export function ddlUnitModelChanged(data) {
 }
 
 export function ddlUnitVoltageChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/UnitVoltageChanged`, data);
     console.log(response.data);
@@ -415,7 +473,6 @@ export function ddlUnitVoltageChanged(data) {
 }
 
 export function txbSummerOutdoorAirWBChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SummerOutdoorAirWBChanged`, data);
     console.log(response.data);
@@ -426,7 +483,6 @@ export function txbSummerOutdoorAirWBChanged(data) {
 
 
 export function txbSummerOutdoorAirRHChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api//units/SummerOutdoorAirRHChanged`, data);
     console.log(response.data);
@@ -436,7 +492,6 @@ export function txbSummerOutdoorAirRHChanged(data) {
 }
 
 export function txbWinterOutdoorAirWBChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api//units/WinterOutdoorAirWBChanged`, data);
     console.log(response.data);
@@ -446,7 +501,6 @@ export function txbWinterOutdoorAirWBChanged(data) {
 }
 
 export function txbWinterOutdoorAirRHChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/WinterOutdoorAirRHChanged`, data);
     console.log(response.data);
@@ -456,7 +510,6 @@ export function txbWinterOutdoorAirRHChanged(data) {
 }
 
 export function txbSummerReturnAirWBChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SummerReturnAirWBChanged`, data);
     console.log(response.data);
@@ -466,7 +519,6 @@ export function txbSummerReturnAirWBChanged(data) {
 }
 
 export function txbSummerReturnAirRHChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SummerReturnAirRHChanged`, data);
     console.log(response.data);
@@ -477,7 +529,6 @@ export function txbSummerReturnAirRHChanged(data) {
 }
 
 export function txbWinterReturnAirWBChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/WinterReturnAirWBChanged`, data);
     console.log(response.data);
@@ -487,7 +538,6 @@ export function txbWinterReturnAirWBChanged(data) {
 }
 
 export function txbWinterReturnAirRHChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/WinterReturnAirRHChanged`, data);
     console.log(response.data);
@@ -497,11 +547,39 @@ export function txbWinterReturnAirRHChanged(data) {
 }
 
 export function ddlPreheatCompChanged(data) {
-  console.log(data);
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/ddlPreheatCompChanged`, data);
     console.log(response.data);
     dispatch(UnitSlice.actions.ddlPreheatCompChanged(response.data));
+    return response.data;
+  }
+}
+
+export function ddlCoolingCompChanged(data) {
+  return async () => {
+    const response = await axios.post(`${serverUrl}/api/units/ddlCoolingCompChanged`, data);
+    console.log(response.data);
+    dispatch(UnitSlice.actions.ddlCoolingCompChanged(response.data));
+    return response.data;
+  }
+}
+
+export function ddlHeatingCompChanged(data) {
+  return async () => {
+    const response = await axios.post(`${serverUrl}/api/units/ddlHeatingCompChanged`, data);
+    console.log(response.data);
+    dispatch(UnitSlice.actions.ddlHeatingCompChanged(response.data));
+    return response.data;
+  }
+}
+
+export function getViewSelectionInfo(data) {
+  console.log(data);
+  return async () => {    
+    dispatch(UnitSlice.actions.startLoading());
+    const response = await axios.post(`${serverUrl}/api/units/ViewSelection`, data);
+    console.log(response.data);
+    dispatch(UnitSlice.actions.getViewSelectionInfo(response.data));
     return response.data;
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 // import PropTypes from 'prop-types';
 
@@ -29,6 +29,7 @@ import * as unitReducer from '../../redux/slices/unitReducer';
 // components
 import Iconify from '../../components/Iconify';
 import { FormProvider, RHFTextField, RHFSelect, RHFCheckbox } from '../../components/hook-form';
+import { PATH_UNIT } from '../../routes/paths';
 //------------------------------------------------
 
 const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
@@ -48,6 +49,8 @@ export default function UnitEdit({ unitType, productType }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { jobId, unitId } = useParams();
+  const { state } = useLocation();
+
   const isEdit = unitId !== undefined;
   const { controlInfo, unitInfo } = useSelector((state) => state.unit);
   console.log(controlInfo, unitInfo);
@@ -126,7 +129,6 @@ export default function UnitEdit({ unitType, productType }) {
     divDXC_MsgVisible,
     heatElectricHeater,
     preheatElectricHeater,
-    electricHeaterVoltage,
     divPreheatSetpointVisible,
     divCoolingSetpointVisible,
     divHeatingSetpointVisible,
@@ -137,7 +139,7 @@ export default function UnitEdit({ unitType, productType }) {
     txtTag: isEdit ? unitInfo.txbTagText : '',
     txbQty: isEdit ? unitInfo.txbQtyText : '1',
     ddlLocation: isEdit ? unitInfo.locationID : ddlLocationValue,
-    ckbDownshot: isEdit ? unitInfo.ckbDownshot : ckbDownshot,
+    ckbDownshot: isEdit ? unitInfo.ckbDownshot === 1 : ckbDownshot === 1,
     ddlOrientation: isEdit ? unitInfo.orientationID : ddlOrientationValue,
     ddlUnitType: isEdit ? unitInfo.unitTypeID : ddlUnitTypeValue,
     ddlControlsPreference: ddlControlsPreferenceValue,
@@ -145,10 +147,10 @@ export default function UnitEdit({ unitType, productType }) {
     txbSummerReturnAirCFM: isEdit ? unitInfo.txbSummerReturnAirCFMText : 325,
     txbSupplyAirESP: isEdit ? unitInfo.txbSupplyAirESPText : 0.75,
     txbExhaustAirESP: isEdit ? unitInfo.txbExhaustAirESPText : 0.75,
-    ckbBypass: isEdit ? unitInfo.ckbBypass : ckbBypass.ckbBypassChecked,
+    ckbBypass: isEdit ? unitInfo.ckbBypass === 1 : ckbBypass.ckbBypassChecked === 1,
     ddlUnitModel: isEdit ? unitInfo.unitModelID : ddlUnitModelValue,
     ddlUnitVoltage: isEdit ? unitInfo.unitVoltageID : ddlUnitVoltageValue,
-    ckbVoltageSPP: isEdit ? unitInfo.ckbVoltageSPP : ckbVoltageSPP,
+    ckbVoltageSPP: isEdit ? unitInfo.ckbVoltageSPP === 1 : ckbVoltageSPP === 1,
     txbAltitude: unitInfo.txbAltitudeText,
     txbSummerOutdoorAirDB: unitInfo.txbSummerOutdoorAirDBText,
     txbSummerOutdoorAirWB: unitInfo.txbSummerOutdoorAirRHText,
@@ -175,8 +177,8 @@ export default function UnitEdit({ unitType, productType }) {
     ddlHeatingComp: isEdit ? unitInfo.HeatingCompID : ddlHeatingCompValue,
     txbOA_FilterPD: isEdit ? unitInfo.txbOA_FilterPDText : 0.5,
     txbRA_FilterPD: isEdit ? unitInfo.txbRA_FilterPDText : 0.5,
-    ckbHeatPump: isEdit ? unitInfo.ckbHeatPump : cooling.ckbHeatPumpChecked,
-    ckbDehumidification: isEdit ? unitInfo.ckbDehumidification : dehumidification.ckbDehumidification,
+    ckbHeatPump: isEdit ? unitInfo.ckbHeatPump === 1 : cooling.ckbHeatPumpChecked === 1,
+    ckbDehumidification: isEdit ? unitInfo.ckbDehumidification : dehumidification.ckbDehumidification === 1,
     ddlReheatComp: isEdit ? unitInfo.ReheatCompID : reheat.ddlReheatCompValue,
     ddlDamperAndActuator: isEdit ? unitInfo.DamperActuatorID : ddlDamperAndActuatorValue,
     ddlElecHeaterVoltage: isEdit ? unitInfo.ElecHeaterVoltageID : elecHeaterVoltage.ddlElecHeaterVoltageValue,
@@ -186,8 +188,8 @@ export default function UnitEdit({ unitType, productType }) {
     ddlHeatElecHeaterInstallation: isEdit
       ? unitInfo.HeatElecHeaterInstallationID
       : heatElectricHeater.ddlHeatElecHeaterInstallationValue,
-    ckbValveAndActuator: isEdit ? unitInfo.ckbValveAndActuator : valveAndActuator.ckbValveAndActuatorChecked,
-    ckbDrainPan: isEdit ? unitInfo.ckbDrainPan : drainPan.ckbDrainPanChecked,
+    ckbValveAndActuator: isEdit ? unitInfo.ckbValveAndActuator === 1 : valveAndActuator.ckbValveAndActuatorChecked === 1,
+    ckbDrainPan: isEdit ? unitInfo.ckbDrainPan  === 1: drainPan.ckbDrainPanChecked === 1,
     ddlPreheatCoilHanding: isEdit ? unitInfo.PreheatCoilHandingID : ddlPreheatCoilHandingValue,
     ddlCoolingCoilHanding: isEdit ? unitInfo.CoolingCoilHandingID : ddlCoolingCoilHandingValue,
     ddlHeatingCoilHanding: isEdit ? unitInfo.HeatingCoilHandingID : ddlHeatingCoilHandingValue,
@@ -197,21 +199,21 @@ export default function UnitEdit({ unitType, productType }) {
     txbCoolingSetpointWB: isEdit ? unitInfo.txbCoolingSetpointWBText : 54,
     txbHeatingSetpointDB: isEdit ? unitInfo.txbHeatingSetpointDBText : 72,
     txbReheatSetpointDB: isEdit ? unitInfo.txbReheatSetpointDBText : 70,
-    ckbPreheatHWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbPreheatHWC_UseCapValue : 0,
+    ckbPreheatHWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbPreheatHWC_UseCapValue === 1 : false,
     txbPreheatHWC_Cap: isEdit && unitInfo.isCustoms ? unitInfo.txbPreheatHWC_CapText : 0,
-    ckbPreheatHWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbPreheatHWC_UseFlowRateValue : 0,
+    ckbPreheatHWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbPreheatHWC_UseFlowRateValue === 1 : false,
     txbPreheatHWC_FlowRate: isEdit && unitInfo.isCustoms ? unitInfo.txbPreheatHWC_FlowRateText : 0,
-    ckbCoolingCWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbCoolingCWC_UseCapValue : 0,
+    ckbCoolingCWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbCoolingCWC_UseCapValue  === 1: false,
     txbCoolingCWC_Cap: isEdit && unitInfo.isCustoms ? unitInfo.txbCoolingCWC_CapText : 0,
-    ckbCoolingCWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbCoolingCWC_UseFlowRateValue : 0,
+    ckbCoolingCWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbCoolingCWC_UseFlowRateValue === 1 : false,
     txbCoolingCWC_FlowRate: isEdit && unitInfo.isCustoms ? unitInfo.txbCoolingCWC_FlowRateText : 0,
-    ckbHeatingHWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbHeatingHWC_UseCapValue : 0,
+    ckbHeatingHWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbHeatingHWC_UseCapValue  === 1: 0,
     txbHeatingHWC_Cap: isEdit && unitInfo.isCustoms ? unitInfo.txbHeatingHWC_CapText : 0,
-    ckbHeatingHWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbHeatingHWC_UseFlowRateValue : 0,
+    ckbHeatingHWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbHeatingHWC_UseFlowRateValue === 1 : false,
     txbHeatingHWC_FlowRate: isEdit && unitInfo.isCustoms ? unitInfo.txbHeatingHWC_FlowRateText : 0,
-    ckbReheatHWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbReheatHWC_UseCapValue : 0,
+    ckbReheatHWC_UseCap: isEdit && unitInfo.isCustoms ? unitInfo.ckbReheatHWC_UseCapValue  === 1: 0,
     txbReheatHWC_Cap: isEdit && unitInfo.isCustoms ? unitInfo.txbReheatHWC_CapText : 0,
-    ckbReheatHWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbReheatHWC_UseFlowRateValue : 0,
+    ckbReheatHWC_UseFlowRate: isEdit && unitInfo.isCustoms ? unitInfo.ckbReheatHWC_UseFlowRateValue === 1 : false,
     txbReheatHWC_FlowRate: isEdit && unitInfo.isCustoms ? unitInfo.txbReheatHWC_FlowRateText : 0,
     ddlCoolingFluidType: isEdit ? unitInfo.CoolingFluidTypeID : ddlCoolingFluidTypeValue,
     ddlCoolingFluidConcentration: isEdit ? unitInfo.CoolingFluidConcentrationID : ddlCoolingFluidConcentrationValue,
@@ -232,8 +234,6 @@ export default function UnitEdit({ unitType, productType }) {
     txbUnitLengthText: isEdit ? unitInfo.txbUnitLengthText : 0,
     txbUnitWeightText: isEdit ? unitInfo.txbUnitWeightText : 0,
     txbUnitWidthText: isEdit ? unitInfo.txbUnitWidthText : 0,
-    txbWinterSupplyAirCFM: isEdit ? unitInfo.txbWinterSupplyAirCFM : 0,
-    txbWinterReturnAirCFM: isEdit ? unitInfo.txbWinterReturnAirCFM : 0,
     ddlHandingValue: isEdit ? unitInfo.ddlHandingValue : 1,
     ddlSupplyAirOpeningValue: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningValue : 1,
     ddlSupplyAirOpeningText: isEdit && unitInfo.isLayout ? unitInfo.ddlReturnAirOpeningText : '1',
@@ -281,31 +281,23 @@ export default function UnitEdit({ unitType, productType }) {
     intJobID: jobId,
     intUnitNo: unitId,
     intProductTypeID: productType,
+    intUnitTypeID: unitType,
     intUAL: localStorage.getItem('UAL'),
     intUserID: localStorage.getItem('userId'),
   });
 
-  const onSubmit = async (data) => {
-    const result = await dispatch(
-      unitReducer.saveUnitInfo({
-        ...data,
-        intJobID: jobId,
-        intUnitID: unitId,
-        intProductTypeID: productType,
-        intUAL: localStorage.getItem('UAL'),
-      })
-    );
+  const onSubmit = async () => {
+    const result = await dispatch(unitReducer.saveUnitInfo(getAllFormData()));
     setOpenSuccessNotification(true);
-    console.log(result);
+    navigate(PATH_UNIT.edit(jobId, result), {state});
   };
 
   const ddlLocationChanged = async (e) => {
-    setValue('ddlLocation', e.target.value);
+    setValue('ddlLocation', parseInt(e.target.value, 10));
     const result = await dispatch(unitReducer.ddlLocationChanged(getAllFormData()));
     setValue("ddlOrientation", result.ddlOrientationValue);
     setValue("ddlDamperAndActuator", result.ddlDamperAndActuatorValue);
     setValue("ddlUnitModel", result.ddlUnitModelValue);
-    setValue("ddlUnitVoltage", result.ddlUnitVoltageValue);
     setValue("ckbBypass", result.others.ckbBypass);
     setValue("ddlElecHeaterVoltage", result.others.elecHeaterVoltage.ddlElecHeaterVoltageValue);
     setValue("ckbBypass", result.downshot);
@@ -315,11 +307,10 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const ddlOrientationChanged = async (e) => {
-    setValue('ddlOrientation', e.target.value);
+    setValue('ddlOrientation', parseInt(e.target.value, 10));
     const result = await dispatch(unitReducer.ddlOrientationChanged(getAllFormData()));
     setValue("ddlUnitModel", result.ddlUnitModelValue);
-    setValue("ddlUnitVoltage", result.ddlUnitVoltageValue);
-    setValue("ckbBypass", result.others.ckbBypass.ckbBypassCheckeds);
+    setValue("ckbBypass", result.others.ckbBypass.ckbBypassChecked);
     setValue("ddlElecHeaterVoltage", result.others.elecHeaterVoltage.ddlElecHeaterVoltageValue);
     setValue("ddlSupplyAirOpeningValue", result.ddlSupplyAirOpeningValue);
     setValue("ddlSupplyAirOpeningText", result.ddlSupplyAirOpeningText);
@@ -329,8 +320,7 @@ export default function UnitEdit({ unitType, productType }) {
     const result = await dispatch(unitReducer.txbSummerSupplyAirCFMChanged(getAllFormData()));
     setValue("ddlOrientation", result.ddlOrientationValue);
     setValue("ddlUnitModel", result.ddlUnitModelValue);
-    setValue("ddlUnitVoltage", result.ddlUnitVoltageValue);
-    setValue("ckbBypass", result.others.ckbBypass.ckbBypassCheckeds);
+    setValue("ckbBypass", result.others.ckbBypass.ckbBypassChecked);
     setValue("ddlElecHeaterVoltage", result.others.elecHeaterVoltage.ddlElecHeaterVoltageValue);
     setValue("ddlSupplyAirOpeningValue", result.ddlSupplyAirOpeningValue);
     setValue("ddlSupplyAirOpeningText", result.ddlSupplyAirOpeningText);
@@ -354,7 +344,7 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const ddlUnitModelChanged = async (e) => {
-    setValue("ddlUnitModel", e.target.value);
+    setValue("ddlUnitModel", parseInt(e.target.value, 10));
     const result = await dispatch(unitReducer.ddlUnitModelChanged(getAllFormData()));
     setValue("ddlUnitVoltageValue", result.ddlUnitVoltageValue);
     setValue("ddlElecHeaterVoltage", result.elecHeaterVoltage.ddlElecHeaterVoltageValue);
@@ -362,13 +352,13 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const ddlUnitVoltageChanged = async (e) => {
-    setValue("ddlUnitVoltage", e.target.value);
+    setValue("ddlUnitVoltage", parseInt(e.target.value, 10));
     const result = await dispatch(unitReducer.ddlUnitVoltageChanged(getAllFormData()));
     setValue("ddlElecHeaterVoltage", result.ddlElecHeaterVoltageValue);
   };
 
   const txbSummerOutdoorAirDBChanged = async (e) => {
-    setValue("txbSummerOutdoorAirDB", e.target.value);
+    setValue("txbSummerOutdoorAirDB", parseFloat(e.target.value, 10));
     if ( e.target.value === 0)
     {
       setValue("txbSummerOutdoorAirWB", 0);
@@ -382,19 +372,19 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const txbSummerOutdoorAirWBChanged = async (e) => {
-    setValue("txbSummerOutdoorAirWB", e.target.value);
+    setValue("txbSummerOutdoorAirWB", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbSummerOutdoorAirWBChanged(getAllFormData()));
     setValue('txbSummerOutdoorAirRH', result);
   };
 
   const txbSummerOutdoorAirRHChanged = async (e) => {
-    setValue("txbSummerOutdoorAirRH", e.target.value);
+    setValue("txbSummerOutdoorAirRH", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbSummerOutdoorAirRHChanged(getAllFormData()));
     setValue('txbSummerOutdoorAirWB', result);
   };
 
   const txbWinterOutdoorAirDBChanged = async (e) => {
-    setValue('txbWinterOutdoorAirDB', e.target.value);
+    setValue('txbWinterOutdoorAirDB', parseFloat(e.target.value, 10));
     if (e.target.value === 0){
       setValue('txbWinterOutdoorAirWB', 0);
       setValue('txbWinterOutdoorAirRH', 100);
@@ -405,19 +395,19 @@ export default function UnitEdit({ unitType, productType }) {
   };
                                                                                                                                                                                                                                                          
   const txbWinterOutdoorAirWBChanged = async (e) => {
-    setValue("txbWinterOutdoorAirWB", e.target.value);
+    setValue("txbWinterOutdoorAirWB", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbWinterOutdoorAirWBChanged(getAllFormData()));
     setValue('txbWinterOutdoorAirRH', result);
   };
 
   const txbWinterOutdoorAirRHChanged = async (e) => {
-    setValue("txbWinterOutdoorAirRH", e.target.value);
+    setValue("txbWinterOutdoorAirRH", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbWinterOutdoorAirRHChanged(getAllFormData()));
     setValue('txbWinterOutdoorAirWB', result);
   };
 
   const txbSummerReturnAirDBChanged = (e) => {
-    setValue('txbSummerReturnAirDB', e.target.value);
+    setValue('txbSummerReturnAirDB', parseFloat(e.target.value, 10));
     if (e.target.value === 0)
     {
         setValue('txbSummerReturnAirWB', 0);
@@ -431,19 +421,19 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const txbSummerReturnAirWBChanged = async (e) => {
-    setValue("txbSummerReturnAirWB", e.target.value);
+    setValue("txbSummerReturnAirWB", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbSummerReturnAirWBChanged(getAllFormData()));
     setValue('txbSummerReturnAirRH', result);
   };
 
   const txbSummerReturnAirRHChanged = async (e) => {
-    setValue("txbSummerReturnAirRH", e.target.value);
+    setValue("txbSummerReturnAirRH", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbSummerReturnAirRHChanged(getAllFormData()));
     setValue('txbSummerReturnAirWB', result);
   };
 
   const txbWinterReturnAirDBChanged = (e) => {
-    setValue("txbWinterReturnAirDB", e.target.value);
+    setValue("txbWinterReturnAirDB", parseFloat(e.target.value, 10));
 
     if (e.target === 0)
     {
@@ -458,56 +448,81 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const txbWinterReturnAirWBChanged = async (e) => {
-    setValue("txbWinterReturnAirWB", e.target.value);
+    setValue("txbWinterReturnAirWB", parseFloat(e.target.value, 10));
     const result = await dispatch(unitReducer.txbWinterReturnAirWBChanged(getAllFormData()));
     setValue('txbWinterReturnAirRH', result);
   };
 
   const txbWinterReturnAirRHChanged = async(e) => {
     if(!isNaN(+e.target.value)) {
-      setValue("txbWinterReturnAirRH", e.target.value);
+      setValue("txbWinterReturnAirRH", parseFloat(e.target.value, 10));
       const result = await dispatch(unitReducer.txbWinterReturnAirRHChanged(getAllFormData()));
       setValue('txbWinterReturnAirWB', result);
     };
   };
 
-  const onChangeTxbWinterReturnAirRHChange = (e) => {
-    if (!isNaN(+e.target.value)) {
-      setValue("txbWinterReturnAirRH", e.target.value);
-    }
-  }
-
   const ddlPreheatCompChanged = async (e) => {
-    setValue("ddlPreheatComp", e.target.value);
+    setValue("ddlPreheatComp", parseInt(e.target.value, 10));
     const result = await dispatch(unitReducer.ddlPreheatCompChanged(getAllFormData()));
-    setValue("ddlPreheatElecHeaterInstallationValue", result.preheatElectricHeater.divPreheatElecHeaterInstallationVisible && result.preheatElectricHeater.ddlPreheatElecHeaterInstallationValue);
-    setValue("ddlElecHeaterVoltageValue", result.preheatElectricHeater.electricHeaterVoltageInfo.divElecHeaterVoltageVisible && result.preheatElectricHeater.electricHeaterVoltageInfo.ddlElecHeaterVoltageValue);
+    setValue("ddlPreheatElecHeaterInstallation", result.preheatElectricHeater.divPreheatElecHeaterInstallationVisible && result.preheatElectricHeater.ddlPreheatElecHeaterInstallationValue);
+    setValue("ddlElecHeaterVoltage", result.preheatElectricHeater.electricHeaterVoltageInfo.divElecHeaterVoltageVisible && result.preheatElectricHeater.electricHeaterVoltageInfo.ddlElecHeaterVoltageValue);
   };
 
   const ddlHeatExchCompChanged = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
   };
 
   const ddlCoolingCompChanged = async (e) => {
-    console.log(e.target.value);
+    setValue("ddlCoolingComp", parseInt(e.target.value, 10));
+    const result = await dispatch(unitReducer.ddlCoolingCompChanged(getAllFormData()));    
   };
 
-  const ddlHeatingCompChanged = (e) => {
-    console.log(e.target.value);
+  const ddlHeatingCompChanged = async (e) => {
+    setValue("ddlHeatingComp", parseInt(e.target.value, 10));
+    const result = await dispatch(unitReducer.ddlHeatingCompChanged(getAllFormData()));    
   };
 
-  const txbOA_FilterPDChanged = (e) => {
-    console.log(e.target.value);
+  const txbOA_FilterPDChanged = async (e) => {
+    console.log(getAllFormData());
+    if (e.target.value > 1.0)
+    {
+      setValue("txbOA_FilterPD", 1.0);
+    } else  if (e.target.value < 0.3)
+    {
+      setValue("txbOA_FilterPD", 0.3);
+    } else {
+      setValue("txbOA_FilterPD", parseFloat(e.target.value, 10));
+    }
   };
 
   const txbRA_FilterPDChanged = (e) => {
-    console.log(e.target.value);
+    // console.log(getAllFormData());
+    if (e.target.value > 1.0)
+    {
+      setValue("txbRA_FilterPD", 1.0);
+    } else  if (e.target.value < 0.3)
+    {
+      setValue("txbRA_FilterPD", 0.3);
+    } else {
+      setValue("txbRA_FilterPD", parseFloat(e.target.value, 10));
+    }
   };
 
-  const ddlElecHeaterVoltageChanged = (e) => {
-    console.log(e.target.value);
+  const ddlElecHeaterVoltageChanged = async (e) => {
+    setValue("ddlElecHeaterVoltage", parseInt(e.target.value, 10));
   };
 
+  const setValuewithCheck = (e, key) => {
+    if (!isNaN(+e.target.value)) {
+      setValue(key, parseFloat(e.target.value, 10));
+    }
+  }
+
+  const clickedCheckbox = (key) => {
+    setValue(key, 1 - getValues(key));
+    console.log(getValues(key));
+  }
+  
   return (
     <Container>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -529,7 +544,7 @@ export default function UnitEdit({ unitType, productType }) {
                 <CardContent sx={{ height: 'auto' }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                     <RHFTextField size="small" name="txtTag" label="Tag" />
-                    <RHFTextField size="small" name="txbQty" label="Quantity" />
+                    <RHFTextField size="small" name="txbQty" label="Quantity" onChange={(e) => {setValuewithCheck(e, 'txbQty')}} />
                     <RHFSelect
                       size="small"
                       name="ddlLocation"
@@ -548,7 +563,11 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ckbDownshot"
                       label="Downshot"
                       sx={getDisplay(ckbDownshot === 1)}
-                      checked={isEdit ? unitInfo.ckbDownshot === 1 : ckbDownshot === 1}
+                      defaultChecked={getValues("ckbDownshot") === 1}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        clickedCheckbox('ckbDownshot')
+                      }}
                     />
                     <RHFSelect
                       size="small"
@@ -570,7 +589,7 @@ export default function UnitEdit({ unitType, productType }) {
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFSelect size="small" name="ddlControlsPreference" label="Control Preference" placeholder="">
+                    <RHFSelect size="small" name="ddlControlsPreference" label="Control Preference" placeholder="" onChange={(e) => { setValue('ddlControlsPreference', parseInt(e.target.value, 10)) }}>
                       {ddlControlsPreference.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -590,6 +609,7 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbSummerSupplyAirCFM"
                         label="Supply Air (CFM)"
                         onBlur={txbSummerSupplyAirCFMChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerSupplyAirCFM')}}
                       />
                       <RHFTextField
                         size="small"
@@ -597,12 +617,14 @@ export default function UnitEdit({ unitType, productType }) {
                         label="Supply Air (ASD)"
                         sx={getDisplay(divSummerReturnAirCFMVisible)}
                         onBlur={txbSummerReturnAirCFMChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerReturnAirCFM')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSupplyAirESP"
                         label="Supply Air (ERC)"
                         onBlur={txbSupplyAirESPChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSupplyAirESP')}}
                       />
                       <RHFTextField
                         size="small"
@@ -610,6 +632,7 @@ export default function UnitEdit({ unitType, productType }) {
                         label="Supply Air (DVG)"
                         sx={getDisplay(divExhaustAirESPVisible)}
                         onBlur={txbExhaustAirESPChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbExhaustAirESP')}}
                       />
                     </Box>
                     <Divider />
@@ -619,7 +642,7 @@ export default function UnitEdit({ unitType, productType }) {
                         name="ckbBypass"
                         label="Bypass for Economizer"
                         sx={getDisplay(divUnitBypassVisible)}
-                        checked={isEdit ? unitInfo.ckbBypass === 1 : ckbBypass === 1}
+                        checked={getValues('ckbBypass') === 1}
                       />
                       <RHFSelect size="small" name="ddlUnitModel" label="Unit Model" onChange={ddlUnitModelChanged}>
                         {ddlUnitModel.map((item, index) => (
@@ -663,36 +686,42 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbSummerOutdoorAirDB"
                         label="Summer Outdoor Air DB (F)"
                         onBlur={txbSummerOutdoorAirDBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerOutdoorAirDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerOutdoorAirWB"
                         label="Summer Outdoor Air WB (F)"
                         onBlur={txbSummerOutdoorAirWBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerOutdoorAirWB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerOutdoorAirRH"
                         label="Summer Outdoor Air RH (%)"
                         onBlur={txbSummerOutdoorAirRHChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerOutdoorAirRH')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterOutdoorAirDB"
                         label="Winter Outdoor Air DB"
                         onBlur={txbWinterOutdoorAirDBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterOutdoorAirDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterOutdoorAirWB"
                         label="Winter Outdoor Air WB"
                         onBlur={txbWinterOutdoorAirWBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterOutdoorAirWB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterOutdoorAirRH"
                         label="Winter Outdoor Air RH"
                         onBlur={txbWinterOutdoorAirRHChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterOutdoorAirRH')}}
                       />
                     </Box>
                   </Box>
@@ -708,37 +737,42 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbSummerReturnAirDB"
                         label="Summer Return Air DB (F)"
                         onBlur={txbSummerReturnAirDBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerReturnAirDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerReturnAirWB"
                         label="Summer Return Air WB (F)"
                         onBlur={txbSummerReturnAirWBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerReturnAirWB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerReturnAirRH"
                         label="Summer Return Air RH (%)"
                         onBlur={txbSummerReturnAirRHChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerReturnAirRH')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterReturnAirDB"
                         label="Winter Return Air DB"
                         onBlur={txbWinterReturnAirDBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterReturnAirDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterReturnAirWB"
                         label="Winter Return Air WB"
                         onBlur={txbWinterReturnAirWBChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterReturnAirWB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterReturnAirRH"
                         label="Winter Return Air RH"
-                        onChange={onChangeTxbWinterReturnAirRHChange}
                         onBlur={txbWinterReturnAirRHChanged}
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterReturnAirRH')}}
                       />
                     </Box>
                   </Box>
@@ -754,30 +788,35 @@ export default function UnitEdit({ unitType, productType }) {
                         name="txbWinterPreheatSetpointDB"
                         label="Winter Preheat Setpoint DB (F):"
                         autoComplete="off"
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterPreheatSetpointDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerCoolingSetpointDB"
                         label="Summer Cooling Setpoint DB (F):"
                         autoComplete="off"
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerCoolingSetpointDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerCoolingSetpointWB"
                         label="Summer Cooling Setpoint WB (F):"
                         autoComplete="off"
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerCoolingSetpointWB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbWinterHeatingSetpointDB"
                         label="Winter Heating Setpoint DB (F):"
                         autoComplete="off"
+                        onChange={(e) => {setValuewithCheck(e, 'txbWinterHeatingSetpointDB')}}
                       />
                       <RHFTextField
                         size="small"
                         name="txbSummerReheatSetpointDB"
                         label="Summer Reheat Setpoint DB (F):"
                         autoComplete="off"
+                        onChange={(e) => {setValuewithCheck(e, 'txbSummerReheatSetpointDB')}}
                       />
                     </Box>
                   </Box>
@@ -806,7 +845,7 @@ export default function UnitEdit({ unitType, productType }) {
               <CardContent sx={{ height: 'auto' }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1 }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFSelect size="small" name="ddlOA_FilterModel" label="QA Filter">
+                    <RHFSelect size="small" name="ddlOA_FilterModel" label="QA Filter" onChange={(e) => setValue("ddlOA_FilterModel", parseInt(e.target.value, 10))}>
                       {ddlOA_FilterModel.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -818,6 +857,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlRA_FilterModel"
                       label="RA Filter"
                       sx={getDisplay(divRA_FilterModelVisible)}
+                      onChange={(e) => setValue("ddlRA_FilterModel", parseInt(e.target.value, 10))}
                     >
                       {ddlRA_FilterModel.map((item, index) => (
                         <option key={index} value={item.id}>
@@ -888,6 +928,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbOA_FilterPD"
                       label="QA Filter PD (in w.g.)"
                       onBlur={txbOA_FilterPDChanged}
+                      onChange={(e) => {setValuewithCheck(e, 'txbOA_FilterPD')}}
                     />
                     <RHFTextField
                       size="small"
@@ -895,6 +936,7 @@ export default function UnitEdit({ unitType, productType }) {
                       label="RA Filter PD (in w.g.)"
                       sx={getDisplay(divRA_FilterPDVisible)}
                       onBlur={txbRA_FilterPDChanged}
+                      onChange={(e) => {setValuewithCheck(e, 'txbRA_FilterPD')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -925,6 +967,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlDamperAndActuator"
                       label="Dampers & Actuator"
                       sx={getDisplay(ddlDamperAndActuatorVisible)}
+                      onChange={(e) => { setValue('ddlDamperAndActuator', parseInt(e.target.value, 10)) }}
                       placeholder=""
                     >
                       {ddlDamperAndActuator.map((item, index) => (
@@ -967,6 +1010,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="ddlHeatElecHeaterInstallation"
                       label="Heating Elec. Heater Installation"
                       sx={getDisplay(heatElectricHeater.divHeatElecHeaterInstallationVisible)}
+                      onChange={(e) => setValue('ddlHeatElecHeaterInstallation', parseInt(e.target.value, 10))}
                       placeholder=""
                     >
                       {heatElectricHeater.ddlHeatElecHeaterInstallation.map((item, index) => (
@@ -1000,21 +1044,21 @@ export default function UnitEdit({ unitType, productType }) {
               <CardContent sx={{ height: 'auto' }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1 }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFSelect size="small" name="ddlPreheatCoilHanding" label="Preheat Coil Handing">
+                    <RHFSelect size="small" name="ddlPreheatCoilHanding" label="Preheat Coil Handing" onChange={(e) => setValue('ddlPreheatCoilHanding', parseInt(e.target.value, 10))} sx={getDisplay(getValues('ddlPreheatComp') > 1)}>
                       {ddlPreheatCoilHanding.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFSelect size="small" name="ddlCoolingCoilHanding" label="Cooling Coil Handing">
+                    <RHFSelect size="small" name="ddlCoolingCoilHanding" label="Cooling Coil Handing" onChange={(e) => setValue('ddlCoolingCoilHanding', parseInt(e.target.value, 10))} sx={getDisplay(getValues('ddlCoolingComp') > 1)}>
                       {ddlCoolingCoilHanding.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFSelect size="small" name="ddlHeatingCoilHanding" label="Heating Coil Handing">
+                    <RHFSelect size="small" name="ddlHeatingCoilHanding" label="Heating Coil Handing" onChange={(e) => setValue('ddlHeatingCoilHanding', parseInt(e.target.value, 10))} sx={getDisplay(getValues('ddlHeatingComp') > 1)}>
                       {ddlHeatingCoilHanding.map((item, index) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -1049,30 +1093,35 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbPreheatSetpointDB"
                       label="Preheat LAT Setpoint DB (F)"
                       sx={getDisplay(divPreheatSetpointVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbPreheatSetpointDB')}}
                     />
                     <RHFTextField
                       size="small"
                       name="txbCoolingSetpointDB"
                       label="Cooling LAT Setpoint DB (F)"
                       sx={getDisplay(divCoolingSetpointVisible.DB)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbCoolingSetpointDB')}}
                     />
                     <RHFTextField
                       size="small"
                       name="txbCoolingSetpointWB"
                       label="Cooling LAT Setpoint WB (F)"
                       sx={getDisplay(divHeatingSetpointVisible.WB)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbCoolingSetpointWB')}}
                     />
                     <RHFTextField
                       size="small"
                       name="txbHeatingSetpointDB"
                       label="Heating LAT Setpoint DB (F)"
                       sx={getDisplay(divHeatingSetpointVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbHeatingSetpointDB')}}
                     />
                     <RHFTextField
                       size="small"
                       name="txbReheatSetpointDB"
                       label="Dehum. Reheat Setpoint DB (F)"
                       sx={getDisplay(reheatSetpoints.divReheatSetpointVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbReheatSetpointDB')}}
                     />
                   </Box>
                   <Divider />
@@ -1089,6 +1138,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbPreheatHWC_Cap"
                       label="Preheat HWC Capacity (MBH)"
                       sx={getDisplay(customInputs.divPreheatHWC_CapVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbPreheatHWC_Cap')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1102,6 +1152,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbPreheatHWC_FlowRate"
                       label="Preheat HWC Flow Rate (GPM)"
                       sx={getDisplay(customInputs.divPreheatHWC_FlowRateVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbPreheatHWC_FlowRate')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1115,6 +1166,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbCoolingCWC_Cap"
                       label="Cooling CWC Capacity (MBH)"
                       sx={getDisplay(customInputs.divCoolingCWC_CapVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbCoolingCWC_Cap')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1128,6 +1180,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbCoolingCWC_FlowRate"
                       label="Cooling CWC Flow Rate (GPM)"
                       sx={getDisplay(customInputs.divCoolingCWC_FlowRateVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbCoolingCWC_FlowRate')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1141,6 +1194,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbHeatingHWC_Cap"
                       label="Heating HWC Capacity (MBH)"
                       sx={getDisplay(customInputs.divHeatingHWC_CapVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbHeatingHWC_Cap')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1154,6 +1208,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbHeatingHWC_FlowRate"
                       label="Heating HWC Flow Rate (GPM)"
                       sx={getDisplay(customInputs.divHeatingHWC_FlowRateVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbHeatingHWC_FlowRate')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1167,6 +1222,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbReheatHWC_Cap"
                       label="Reheat HWC Capacity (MBH)"
                       sx={getDisplay(customInputs.divReheatCompVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbReheatHWC_Cap')}}
                     />
                     <RHFCheckbox
                       size="small"
@@ -1180,6 +1236,7 @@ export default function UnitEdit({ unitType, productType }) {
                       name="txbReheatHWC_FlowRate"
                       label="Reheat HWC Flow Rate (GPM)"
                       sx={getDisplay(customInputs.divReheatSetpointVisible)}
+                      onChange={(e) => {setValuewithCheck(e, 'txbReheatHWC_FlowRate')}}
                     />
                   </Box>
                 </Box>
@@ -1204,8 +1261,8 @@ export default function UnitEdit({ unitType, productType }) {
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFTextField size="small" name="txbCoolingFluidEntTemp" label="Cooling Fluid Ent Temp (F)" />
-                    <RHFTextField size="small" name="txbCoolingFluidLvgTemp" label="Cooling Fluid Lvg Temp (F)" />
+                    <RHFTextField size="small" name="txbCoolingFluidEntTemp" label="Cooling Fluid Ent Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbCoolingFluidEntTemp')}}/>
+                    <RHFTextField size="small" name="txbCoolingFluidLvgTemp" label="Cooling Fluid Lvg Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbCoolingFluidLvgTemp')}} />
                   </Box>
                 </Box>
               </CardContent>
@@ -1215,9 +1272,9 @@ export default function UnitEdit({ unitType, productType }) {
               <CardContent sx={{ height: 'auto' }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1 }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField size="small" name="txbRefrigSuctionTemp" label="Suction Temp (F)" />
-                    <RHFTextField size="small" name="txbRefrigLiquidTemp" label="Liquid Temp (F)" />
-                    <RHFTextField size="small" name="txbRefrigSuperheatTemp" label="Superheat Temp (F)" />
+                    <RHFTextField size="small" name="txbRefrigSuctionTemp" label="Suction Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbRefrigSuctionTemp')}}/>
+                    <RHFTextField size="small" name="txbRefrigLiquidTemp" label="Liquid Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbRefrigLiquidTemp')}}/>
+                    <RHFTextField size="small" name="txbRefrigSuperheatTemp" label="Superheat Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbRefrigSuperheatTemp')}}/>
                   </Box>
                 </Box>
               </CardContent>
@@ -1241,8 +1298,8 @@ export default function UnitEdit({ unitType, productType }) {
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFTextField size="small" name="txbHeatingFluidEntTemp" label="Heating Fluid Ent Temp (F)" />
-                    <RHFTextField size="small" name="txbHeatingFluidLvgTemp" label="Heating Fluid Lvg Temp (F)" />
+                    <RHFTextField size="small" name="txbHeatingFluidEntTemp" label="Heating Fluid Ent Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbHeatingFluidEntTemp')}}/>
+                    <RHFTextField size="small" name="txbHeatingFluidLvgTemp" label="Heating Fluid Lvg Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbHeatingFluidLvgTemp')}}/>
                   </Box>
                 </Box>
               </CardContent>
@@ -1252,10 +1309,10 @@ export default function UnitEdit({ unitType, productType }) {
               <CardContent sx={{ height: 'auto' }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1 }}>
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFTextField size="small" name="txbRefrigCondensingTemp" label="Condensing Temp (F)" />
-                    <RHFTextField size="small" name="txbRefrigVaporTemp" label="Condensing Temp (F)" />
-                    <RHFTextField size="small" name="txbRefrigSubcoolingTemp" label="Subcooling Temp (F)" />
-                    <RHFTextField size="small" name="txbPercentCondensingLoad" label="% Condensing Load" />
+                    <RHFTextField size="small" name="txbRefrigCondensingTemp" label="Condensing Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbRefrigCondensingTemp')}}/>
+                    <RHFTextField size="small" name="txbRefrigVaporTemp" label="Condensing Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbRefrigVaporTemp')}}/>
+                    <RHFTextField size="small" name="txbRefrigSubcoolingTemp" label="Subcooling Temp (F)" onChange={(e) => {setValuewithCheck(e, 'txbRefrigSubcoolingTemp')}}/>
+                    <RHFTextField size="small" name="txbPercentCondensingLoad" label="% Condensing Load" onChange={(e) => {setValuewithCheck(e, 'txbPercentCondensingLoad')}}/>
                   </Box>
                 </Box>
               </CardContent>
