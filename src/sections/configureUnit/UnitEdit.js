@@ -464,21 +464,31 @@ export default function UnitEdit({ unitType, productType }) {
   };
 
   const txbWinterReturnAirRHChanged = async(e) => {
-    setValue("txbWinterReturnAirRH", e.target.value);
-    const result = await dispatch(unitReducer.txbWinterReturnAirRHChanged(getAllFormData()));
-    setValue('txbWinterReturnAirWB', result);
+    if(!isNaN(+e.target.value)) {
+      setValue("txbWinterReturnAirRH", e.target.value);
+      const result = await dispatch(unitReducer.txbWinterReturnAirRHChanged(getAllFormData()));
+      setValue('txbWinterReturnAirWB', result);
+    };
   };
+
+  const onChangeTxbWinterReturnAirRHChange = (e) => {
+    if (!isNaN(+e.target.value)) {
+      setValue("txbWinterReturnAirRH", e.target.value);
+    }
+  }
 
   const ddlPreheatCompChanged = async (e) => {
     setValue("ddlPreheatComp", e.target.value);
     const result = await dispatch(unitReducer.ddlPreheatCompChanged(getAllFormData()));
+    setValue("ddlPreheatElecHeaterInstallationValue", result.preheatElectricHeater.divPreheatElecHeaterInstallationVisible && result.preheatElectricHeater.ddlPreheatElecHeaterInstallationValue);
+    setValue("ddlElecHeaterVoltageValue", result.preheatElectricHeater.electricHeaterVoltageInfo.divElecHeaterVoltageVisible && result.preheatElectricHeater.electricHeaterVoltageInfo.ddlElecHeaterVoltageValue);
   };
 
   const ddlHeatExchCompChanged = (e) => {
     console.log(e.target.value);
   };
 
-  const ddlCoolingCompChanged = (e) => {
+  const ddlCoolingCompChanged = async (e) => {
     console.log(e.target.value);
   };
 
@@ -727,6 +737,7 @@ export default function UnitEdit({ unitType, productType }) {
                         size="small"
                         name="txbWinterReturnAirRH"
                         label="Winter Return Air RH"
+                        onChange={onChangeTxbWinterReturnAirRHChange}
                         onBlur={txbWinterReturnAirRHChanged}
                       />
                     </Box>

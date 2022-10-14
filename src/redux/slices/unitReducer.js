@@ -27,14 +27,14 @@ const UnitSlice = createSlice({
     startLoading(state) {
       state.isLoading = true;
     },
-    setJobInfo(state, action) {
-      state.productType = action.payload.productType;
-      state.unitType = action.payload.unitType;
-      state.productTypeUnitTypeLink = action.payload.productTypeUnitTypeLink;
+    setJobInfo(state, actions) {
+      state.productType = actions.payload.productType;
+      state.unitType = actions.payload.unitType;
+      state.productTypeUnitTypeLink = actions.payload.productTypeUnitTypeLink;
       state.isLoading = false;
     },
-    setInitInfo(state, action) {
-      const { controlInfo, unitInfo, visibleInfo } = action.payload;
+    setInitInfo(state, actions) {
+      const { controlInfo, unitInfo, visibleInfo } = actions.payload;
       state.controlInfo = {
         ddlOrientation: controlInfo.mainControlData.ddlOrientation,
         ddlOrientationValue: controlInfo.mainControlData.ddlOrientationValue,
@@ -115,12 +115,20 @@ const UnitSlice = createSlice({
         ddlUnitVoltageValue: controlInfo.mainControlData.others.ddlUnitVoltageValue,
         elecHeaterVoltage: controlInfo.mainControlData.others.elecHeaterVoltage,
         ckbBypass: controlInfo.mainControlData.others.ckbBypass,
+        btnNextVisible: visibleInfo.btnNextVisible,
+        btnOutputVisible: visibleInfo.btnOutputVisible,
+        btnQuoteVisible: visibleInfo.btnQuoteVisible,
+        btnSubmittalsVisible: visibleInfo.btnSubmittalsVisible,
+        btnViewModelOptionVisible: visibleInfo.btnViewModelOptionVisible,
+        divNotesVisible: visibleInfo.divNotesVisible,
+        divUnitOpeningsMsgVisible: visibleInfo.divUnitOpeningsMsgVisible,
+        div_hx_fp_hiddenVisible: visibleInfo.div_hx_fp_hiddenVisible,
       };
       state.unitInfo = unitInfo;
       state.isLoading = false;
     },
-    ddlLocationChanged(state, action) {
-      const data = action.payload;
+    ddlLocationChanged(state, actions) {
+      const data = actions.payload;
       state.controlInfo = {
         ...state.controlInfo,
         ddlOrientation: data.ddlOrientation,
@@ -144,8 +152,8 @@ const UnitSlice = createSlice({
         txbExhaustAirESP: data.txbExhaustAirESP,
       };
     },
-    ddlOrientationChanged(state, action) {
-      const data = action.payload;
+    ddlOrientationChanged(state, actions) {
+      const data = actions.payload;
       state.controlInfo = {
         ...state.controlInfo,
         ddlUnitModel: data.ddlUnitModel,
@@ -163,8 +171,8 @@ const UnitSlice = createSlice({
         ddlSupplyAirOpeningText: data.ddlSupplyAirOpeningText,
       };
     },
-    txbSummerSupplyAirCFMChanged(state, action) {
-      const data = action.payload;
+    txbSummerSupplyAirCFMChanged(state, actions) {
+      const data = actions.payload;
       state.controlInfo = {
         ...state.controlInfo,
         ddlOrientation: data.ddlOrientation,
@@ -186,26 +194,26 @@ const UnitSlice = createSlice({
         ddlSupplyAirOpeningText: data.ddlSupplyAirOpeningText,
       };
     },
-    txbSummerReturnAirCFMChanged(state, action) {
+    txbSummerReturnAirCFMChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbSummerReturnAirCFM: action.payload,
+        txbSummerReturnAirCFM: actions.payload,
       };
     },
-    txbSupplyAirESPChanged(state, action) {
+    txbSupplyAirESPChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbSupplyAirESP: action.payload,
+        txbSupplyAirESP: actions.payload,
       };
     },
-    txbExhaustAirESPChanged(state, action) {
+    txbExhaustAirESPChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbExhaustAirESP: action.payload,
+        txbExhaustAirESP: actions.payload,
       };
     },
-    ddlUnitModelChanged(state, action) {
-      const data = action.payload;
+    ddlUnitModelChanged(state, actions) {
+      const data = actions.payload;
       state.controlInfo = {
         ...state.controlInfo,
         ddlUnitVoltage: data.ddlUnitVoltage,
@@ -219,65 +227,76 @@ const UnitSlice = createSlice({
         txbSupplyAirESP: data.txbSupplyAirESP,
       };
     },
-    ddlPreheatCompChanged(state, action) {
-      const data = action.payload;
-
-
-    },
-    ddlUnitVoltageChanged(state, action) {
+    ddlPreheatCompChanged(state, actions) {
+      const data = actions.payload;
       state.controlInfo = {
         ...state.controlInfo,
-        elecHeaterVoltage: action.payload,
+        customInputs: data.customInputs,
+        divPreheatCoilHandingVisible: data.divHeatingFluidDesignConditionsVisible,
+        divHeatingFluidDesignConditionsVisible: data.divHeatingFluidDesignConditionsVisible,
+        preheatElectricHeater: data.preheatElectricHeater,
+        elecHeaterVoltage: data.preheatElectricHeater.electricHeaterVoltageInfo,
+        lblPreheatWarningText: data.preheatInfomation.lblPreheatWarningText,
+        lblPreheatWarningVisible: data.preheatInfomation.lblPreheatWarningVisible,
+        valveAndActuator: data.valveAndActuator,
+        divPreheatSetpointVisible: data.isAUHID? data.divPreheatSetpointVisible: false,
+        divSetpointsVisible: data.isAUHID? data.divSetpointsVisible: false,
+      }
+    },
+    ddlUnitVoltageChanged(state, actions) {
+      state.controlInfo = {
+        ...state.controlInfo,
+        elecHeaterVoltage: actions.payload,
       };
     },
-    txbSummerOutdoorAirWBChanged(state, action) {
+    txbSummerOutdoorAirWBChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbSummerOutdoorAirRH: action.payload
+        txbSummerOutdoorAirRH: actions.payload
       }
     },
-    txbSummerOutdoorAirRHChanged(state, action) {
+    txbSummerOutdoorAirRHChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbSummerOutdoorAirWB: action.payload
+        txbSummerOutdoorAirWB: actions.payload
       }
     },
-    txbWinterOutdoorAirWBChanged(state, action) {
+    txbWinterOutdoorAirWBChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbWinterOutdoorAirRH: action.payload,
+        txbWinterOutdoorAirRH: actions.payload,
       }
     },
-    txbWinterOutdoorAirRHChanged(state, action) {
+    txbWinterOutdoorAirRHChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbWinterOutdoorAirWB: action.payload,
+        txbWinterOutdoorAirWB: actions.payload,
       }
     },
-    txbSummerReturnAirWBChanged(state, action) {
+    txbSummerReturnAirWBChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbSummerReturnAirRH: action.payload
+        txbSummerReturnAirRH: actions.payload
       }
     },
-    txbSummerReturnAirRHChanged(state, action) {
+    txbSummerReturnAirRHChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbSummerReturnAirWB: action.payload
+        txbSummerReturnAirWB: actions.payload
       }
     },
-    txbWinterReturnAirWBChanged(state, action) {
+    txbWinterReturnAirWBChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbWinterReturnAirRH: action.payload
+        txbWinterReturnAirRH: actions.payload
       }
     },
-    txbWinterReturnAirRHChanged(state, action) {
+    txbWinterReturnAirRHChanged(state, actions) {
       state.unitInfo = {
         ...state.unitInfo,
-        txbWinterReturnAirWB: action.payload
+        txbWinterReturnAirWB: actions.payload
       }
-    }
+    },
   },
 });
 
@@ -300,6 +319,7 @@ export function getInitUnitinfo(data) {
   return async () => {
     dispatch(UnitSlice.actions.startLoading());
     const response = await axios.post(`${serverUrl}/api/units/getunitinfo`, data);
+    console.log(response.data);
     dispatch(UnitSlice.actions.setInitInfo(response.data));
   };
 }
@@ -438,9 +458,9 @@ export function txbWinterOutdoorAirRHChanged(data) {
 export function txbSummerReturnAirWBChanged(data) {
   console.log(data);
   return async () => {
-    const response = await axios.post(`${serverUrl}/api/units/ummerReturnAirWBChanged`, data);
+    const response = await axios.post(`${serverUrl}/api/units/SummerReturnAirWBChanged`, data);
     console.log(response.data);
-    dispatch(UnitSlice.action.txbSummerReturnAirWBChanged(response.data));
+    dispatch(UnitSlice.actions.txbSummerReturnAirWBChanged(response.data));
     return response.data;
   }
 }
@@ -450,7 +470,8 @@ export function txbSummerReturnAirRHChanged(data) {
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/SummerReturnAirRHChanged`, data);
     console.log(response.data);
-    dispatch(UnitSlice.action.txbSummerReturnAirRHChanged(response.data));
+    console.log(UnitSlice.actions);
+    dispatch(UnitSlice.actions.txbSummerReturnAirRHChanged(response.data));
     return response.data;
   }
 }
@@ -460,7 +481,7 @@ export function txbWinterReturnAirWBChanged(data) {
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/WinterReturnAirWBChanged`, data);
     console.log(response.data);
-    dispatch(UnitSlice.action.txbWinterReturnAirWBChanged(response.data));
+    dispatch(UnitSlice.actions.txbWinterReturnAirWBChanged(response.data));
     return response.data;
   }
 }
@@ -470,7 +491,7 @@ export function txbWinterReturnAirRHChanged(data) {
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/WinterReturnAirRHChanged`, data);
     console.log(response.data);
-    dispatch(UnitSlice.action.txbWinterReturnAirRHChanged(response.data));
+    dispatch(UnitSlice.actions.txbWinterReturnAirRHChanged(response.data));
     return response.data;
   }
 }
@@ -480,7 +501,7 @@ export function ddlPreheatCompChanged(data) {
   return async () => {
     const response = await axios.post(`${serverUrl}/api/units/ddlPreheatCompChanged`, data);
     console.log(response.data);
-    dispatch(UnitSlice.action.ddlPreheatCompChanged(response.data));
+    dispatch(UnitSlice.actions.ddlPreheatCompChanged(response.data));
     return response.data;
   }
 }
