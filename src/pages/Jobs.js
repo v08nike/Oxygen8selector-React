@@ -39,6 +39,7 @@ import {
 import { JobsTableToolbar, JobsTableRow } from '../sections/jobslist';
 import NewJobFormDialog from '../sections/dialog/NewJobFormDialog';
 import ConfirmDialog from '../sections/dialog/ConfirmDialog';
+import Loading from '../sections/Loading';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -200,7 +201,7 @@ export default function MyJobs() {
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus);
 
-  return (
+  return isLoading? <Loading /> : (
     <Page title="Jobs">
       <RootStyle>
         <Container>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 // @mui
@@ -23,14 +23,15 @@ import {
 } from '@mui/material';
 
 // redux
-// import { useSelector } from 'react-redux';
-// import { deleteUnit } from '../../redux/slices/jobsReducer';
+import { useSelector, useDispatch } from '../../redux/store';
+import { getViewSelectionInfo } from '../../redux/slices/unitReducer';
 // components
 // import Iconify from '../../components/Iconify';
 
 // hooks
 import { FormProvider, RHFTextField } from '../../components/hook-form';
-
+// sections
+import Loading from '../Loading';
 // ----------------------------------------------------------------------
 
 const GroupHeaderStyle = styled(Box)(({ theme }) => ({
@@ -48,32 +49,59 @@ const CardHeaderStyle = styled(CardHeader)(({ theme }) => ({
 const CardHeaderRHFTextFieldStyle = styled(RHFTextField)(() => ({
   '& .MuiFilledInput-root': {
     background: 'rgb(255, 255, 255)',
-    '&:hover':{
+    '&:hover': {
       background: 'rgb(239, 239, 239)',
-    }
+    },
   },
 }));
 
 // ----------------------------------------------------------------------
 
 export default function Selection() {
-  // const { jobId, unitId } = useParams();
+  const { jobId, unitId } = useParams();
+  const dispatch = useDispatch();
+  const { state } = useLocation();
 
-  const SelectionInfo = [
+  const { controlInfo, unitInfo, isLoading, viewSelectionInfo } = useSelector((state) => state.unit);
+
+  const {
+    pricingDetail,
+    performanceVisible,
+    unitDetails,
+    unitDetailsVisible,
+    electricalRequirements,
+    electricPreheatVisible,
+    electricPreheat,
+    heatExchanger,
+    heatingElectricHeater,
+    heatingElectricHeaterVisible,
+  } = viewSelectionInfo;
+  const { preheatElectricHeater } = controlInfo;
+
+  useEffect(() => {
+    dispatch(
+      getViewSelectionInfo({
+        intUserID: localStorage.getItem('userId'),
+        intUAL: localStorage.getItem('UAL'),
+        intJobID: jobId,
+        intProductTypeID: state.productType,
+        intUnitTypeID: state.unitType,
+        intUnitNo: unitId === undefined ? -1 : unitId,
+        ddlPreheatElecHeaterInstallation: preheatElectricHeater.ddlPreheatElecHeaterInstallationValue,
+      })
+    );
+  }, [dispatch, jobId, unitId, state, preheatElectricHeater]);
+
+  console.log(viewSelectionInfo);
+
+  const SelectionInfo = JSON.stringify(viewSelectionInfo) !== '{}' ? [
     {
       groupName: 'Pricing',
       subGroups: [
         {
           title: 'Pricing Detail',
-          data: [
-            ['Unit', '$7447.73', '1 - A16IN - 208 - 1 - 0 - 1 - 7447.73 - 7447.73 -'],
-            [
-              'Preheat Elec Heater',
-              '$1034.32',
-              '5 - A16IN - 1 - Indoor - 3 - In Casing - CP - 208 - 3 - 60 - 1 - 1034.32 - 1086.04 - 1 -',
-            ],
-            ['Total', '$8482.05', ''],
-          ],
+          data: pricingDetail.map((item) => [item.cLabel, item.cValue, item.cNotes]),
+          visible: performanceVisible,
         },
       ],
     },
@@ -82,19 +110,8 @@ export default function Selection() {
       subGroups: [
         {
           title: 'Unit Details',
-          data: [
-            ['Unit Tag', 'WELCOME'],
-            ['Model', '	A16IN - (325 - 775 CFM)'],
-            ['Qty', '1'],
-            ['Location', 'Indoor'],
-            ['Altitude', '0'],
-            ['ByPass', 'No'],
-            ['Orientation', 'Horizontal'],
-            ['ESP SA / RA (inH2O)', '0.75/0.75'],
-            ['Filters QA / RA', '2" 85% MERV-13 / 2" 30% MERV-8'],
-            ['Controls Preference', 'Constant Volume'],
-            ['Dampers & Actuator', 'NA'],
-          ],
+          data: unitDetails.map((item) => [item.cLabel, item.cValue]),
+          visible: unitDetailsVisible,
         },
       ],
     },
@@ -103,26 +120,18 @@ export default function Selection() {
       subGroups: [
         {
           title: 'Unit',
-          data: [
-            ['Voltage', '208V/1ph/60Hz'],
-            ['Range', '207V-253V'],
-            ['FLA', '5.29'],
-            ['MCA', '5.91'],
-            ['RFS', '15A'],
-          ],
+          data: electricalRequirements.unitData.map((item) => [item.cLabel, item.cValue]),
+          visible: electricalRequirements.unitDataVisible,
         },
         {
           title: 'Preheat Electric Heater',
-          data: [
-            ['Std. Coil', '1'],
-            ['Controls', 'SCR'],
-            ['Voltage', '208V/3ph/60Hz'],
-            ['Range', '207V-253V'],
-            ['FLA', '5.29'],
-            ['MCA', '5.91'],
-            ['RFS', '15A'],
-            ['Max KW', '4'],
-          ],
+          data: electricalRequirements.preheatData.map((item) => [item.cLabel, item.cValue]),
+          visible: electricalRequirements.preheatDataVisible,
+        },
+        {
+          title: 'Heating Electric Heater',
+          data: electricalRequirements.heatingData.map((item) => [item.cLabel, item.cValue]),
+          visible: electricalRequirements.heatingDataVisible,
         },
       ],
     },
@@ -131,14 +140,8 @@ export default function Selection() {
       subGroups: [
         {
           title: 'Actual',
-          data: [
-            ['Outdoor Air (CFM)', '	325'],
-            ['Voltage', '208V/3ph/60Hz'],
-            ['kW', '0.1'],
-            ['Ent. Air DB/WB (F)', '35 / 33'],
-            ['Lvg Air DB/WB (F)', '36 / 33.6'],
-            ['Installation', 'In Casing – Field Mounted and Wired'],
-          ],
+          data: electricPreheat.map((item) => [item.cLabel, item.cValue]),
+          visible: electricPreheatVisible,
         },
       ],
     },
@@ -147,45 +150,28 @@ export default function Selection() {
       subGroups: [
         {
           title: 'Design Conditions',
-          data: [
-            ['', 'Outdoor Air', 'Return Air'],
-            ['SCFM', '325', '325'],
-            ['Summer DB (F) / WB (F) / RH (%)', '95 / 78 / 47.3', '75 / 63 / 51.2'],
-            ['Winter DB (F) / WB (F) / RH (%)', '95 / 78 / 47.3', '75 / 63 / 51.2'],
-          ],
+          data: heatExchanger.designConditions.map((item) => [item.cLabel, item.cValue_1, item.cValue_2]),
+          visible: heatExchanger.designConditionsVisible,
         },
         {
           title: 'Performance Leaving Air',
-          data: [
-            ['', '	Supply Air', '	Exhaust Air'],
-            ['SCFM', '325', '325'],
-            ['Summer DB (F) / WB (F) / RH (%)', '95 / 78 / 47.3', '75 / 63 / 51.2'],
-            ['Winter DB (F) / WB (F) / RH (%)', '95 / 78 / 47.3', '75 / 63 / 51.2'],
-          ],
+          data: heatExchanger.performanceLeavingAir.map((item) => [item.cLabel, item.cValue_1, item.cValue_2]),
+          visible: heatExchanger.performanceLeavingAirVisible,
         },
         {
           title: 'Performance',
-          data: [
-            ['', 'Summer', 'Winter'],
-            ['Supply Air PD (inH2O)', '0.24', '0.24'],
-            ['Exhaust Air PD (inH2O)', '325', '325'],
-            ['Sensible Effectiveness %', '325', '325'],
-            ['Latent Effectiveness %', '325', '325'],
-            ['Total Effectiveness %', '325', '325'],
-            ['EATR %:', '325', '325'],
-            ['OACF', '325', '325'],
-            ['Net Supply Airflow (SCFM)', '325', '325'],
-            ['Energy Recover Ratio %', '325', '325'],
-            ['BTU/H Saved', '325', '325'],
-          ],
+          data: heatExchanger.performance.map((item) => [item.cLabel, item.cValue_1, item.cValue_2]),
+          visible: heatExchanger.performanceVisible,
         },
       ],
     },
-  ];
+  ] : [];
 
   const methods = useForm();
 
-  return (
+  return JSON.stringify(viewSelectionInfo) === '{}' ? (
+    <Loading />
+  ) : (
     <Container>
       <FormProvider methods={methods}>
         <Stack spacing={5} sx={{ mt: 2 }}>
@@ -202,7 +188,10 @@ export default function Selection() {
               </GroupHeaderStyle>
               <Stack spacing={3} sx={{ background: '#efefef' }}>
                 {item.subGroups.map((element, index) => (
-                  <Card key={element.title + index} sx={{ m: '20px 30px!important' }}>
+                  <Card
+                    key={element.title + index}
+                    sx={{ display: element.visible ? 'block' : 'none', m: '20px 30px!important' }}
+                  >
                     <CardHeaderStyle
                       title={
                         <CardHeaderRHFTextFieldStyle

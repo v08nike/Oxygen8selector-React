@@ -18,7 +18,7 @@ import Iconify from '../components/Iconify';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 // sections
 import { UnitEdit, Drawing, Layout, Selection } from '../sections/configureUnit';
-
+import Loading from '../sections/Loading';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -34,7 +34,7 @@ export default function SetUnitInfo() {
   const { themeStretch } = useSettings();
   const { jobId, unitId } = useParams();
   const { state } = useLocation();
-  console.log(state);
+  // console.log(state);
   const dispatch = useDispatch();
   const { currentTab, onChangeTab } = useTabs('Unit Info');
   const { unitInfo } = useSelector((state) => state.unit);
@@ -42,12 +42,12 @@ export default function SetUnitInfo() {
   useEffect(() => {
     dispatch(
       getInitUnitinfo({
-        userId: localStorage.getItem("userId"),
-        UAL: localStorage.getItem('UAL'),
-        jobId,
-        productTypeId: state.productType,
-        unitTypeId: state.unitType,
-        unitNo: unitId === undefined ? -1 : unitId,
+        intUserID: localStorage.getItem('userId'),
+        intUAL: localStorage.getItem('UAL'),
+        intJobID: jobId,
+        intProductTypeID: state.productType,
+        intUnitTypeID: state.unitType,
+        intUnitNo: unitId === undefined ? -1 : unitId,
       })
     );
   }, [dispatch, state, jobId, unitId]);
@@ -59,9 +59,7 @@ export default function SetUnitInfo() {
         {
           value: 'Unit Info',
           icon: <Iconify icon={'fa-brands:unity'} width={20} height={20} />,
-          component: (
-            <UnitEdit unitType={state.unitType.toString()} productType={state.productType} />
-          ),
+          component: <UnitEdit unitType={state.unitType.toString()} productType={state.productType} />,
         },
         {
           value: 'Layout',
@@ -81,7 +79,9 @@ export default function SetUnitInfo() {
       ]
     : [];
 
-  return (
+  return isLoading ? (
+    <Loading />
+  ) : (
     <Page title="Unit: View">
       <RootStyle>
         <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -90,7 +90,6 @@ export default function SetUnitInfo() {
             links={[
               { name: 'My Jobs', href: PATH_JOBS.root },
               { name: 'Job Dashboard', href: PATH_JOB.dashboard(jobId) },
-              { name: 'Set Unit Info', href: PATH_UNIT.configure(jobId) },
               { name: currentTab },
             ]}
           />

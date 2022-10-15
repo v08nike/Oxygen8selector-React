@@ -28,6 +28,7 @@ import Iconify from '../components/Iconify';
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs';
 // sections
 import { JobInfo, UnitList } from '../sections/jobDashboard';
+import Loading from '../sections/Loading';
 
 // ----------------------------------------------------------------------
 
@@ -109,7 +110,7 @@ export default function JobDashboard() {
     <Page title="Job: Dashboard">
       <RootStyle>
         {isLoading ? (
-          <h1>Loading</h1>
+          <Loading />
         ) : (
           <Container>
             <HeaderBreadcrumbs
